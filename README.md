@@ -38,4 +38,4 @@ coding!
 - Damilola Oshinowo #2: [GitHub](https://github.com/dami-boy) / [LinkedIn](https://linkedin.com/in/damilola-oshinowo)
 
    ...
-- Teammate name #n: [GitHub](https://github.com/ghaccountname) / [LinkedIn](https://linkedin.com/in/liaccountname)
+- Kris Oldrini #n: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)
