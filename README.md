@@ -36,6 +36,7 @@ coding!
 
 - Adam Honvedo #1: [GitHub](https://github.com/Homvi) / [LinkedIn](https://www.linkedin.com/in/adamhonvedo/)
 - Damilola Oshinowo #2: [GitHub](https://github.com/dami-boy) / [LinkedIn](https://linkedin.com/in/damilola-oshinowo)
+- Asare Joseph #3: [GitHub](https://github.com/kofi916) / [LinkedIn](https://www.linkedin.com/in/joseph-asare-0b959111a/)
 
    ...
 - Kris Oldrini #n: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)
