@@ -26,4 +26,11 @@ router.patch("/:id",
   UserController.update
 );
 
+// Replace user (PUT)
+router.put("/:id", 
+  validateRequest.params(UserParamsSchema),
+  validateRequest.body(GoogleUserSchema),
+  UserController.replace
+);
+
 export default router;

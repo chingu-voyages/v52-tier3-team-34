@@ -164,4 +164,41 @@ export class UserService {
       throw error;
     }
   }
+
+  static async replace(id: string, data: GoogleUserInput) {
+    try {
+      const userId = Number(id);
+      if (isNaN(userId)) throw new Error('Invalid user ID');
+
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          profileImage: true,
+          createdAt: true
+        }
+      });
+
+      return user;
+    } catch (error) {
+      // Not found error
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("User not found");
+      }
+
+      // Unique constraint violation
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        if (error.meta?.target) {
+          const field = Array.isArray(error.meta.target) ? error.meta.target[0] : "field";
+          throw new Error(`User with this ${field} already exists`);
+        }
+        throw new Error("This update violates a unique constraint");
+      }
+
+      throw error;
+    }
+  }
 }

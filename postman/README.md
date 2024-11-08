@@ -188,6 +188,42 @@ postman/
   }
   ```
 
+#### Replace User
+- **Endpoint**: PUT `/api/users/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Request Body** (all fields required): 
+  ```json
+  {
+    "email": "replaced.user@example.com",
+    "name": "Replaced User",
+    "googleId": "google_replaced_123",
+    "profileImage": "https://example.com/avatars/replaced.jpg"  // optional
+  }
+  ```
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "email": "replaced.user@example.com",
+      "name": "Replaced User",
+      "profileImage": "https://example.com/avatars/replaced.jpg",
+      "createdAt": "2024-03-11T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "User not found",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing

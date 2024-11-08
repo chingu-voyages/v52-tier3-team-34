@@ -111,4 +111,33 @@ export class UserController {
       res.status(statusCode).json(response);
     }
   }
+
+  static async replace(
+    req: Request<UserParams, {}, GoogleUserInput>,
+    res: Response
+  ) {
+    try {
+      const userId = req.params.id;
+      const user: UserResponse = await UserService.replace(userId, req.body);
+
+      const response: ApiResponse<UserResponse> = {
+        status: "success",
+        data: user,
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(response);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to replace user",
+        timestamp: new Date().toISOString()
+      };
+
+      const statusCode = error instanceof Error && error.message === "User not found"
+        ? 404
+        : 400;
+      res.status(statusCode).json(response);
+    }
+  }
 }
