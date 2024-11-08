@@ -118,6 +118,40 @@ postman/
   }
   ```
 
+#### Create User
+- **Endpoint**: POST `/api/users`
+- **Request Body**: 
+  ```json
+  {
+    "email": "new.user@example.com",
+    "name": "New User",
+    "googleId": "google_new_123",
+    "profileImage": "https://example.com/avatars/new.jpg"  // optional
+  }
+  ```
+- **Success Response** (201):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 11,
+      "email": "new.user@example.com",
+      "name": "New User",
+      "profileImage": "https://example.com/avatars/new.jpg",
+      "createdAt": "2024-03-11T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+- **Error Response** (400):
+  ```json
+  {
+    "status": "error",
+    "message": "User with this email already exists",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing

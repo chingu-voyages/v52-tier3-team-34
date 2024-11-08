@@ -1,5 +1,6 @@
 import prisma from '../config/database';
 import { GoogleUserInput, UserQuery } from '../types/user.types';
+import { Prisma } from '@prisma/client';
 
 export class UserService {
   static async findOrCreateFromGoogle(data: GoogleUserInput) {
@@ -80,5 +81,33 @@ export class UserService {
         hasPreviousPage: page > 1
       }
     };
+  }
+
+  static async create(data: GoogleUserInput) {
+    try {
+      const user = await prisma.user.create({
+        data,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          profileImage: true,
+          createdAt: true
+        }
+      });
+      
+      return user;
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        if (error.meta?.target) {
+          const field = Array.isArray(error.meta.target) ? error.meta.target[0] : 'field';
+          throw new Error(`User with this ${field} already exists`);
+        }
+        
+        throw new Error('This user cannot be created due to a unique constraint violation');
+      }
+      
+      throw error;
+    }
   }
 } 

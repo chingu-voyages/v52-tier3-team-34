@@ -52,6 +52,60 @@
       "name": "Users",
       "item": [
         {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"new.user@example.com\",\n  \"name\": \"New User\",\n  \"googleId\": \"google_new_123\",\n  \"profileImage\": \"https://example.com/avatars/new.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Create a new user"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"new.user@example.com\",\n  \"name\": \"New User\",\n  \"googleId\": \"google_new_123\",\n  \"profileImage\": \"https://example.com/avatars/new.jpg\"\n}"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 11,
+                  "email": "new.user@example.com",
+                  "name": "New User",
+                  "profileImage": "https://example.com/avatars/new.jpg",
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
           "name": "List Users",
           "request": {
             "method": "GET",

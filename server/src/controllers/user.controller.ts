@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
-import { UserResponse, UserQuery } from "../types/user.types";
+import { UserResponse, UserQuery, GoogleUserInput } from "../types/user.types";
 import { ApiResponse } from "../types/api.types";
 
 export class UserController {
@@ -47,6 +47,28 @@ export class UserController {
       };
 
       res.status(500).json(response);
+    }
+  }
+
+  static async create(req: Request<{}, {}, GoogleUserInput>, res: Response) {
+    try {
+      const user: UserResponse = await UserService.create(req.body);
+
+      const response: ApiResponse<UserResponse> = {
+        status: "success",
+        data: user,
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(201).json(response);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to create user",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(400).json(response);
     }
   }
 }

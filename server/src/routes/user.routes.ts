@@ -1,9 +1,12 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
 import { validateRequest } from "../middleware/validateRequest";
-import { UserParamsSchema, UserQuerySchema } from "../types/user.types";
+import { UserParamsSchema, UserQuerySchema, GoogleUserSchema } from "../types/user.types";
 
 const router = Router();
+
+// Create user
+router.post("/", validateRequest.body(GoogleUserSchema), UserController.create);
 
 // List users (with query validation)
 router.get("/", validateRequest.query(UserQuerySchema), UserController.list);
