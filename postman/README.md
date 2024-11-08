@@ -224,6 +224,27 @@ postman/
   }
   ```
 
+#### Delete User
+- **Endpoint**: DELETE `/api/users/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "message": "User deleted successfully",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "User not found",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing

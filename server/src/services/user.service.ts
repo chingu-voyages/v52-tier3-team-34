@@ -201,4 +201,24 @@ export class UserService {
       throw error;
     }
   }
+
+  static async delete(id: string) {
+    try {
+      const userId = Number(id);
+      if (isNaN(userId)) throw new Error('Invalid user ID');
+
+      await prisma.user.delete({
+        where: { id: userId }
+      });
+
+      return true;  // Successfully deleted
+    } catch (error) {
+      // Not found error
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2025") {
+        throw new Error("User not found");
+      }
+
+      throw error;
+    }
+  }
 }

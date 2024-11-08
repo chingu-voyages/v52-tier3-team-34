@@ -140,4 +140,33 @@ export class UserController {
       res.status(statusCode).json(response);
     }
   }
+
+  static async delete(
+    req: Request<UserParams>,
+    res: Response
+  ) {
+    try {
+      const userId = req.params.id;
+      await UserService.delete(userId);
+
+      const response: ApiResponse<null> = {
+        status: "success",
+        message: "User deleted successfully",
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(response);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to delete user",
+        timestamp: new Date().toISOString()
+      };
+
+      const statusCode = error instanceof Error && error.message === "User not found"
+        ? 404
+        : 400;
+      res.status(statusCode).json(response);
+    }
+  }
 }

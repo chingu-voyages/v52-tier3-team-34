@@ -33,4 +33,10 @@ router.put("/:id",
   UserController.replace
 );
 
+// Delete user
+router.delete("/:id",
+  validateRequest.params(UserParamsSchema),
+  UserController.delete
+);
+
 export default router;
