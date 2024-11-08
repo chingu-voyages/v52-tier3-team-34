@@ -59,6 +59,38 @@ postman/
 
 ### Users
 
+#### List Users
+- **Endpoint**: GET `/api/users`
+- **Query Parameters**: 
+  - page: number (optional, default: 1)
+  - limit: number (optional, default: 10, max: 100)
+  - orderBy: string (optional, values: 'name', 'email', 'createdAt')
+  - order: string (optional, values: 'asc', 'desc')
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": [
+      {
+        "id": 1,
+        "email": "john.dev@example.com",
+        "name": "John Developer",
+        "profileImage": "https://example.com/avatars/john.jpg",
+        "createdAt": "2024-03-11T10:30:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 2,
+      "totalItems": 10,
+      "itemsPerPage": 5,
+      "hasNextPage": true,
+      "hasPreviousPage": false
+    },
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 #### Get User by ID
 - **Endpoint**: GET `/api/users/:id`
 - **Parameters**: 

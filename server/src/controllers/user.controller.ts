@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { UserService } from "../services/user.service";
-import { UserResponse } from "../types/user.types";
+import { UserResponse, UserQuery } from "../types/user.types";
 import { ApiResponse } from "../types/api.types";
 
 export class UserController {
@@ -24,6 +24,29 @@ export class UserController {
       };
 
       res.status(404).json(response);
+    }
+  }
+
+  static async list(req: Request<{}, {}, {}, UserQuery>, res: Response) {
+    try {
+      const result = await UserService.findAll(req.query);
+
+      const response: ApiResponse<UserResponse[]> = {
+        status: "success",
+        data: result.users,
+        pagination: result.pagination,
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(response);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to fetch users",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(500).json(response);
     }
   }
 }

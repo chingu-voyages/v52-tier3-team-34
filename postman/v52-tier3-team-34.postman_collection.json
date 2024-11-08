@@ -52,6 +52,93 @@
       "name": "Users",
       "item": [
         {
+          "name": "List Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users?page=1&limit=5&orderBy=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "5",
+                  "description": "Items per page (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "orderBy",
+                  "value": "name",
+                  "description": "Sort field (name, email, createdAt)",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "description": "Sort order (asc, desc)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get a list of users with optional pagination and sorting"
+          },
+          "response": [
+            {
+              "name": "Success Response - With Pagination",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users?page=1&limit=5"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": [
+                  {
+                    "id": 1,
+                    "email": "john.dev@example.com",
+                    "name": "John Developer",
+                    "profileImage": "https://example.com/avatars/john.jpg",
+                    "createdAt": "2024-03-11T10:30:00.000Z"
+                  },
+                  {
+                    "id": 2,
+                    "email": "jane.tech@example.com",
+                    "name": "Jane Tech",
+                    "profileImage": "https://example.com/avatars/jane.jpg",
+                    "createdAt": "2024-03-11T10:30:00.000Z"
+                  }
+                ],
+                "pagination": {
+                  "currentPage": 1,
+                  "totalPages": 2,
+                  "totalItems": 10,
+                  "itemsPerPage": 5,
+                  "hasNextPage": true,
+                  "hasPreviousPage": false
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
           "name": "Get User by ID",
           "request": {
             "method": "GET",
@@ -150,4 +237,4 @@
       ]
     }
   ]
-} 
+}
