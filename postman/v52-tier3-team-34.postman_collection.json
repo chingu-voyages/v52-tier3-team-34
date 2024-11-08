@@ -1,0 +1,70 @@
+{
+  "info": {
+    "_postman_id": "your-collection-id",
+    "name": "V52 Tier3 Team 34 API",
+    "description": "Collection for testing the V52 Tier3 Team 34 REST API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": [
+                "api",
+                "health"
+              ]
+            },
+            "description": "Check if the API server is running"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/health",
+                  "host": ["{{baseUrl}}"],
+                  "path": [
+                    "api",
+                    "health"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "message": "Server is running",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+} 
