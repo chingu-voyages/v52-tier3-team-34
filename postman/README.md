@@ -21,13 +21,15 @@ postman/
 ### 2. Import Collection and Environment
 
 #### Method 1: Using Postman UI
+
 1. Open Postman
 2. Click "Import" button (top left)
 3. Drag and drop both JSON files:
    - `v52-tier3-team-34.postman_collection.json`
    - `local.postman_environment.json`
-   
+
 #### Method 2: Using Files
+
 1. Open Postman
 2. Click "Import" button
 3. Click "Upload Files"
@@ -43,6 +45,7 @@ postman/
 ## Available Endpoints
 
 ### Health Check
+
 - **Endpoint**: GET `/api/health`
 - **Purpose**: Verify API server is running
 - **Expected Response**:
@@ -54,20 +57,52 @@ postman/
   }
   ```
 
+### Users
+
+#### Get User by ID
+- **Endpoint**: GET `/api/users/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "email": "john.dev@example.com",
+      "name": "John Developer",
+      "profileImage": "https://example.com/avatars/john.jpg",
+      "createdAt": "2024-03-11T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "User not found",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing
+
 1. Expand the "Health" folder in the collection
 2. Click on "Health Check"
 3. Click "Send" to make the request
 4. Verify the response matches the expected format
 
 ### Environment Variables
+
 - The collection uses `{{baseUrl}}` variable
 - This is automatically replaced with `http://localhost:3000` in local environment
 - To test against different environments, update the URL in environment settings
 
 ### Running All Tests
+
 1. Click on the collection name
 2. Click the "Run" button
 3. In the Collection Runner:
@@ -80,11 +115,13 @@ postman/
 ### Common Issues
 
 1. **Cannot connect to server**
+
    - Verify the API server is running
    - Check if port 3000 is available
    - Verify no firewall is blocking the connection
 
 2. **Environment variables not working**
+
    - Ensure the environment is selected
    - Check if variables are correctly defined
    - Try reloading Postman
@@ -97,6 +134,7 @@ postman/
 ### Getting Help
 
 If you encounter issues:
+
 1. Check the server logs
 2. Verify your local environment setup
 3. Contact the development team
@@ -118,11 +156,13 @@ If you encounter issues:
 ### Best Practices
 
 1. **Naming Conventions**
+
    - Use clear, descriptive names for requests
    - Group related requests in folders
    - Include HTTP method in request name
 
 2. **Documentation**
+
    - Add descriptions to requests
    - Include example responses
    - Document required headers/body
@@ -142,4 +182,4 @@ As new API endpoints are developed, they will be added to this collection in the
 - Venues
 - etc.
 
-Check the collection regularly for updates! 
+Check the collection regularly for updates!

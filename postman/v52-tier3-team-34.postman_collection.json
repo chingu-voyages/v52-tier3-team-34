@@ -1,6 +1,5 @@
 {
   "info": {
-    "_postman_id": "your-collection-id",
     "name": "V52 Tier3 Team 34 API",
     "description": "Collection for testing the V52 Tier3 Team 34 REST API endpoints",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -17,10 +16,7 @@
             "url": {
               "raw": "{{baseUrl}}/api/health",
               "host": ["{{baseUrl}}"],
-              "path": [
-                "api",
-                "health"
-              ]
+              "path": ["api", "health"]
             },
             "description": "Check if the API server is running"
           },
@@ -29,14 +25,8 @@
               "name": "Success Response",
               "originalRequest": {
                 "method": "GET",
-                "header": [],
                 "url": {
-                  "raw": "{{baseUrl}}/api/health",
-                  "host": ["{{baseUrl}}"],
-                  "path": [
-                    "api",
-                    "health"
-                  ]
+                  "raw": "{{baseUrl}}/api/health"
                 }
               },
               "status": "OK",
@@ -57,14 +47,107 @@
           ]
         }
       ]
-    }
-  ],
-  "event": [],
-  "variable": [
+    },
     {
-      "key": "baseUrl",
-      "value": "http://localhost:3000",
-      "type": "string"
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get User by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            },
+            "description": "Get a user by their ID. Returns user details if found."
+          },
+          "response": [
+            {
+              "name": "Success Response - Developer",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "email": "john.dev@example.com",
+                  "name": "John Developer",
+                  "profileImage": "https://example.com/avatars/john.jpg",
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            },
+            {
+              "name": "Success Response - Marketing",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/8"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 8,
+                  "email": "david.content@example.com",
+                  "name": "David Content",
+                  "profileImage": null,
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            },
+            {
+              "name": "Error Response - Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/users/999"
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "error",
+                "message": "User not found",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 } 

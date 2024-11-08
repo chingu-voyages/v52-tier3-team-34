@@ -7,4 +7,29 @@ export const GoogleUserSchema = z.object({
   profileImage: z.string().optional()
 });
 
-export type GoogleUserInput = z.infer<typeof GoogleUserSchema>; 
+export const UserParamsSchema = z.object({
+  id: z.coerce.number().int().positive()
+});
+
+export const UserQuerySchema = z.object({
+  page: z.coerce.number().positive().optional(),
+  limit: z.coerce.number().min(1).max(100).optional(),
+  orderBy: z.enum(['name', 'email', 'createdAt']).optional(),
+  order: z.enum(['asc', 'desc']).optional()
+});
+
+// Schema for PATCH operations - all fields are optional
+export const GoogleUserUpdateSchema = GoogleUserSchema.partial();
+
+export type UserResponse = {
+  id: number;
+  email: string;
+  name: string;
+  profileImage: string | null;
+  createdAt: Date;
+}
+
+export type GoogleUserInput = z.infer<typeof GoogleUserSchema>;
+export type GoogleUserUpdateInput = z.infer<typeof GoogleUserUpdateSchema>;
+export type UserParams = z.infer<typeof UserParamsSchema>;
+export type UserQuery = z.infer<typeof UserQuerySchema>; 
