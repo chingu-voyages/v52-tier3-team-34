@@ -3,17 +3,17 @@ import { Link, Outlet, createRootRoute } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
 export const Route = createRootRoute({
-  component: RootComponent,
+  component: RootComponent
 });
 
 function RootComponent() {
   return (
     <>
-      <div className="p-2 flex gap-2 text-lg">
+      <div className="p-2 flex gap-2 text-lg justify-between px-3">
         <Link
           to="/"
           activeProps={{
-            className: 'font-bold',
+            className: 'underline'
           }}
           activeOptions={{ exact: true }}
         >
@@ -22,7 +22,7 @@ function RootComponent() {
         <Link
           to="/register"
           activeProps={{
-            className: 'font-bold',
+            className: 'underline'
           }}
         >
           Register
