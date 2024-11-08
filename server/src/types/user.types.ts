@@ -8,7 +8,9 @@ export const GoogleUserSchema = z.object({
 });
 
 export const UserParamsSchema = z.object({
-  id: z.coerce.number().int().positive()
+  id: z.string()
+    .regex(/^\d+$/, "ID must be a positive integer")
+    .refine((val) => parseInt(val) > 0, "ID must be positive")
 });
 
 export const UserQuerySchema = z.object({

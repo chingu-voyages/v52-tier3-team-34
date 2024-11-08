@@ -1,30 +1,30 @@
-import prisma from '../config/database';
-import { GoogleUserInput, UserQuery } from '../types/user.types';
-import { Prisma } from '@prisma/client';
+import prisma from "../config/database";
+import { GoogleUserInput, GoogleUserUpdateInput, UserQuery } from "../types/user.types";
+import { Prisma } from "@prisma/client";
 
 export class UserService {
   static async findOrCreateFromGoogle(data: GoogleUserInput) {
     const user = await prisma.user.upsert({
-      where: { 
-        googleId: data.googleId 
+      where: {
+        googleId: data.googleId,
       },
       update: {
         name: data.name,
         email: data.email,
-        profileImage: data.profileImage
+        profileImage: data.profileImage,
       },
       create: {
-        ...data
+        ...data,
       },
       select: {
         id: true,
         email: true,
         name: true,
         profileImage: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
-    
+
     return user;
   }
 
@@ -36,12 +36,12 @@ export class UserService {
         email: true,
         name: true,
         profileImage: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
 
     return user;
@@ -58,16 +58,18 @@ export class UserService {
     const users = await prisma.user.findMany({
       skip,
       take: limit,
-      orderBy: query.orderBy ? {
-        [query.orderBy]: query.order || 'asc'
-      } : undefined,
+      orderBy: query.orderBy
+        ? {
+            [query.orderBy]: query.order || "asc",
+          }
+        : undefined,
       select: {
         id: true,
         email: true,
         name: true,
         profileImage: true,
-        createdAt: true
-      }
+        createdAt: true,
+      },
     });
 
     return {
@@ -78,8 +80,8 @@ export class UserService {
         totalItems: total,
         itemsPerPage: limit,
         hasNextPage: skip + users.length < total,
-        hasPreviousPage: page > 1
-      }
+        hasPreviousPage: page > 1,
+      },
     };
   }
 
@@ -92,22 +94,74 @@ export class UserService {
           email: true,
           name: true,
           profileImage: true,
-          createdAt: true
-        }
+          createdAt: true,
+        },
       });
-      
+
       return user;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
         if (error.meta?.target) {
-          const field = Array.isArray(error.meta.target) ? error.meta.target[0] : 'field';
+          const field = Array.isArray(error.meta.target)
+            ? error.meta.target[0]
+            : "field";
           throw new Error(`User with this ${field} already exists`);
         }
-        
-        throw new Error('This user cannot be created due to a unique constraint violation');
+
+        throw new Error(
+          "This user cannot be created due to a unique constraint violation"
+        );
       }
-      
+
       throw error;
     }
   }
-} 
+
+  static async update(id: string, data: GoogleUserUpdateInput) {
+    try {
+      const userId = Number(id);
+      if (isNaN(userId)) throw new Error('Invalid user ID');
+
+      const user = await prisma.user.update({
+        where: { id: userId },
+        data,
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          profileImage: true,
+          createdAt: true,
+        },
+      });
+
+      return user;
+    } catch (error) {
+      // Not found error
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2025"
+      ) {
+        throw new Error("User not found");
+      }
+
+      // Unique constraint violation
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === "P2002"
+      ) {
+        if (error.meta?.target) {
+          const field = Array.isArray(error.meta.target)
+            ? error.meta.target[0]
+            : "field";
+          throw new Error(`User with this ${field} already exists`);
+        }
+        throw new Error("This update violates a unique constraint");
+      }
+
+      throw error;
+    }
+  }
+}

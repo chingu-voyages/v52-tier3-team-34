@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
 import { validateRequest } from "../middleware/validateRequest";
-import { UserParamsSchema, UserQuerySchema, GoogleUserSchema } from "../types/user.types";
+import { 
+  UserParamsSchema, 
+  UserQuerySchema, 
+  GoogleUserSchema,
+  GoogleUserUpdateSchema 
+} from "../types/user.types";
 
 const router = Router();
 
@@ -11,7 +16,14 @@ router.post("/", validateRequest.body(GoogleUserSchema), UserController.create);
 // List users (with query validation)
 router.get("/", validateRequest.query(UserQuerySchema), UserController.list);
 
-// Get user by ID (existing route)
+// Get user by ID
 router.get("/:id", validateRequest.params(UserParamsSchema), UserController.getById);
+
+// Update user
+router.patch("/:id", 
+  validateRequest.params(UserParamsSchema),
+  validateRequest.body(GoogleUserUpdateSchema),
+  UserController.update
+);
 
 export default router;

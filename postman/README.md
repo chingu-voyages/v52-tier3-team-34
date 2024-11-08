@@ -152,6 +152,42 @@ postman/
   }
   ```
 
+#### Update User
+- **Endpoint**: PATCH `/api/users/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Request Body** (all fields optional): 
+  ```json
+  {
+    "email": "updated.email@example.com",
+    "name": "Updated Name",
+    "googleId": "new_google_id",
+    "profileImage": "https://example.com/avatars/updated.jpg"
+  }
+  ```
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "email": "updated.email@example.com",
+      "name": "Updated Name",
+      "profileImage": "https://example.com/avatars/updated.jpg",
+      "createdAt": "2024-03-11T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "User not found",
+    "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing
