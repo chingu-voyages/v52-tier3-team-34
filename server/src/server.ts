@@ -1,4 +1,6 @@
-import express, { Request, Response } from 'express';
+import express from 'express';
+import { errorHandler } from './middleware/errorHandler';
+import router from './routes';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -6,14 +8,11 @@ const port = process.env.PORT || 3000;
 // Middleware to parse JSON bodies
 app.use(express.json());
 
-// Test route
-app.get('/api/health', (req: Request, res: Response) => {
-  res.json({
-    status: 'success',
-    message: 'Server is running',
-    timestamp: new Date().toISOString()
-  });
-});
+// Mount all routes under /api
+app.use('/api', router);
+
+// Error handling middleware should be last
+app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`🚀 Server running on http://localhost:${port}`);
