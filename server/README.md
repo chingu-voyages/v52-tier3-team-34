@@ -15,10 +15,9 @@ This is the backend REST API built with Node.js, Express, TypeScript, Prisma, SQ
 
 💡 **Recommended Way to Start Development**
 
-📝 **Note about commands**:
+📝 **Note about commands**: 
 Commands shown use Unix-style syntax (Linux/macOS).
 For Windows users:
-
 - Use `\` instead of `/` for paths
 - Use `copy` instead of `cp`
 - Use `mkdir folder\subfolder` instead of `mkdir -p folder/subfolder`
@@ -323,18 +322,3 @@ npm install zod
 ```bash
 mkdir -p src/{config,controllers,middleware,routes,services,utils}
 ```
-
-## API Testing with Postman
-
-The `postman/` directory contains everything needed to test the API endpoints:
-
-1. Collection file with all endpoints and examples
-2. Environment configuration for local development
-3. Detailed documentation on how to use the collection
-
-See `postman/README.md` for detailed instructions on:
-
-- How to import the collection
-- How to set up environments
-- How to run tests
-- Available endpoints and examples
