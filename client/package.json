@@ -6,13 +6,14 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "dev": "vite --port=3001",
-    "build": "vite build",
+    "build": "npm run typecheck && vite build",
     "serve": "vite preview",
     "start": "vite",
     "format": "npx prettier . --write"
   },
   "devDependencies": {
     "@tanstack/router-plugin": "^1.79.0",
+    "@types/node": "^22.9.0",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.2",
