@@ -1,10 +1,10 @@
-import * as React from 'react'
-import { createFileRoute } from '@tanstack/react-router'
+import * as React from 'react';
+import { createFileRoute } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/privacy-policy')({
-  component: RouteComponent,
-})
+  component: RouteComponent
+});
 
 function RouteComponent() {
-  return 'Hello /privacy-policy!'
+  return 'Hello /privacy-policy!';
 }
