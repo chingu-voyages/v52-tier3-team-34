@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import process from 'process';  // Add this line
 
 const prisma = new PrismaClient();
 
