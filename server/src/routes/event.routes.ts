@@ -1,0 +1,42 @@
+import { Router } from "express";
+import { EventController } from "../controllers/event.controller";
+import { validateRequest } from "../middleware/validateRequest";
+import { 
+  EventParamsSchema, 
+  EventQuerySchema, 
+  EventSchema,
+  EventUpdateSchema 
+} from "../types/event.types";
+
+const router = Router();
+
+// List events (with query validation)
+router.get("/", validateRequest.query(EventQuerySchema), EventController.list);
+
+// Get event by ID
+router.get("/:id", validateRequest.params(EventParamsSchema), EventController.getById);
+
+// Create event
+router.post("/", validateRequest.body(EventSchema), EventController.create);
+
+// Update event (PATCH)
+router.patch("/:id", 
+  validateRequest.params(EventParamsSchema),
+  validateRequest.body(EventUpdateSchema),
+  EventController.update
+);
+
+// Replace event (PUT)
+router.put("/:id", 
+  validateRequest.params(EventParamsSchema),
+  validateRequest.body(EventSchema),
+  EventController.replace
+);
+
+// Delete event
+router.delete("/:id",
+  validateRequest.params(EventParamsSchema),
+  EventController.delete
+);
+
+export default router; 

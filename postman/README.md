@@ -8,8 +8,36 @@ This directory contains Postman collections and environments for testing the V52
 postman/
 ├── v52-tier3-team-34.postman_collection.json  # API endpoints collection
 ├── local.postman_environment.json             # Local environment variables
+├── production.postman_environment.json        # Production environment variables
 └── README.md                                  # This file
 ```
+
+## Environment Setup
+
+The API can be tested in two environments:
+
+### 1. Local Environment
+- File: `local.postman_environment.json`
+- Base URL: `http://localhost:3000`
+- Use for local development and testing
+
+### 2. Production Environment
+- File: `production.postman_environment.json`
+- Base URL: `https://v52-tier3-team-34.onrender.com`
+- Use for testing the deployed API
+
+### Switching Environments
+
+1. In Postman, look for the environment dropdown in the top right corner
+2. Select either "Local Environment" or "Production Environment"
+3. All requests will automatically use the selected environment's baseUrl
+
+### Environment Variables
+
+Current variables:
+- `baseUrl`: Base URL for all API requests
+  - Local: `http://localhost:3000`
+  - Production: `https://v52-tier3-team-34.onrender.com`
 
 ## Setup Instructions
 
@@ -242,6 +270,177 @@ postman/
     "status": "error",
     "message": "User not found",
     "timestamp": "2024-03-11T10:30:00.000Z"
+  }
+  ```
+
+### Events
+
+#### List Events
+- **Endpoint**: GET `/api/events`
+- **Query Parameters**: 
+  - page: number (optional, default: 1)
+  - limit: number (optional, default: 10, max: 100)
+  - status: string (optional, values: 'draft', 'published', 'cancelled')
+  - orderBy: string (optional, values: 'startDate', 'title', 'createdAt')
+  - order: string (optional, values: 'asc', 'desc')
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": [
+      {
+        "id": 1,
+        "title": "Jazz Night at Blue Note",
+        "description": "Live jazz quartet performing classic standards...",
+        "startDate": "2024-03-25T19:00:00.000Z",
+        "endDate": "2024-03-25T23:00:00.000Z",
+        "location": "Blue Note Bar & Restaurant",
+        "status": "published",
+        "createdAt": "2024-03-12T10:00:00.000Z",
+        "updatedAt": "2024-03-12T10:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 1,
+      "totalItems": 4,
+      "itemsPerPage": 10,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "timestamp": "2024-03-12T10:00:00.000Z"
+  }
+  ```
+
+#### Get Event by ID
+- **Endpoint**: GET `/api/events/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "title": "Jazz Night at Blue Note",
+      "description": "Live jazz quartet performing classic standards...",
+      "startDate": "2024-03-25T19:00:00.000Z",
+      "endDate": "2024-03-25T23:00:00.000Z",
+      "location": "Blue Note Bar & Restaurant",
+      "status": "published",
+      "createdAt": "2024-03-12T10:00:00.000Z",
+      "updatedAt": "2024-03-12T10:00:00.000Z"
+    },
+    "timestamp": "2024-03-12T10:00:00.000Z"
+  }
+  ```
+
+#### Create Event
+- **Endpoint**: POST `/api/events`
+- **Request Body**: 
+  ```json
+  {
+    "title": "New Event",
+    "description": "Event description",
+    "startDate": "2024-04-01T10:00:00Z",
+    "endDate": "2024-04-01T12:00:00Z",
+    "location": "Event Location",
+    "status": "draft"
+  }
+  ```
+- **Success Response** (201):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 5,
+      "title": "New Event",
+      "description": "Event description",
+      "startDate": "2024-04-01T10:00:00.000Z",
+      "endDate": "2024-04-01T12:00:00.000Z",
+      "location": "Event Location",
+      "status": "draft",
+      "createdAt": "2024-03-12T10:00:00.000Z",
+      "updatedAt": "2024-03-12T10:00:00.000Z"
+    },
+    "timestamp": "2024-03-12T10:00:00.000Z"
+  }
+  ```
+
+#### Update Event
+- **Endpoint**: PATCH `/api/events/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Request Body** (all fields optional): 
+  ```json
+  {
+    "title": "Updated Event Title",
+    "status": "published"
+  }
+  ```
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "title": "Updated Event Title",
+      "description": "Original description...",
+      "startDate": "2024-03-25T19:00:00.000Z",
+      "endDate": "2024-03-25T23:00:00.000Z",
+      "location": "Original location",
+      "status": "published",
+      "createdAt": "2024-03-12T10:00:00.000Z",
+      "updatedAt": "2024-03-12T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-12T10:30:00.000Z"
+  }
+  ```
+
+#### Replace Event
+- **Endpoint**: PUT `/api/events/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Request Body** (all fields required): 
+  ```json
+  {
+    "title": "Replaced Event",
+    "description": "New description",
+    "startDate": "2024-04-01T10:00:00Z",
+    "endDate": "2024-04-01T12:00:00Z",
+    "location": "New Location",
+    "status": "published"
+  }
+  ```
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "id": 1,
+      "title": "Replaced Event",
+      "description": "New description",
+      "startDate": "2024-04-01T10:00:00.000Z",
+      "endDate": "2024-04-01T12:00:00.000Z",
+      "location": "New Location",
+      "status": "published",
+      "createdAt": "2024-03-12T10:00:00.000Z",
+      "updatedAt": "2024-03-12T10:30:00.000Z"
+    },
+    "timestamp": "2024-03-12T10:30:00.000Z"
+  }
+  ```
+
+#### Delete Event
+- **Endpoint**: DELETE `/api/events/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "message": "Event deleted successfully",
+    "timestamp": "2024-03-12T10:30:00.000Z"
   }
   ```
 

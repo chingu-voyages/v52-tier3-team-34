@@ -1,42 +1,90 @@
-# voyage-tasks
+# Live Music Finder - MVP
+(README is a WIP)
+## Table of Contents
 
-Your project's `readme` is as important to success as your code. For 
-this reason you should put as much care into its creation and maintenance
-as you would any other component of the application.
+- [Overview](#overview)
+- [General Instructions](#general-instructions)
+- [Requirements & Specifications](#requirements--specifications)
+- [Acknowledgements](#acknowledgements)
+- [About This Project](#about-this-project)
 
-If you are unsure of what should go into the `readme` let this article,
-written by an experienced Chingu, be your starting point - 
-[Keys to a well written README](https://tinyurl.com/yk3wubft).
+## Overview
 
-And before we go there's "one more thing"! Once you decide what to include
-in your `readme` feel free to replace the text we've provided here.
+Imagine it’s evening, and you’re in a bustling city, searching for a cozy bar with live blues, jazz, or flamenco music playing. This application, **Live Music Finder**, is designed for people who want to discover venues with live music happening in real time, without the wait associated with big concert events. This web-based MVP allows users to see which places have live music right now, or in the near future.
 
-> Own it & Make it your Own!
+The application supports two main roles:
 
-## Team Documents
+- **User (Client)**: Can view locations with live music on a map, filter events by start time, and access basic event details.
+- **Venue Owner**: Can register their venue, set map coordinates, upload at least one picture of their bar, and create events for their venue.
 
-You may find these helpful as you work together to organize your project.
 
-- [Team Project Ideas](./docs/team_project_ideas.md)
-- [Team Decision Log](./docs/team_decision_log.md)
+## Requirements & Specifications
 
-Meeting Agenda templates (located in the `/docs` directory in this repo):
+### Structure
 
-- Meeting - Voyage Kickoff --> ./docs/meeting-voyage_kickoff.docx
-- Meeting - App Vision & Feature Planning --> ./docs/meeting-vision_and_feature_planning.docx
-- Meeting - Sprint Retrospective, Review, and Planning --> ./docs/meeting-sprint_retrospective_review_and_planning.docx
-- Meeting - Sprint Open Topic Session --> ./docs/meeting-sprint_open_topic_session.docx
+- [ ] This is a full-stack application, with both frontend and backend components.
+- [ ] You may use any preferred languages, tools, or libraries for the app’s design and functionality.
 
-## Our Team
+### Functionality
 
-Everyone on your team should add their name along with a link to their GitHub
-& optionally their LinkedIn profiles below. Do this in Sprint #1 to validate
-your repo access and to practice PR'ing with your team *before* you start
-coding!
+#### User (Client) Interface
+
+- **Map View of Live Music Locations**
+  - [ ] Display a real-time map showing venues with live music.
+  - [ ] Allow users to click a venue to see basic details: event genre, artist name, start time, and entry status (e.g., free or paid).
+- **Event Time Filters**
+  - [ ] Include a slider to filter events by start time (e.g., “Now,” “In 1 Hour,” “In 2 Hours”).
+  
+#### Venue (Owner) Interface
+
+- **Venue Registration**
+  - [ ] Enable owners to register their bar, set its map coordinates, and add contact information.
+- **Venue Details Management**
+  - [ ] Allow venue owners to upload at least one image of the bar and provide a description.
+- **Event Creation**
+  - [ ] Allow venue owners to create and manage events for their venue, including details such as event genre, start time, and any entry fees.
+  
+#### Backend Essentials
+
+- **User Authentication**
+  - [ ] Implement basic login for users and venue owners.
+- **Database**
+  - [ ] Set up a database to store venue details, events, and user data.
+
+### Styling
+
+- [ ] Use your team’s creativity to make this app distinctive.
+- [ ] Ensure the application has a responsive design, with consistent display across devices (desktop, tablet, mobile).
+- [ ] Add a footer containing a link to your team’s GitHub repository.
+
+### Acceptance Criteria
+
+#### User (Client) Interface
+
+- [ ] Users can view live music events on a map, filtered by event time.
+- [ ] Users can access basic event details when clicking on a venue.
+
+#### Venue Interface
+
+- [ ] Venue owners can register their venue and upload at least one image.
+- [ ] Venue owners can create events and manage event details.
+
+#### Backend Essentials
+
+- [ ] Database stores venue, event, and user data.
+- [ ] Authentication is implemented for secure access.
+
+## Acknowledgements
+
+Special thanks to the Chingu community for their ongoing support that make this project possible. 
+
+## About This Project
+
+This app is a real-time solution for discovering local, intimate live music performances. It’s perfect for music lovers who want to explore new places and support local artists, all from an easy-to-navigate interface.
 
 - Adam Honvedo #1: [GitHub](https://github.com/Homvi) / [LinkedIn](https://www.linkedin.com/in/adamhonvedo/)
 - Damilola Oshinowo #2: [GitHub](https://github.com/dami-boy) / [LinkedIn](https://linkedin.com/in/damilola-oshinowo)
 - Asare Joseph #3: [GitHub](https://github.com/kofi916) / [LinkedIn](https://www.linkedin.com/in/joseph-asare-0b959111a/)
-
-   ...
-- Kris Oldrini #n: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)
+- Cristiano Valente #4: [GitHub](https://github.com/cris-valente) / [LinkedIn](https://www.linkedin.com/in/cristiano-valente-3943092a1/)
+- Carlos Morais #5: [GitHub](https://github.com/Morais-C) / [LinkedIn](https://www.linkedin.com/in/carlosmoraisprofile/)
+- Kris Oldrini #6: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)

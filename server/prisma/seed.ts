@@ -102,6 +102,58 @@ async function main() {
   users.forEach(user => {
     console.log(`Created user: ${user.name} (ID: ${user.id})`);
   });
+
+  // Clear existing events
+  await prisma.event.deleteMany();
+
+  // Create sample events
+  const events = await Promise.all([
+    prisma.event.create({
+      data: {
+        title: "Jazz Night at Blue Note",
+        description: "Live jazz quartet performing classic standards and original compositions. Perfect for a sophisticated evening out.",
+        startDate: new Date("2024-03-25T19:00:00Z"),
+        endDate: new Date("2024-03-25T23:00:00Z"),
+        location: "Blue Note Bar & Restaurant",
+        status: "published",
+      },
+    }),
+    prisma.event.create({
+      data: {
+        title: "Acoustic Sessions at The Old Pub",
+        description: "Local singer-songwriters showcase their original music in an intimate setting. Great craft beer selection available.",
+        startDate: new Date("2024-03-28T20:00:00Z"),
+        endDate: new Date("2024-03-29T00:00:00Z"),
+        location: "The Old Pub",
+        status: "published",
+      },
+    }),
+    prisma.event.create({
+      data: {
+        title: "Latin Night at Casa Bonita",
+        description: "Live salsa band and dance lessons. Featuring authentic Latin cuisine and signature cocktails.",
+        startDate: new Date("2024-03-30T21:00:00Z"),
+        endDate: new Date("2024-03-31T02:00:00Z"),
+        location: "Casa Bonita Restaurant & Bar",
+        status: "published",
+      },
+    }),
+    prisma.event.create({
+      data: {
+        title: "Rock Cover Band at Murphy's",
+        description: "Local favorites 'The Amplifiers' playing classic rock hits from the 70s to now. Full bar and pub menu available.",
+        startDate: new Date("2024-04-01T20:30:00Z"),
+        endDate: new Date("2024-04-02T00:30:00Z"),
+        location: "Murphy's Irish Pub",
+        status: "draft",
+      },
+    }),
+  ]);
+
+  console.log(`Database has been seeded with ${events.length} events 🌱`);
+  events.forEach(event => {
+    console.log(`Created event: ${event.title} (ID: ${event.id})`);
+  });
 }
 
 main()
