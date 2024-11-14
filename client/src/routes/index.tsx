@@ -7,9 +7,9 @@ export const Route = createFileRoute('/')({
 
 function HomeComponent() {
   return (
-    <div className="p-2">
-      <h3>Home page...</h3>
-      <p>Map, filter...</p>
+    <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
+      <h3 className="text-2xl font-bold">Home page</h3>
+      <p>This page is under development</p>
     </div>
   );
 }
