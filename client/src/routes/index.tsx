@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Map,
   Source,
@@ -10,11 +10,14 @@ import {
   NavigationControl,
   MapRef,
   MapEvent,
-  CircleLayer
+  CircleLayer,
+  Popup
 } from '@vis.gl/react-maplibre';
 import type { FeatureCollection } from 'geojson';
 import * as turf from '@turf/turf';
 import venues from '../../test-data/venues.json';
+import events from '../../test-data/events.json';
+
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 export const Route = createFileRoute('/')({
@@ -54,6 +57,7 @@ function HomeComponent() {
     latitude: 51.5,
     zoom: 5
   });
+  // const [filteredEvents, setFilteredEvents] = useState(events.events);
   const mapRef = useRef<MapRef | null>(null);
 
   // loads map based on geofence
@@ -88,8 +92,27 @@ function HomeComponent() {
         <Source id="venues-data" type="geojson" data={geojson}>
           <Layer {...layerStyle} />
         </Source>
-        {geojson.features.map((feature) => {
-          const [longitude, latitude] = feature.geometry.coordinates as [number, number];
+        {events.events.map((event) => {
+          const venue = venues.features.find((v) => v.properties.id === event.venue_id);
+          if (venue) {
+            const [longitude, latitude] = venue.geometry.coordinates as [number, number];
+            return (
+              <Popup
+                key={event.id}
+                longitude={longitude}
+                latitude={latitude}
+                anchor="bottom"
+                closeButton={false}
+                closeOnClick={false}
+              >
+                <div>
+                  <h3 className="font-bold">{event.title}</h3>
+                  <p>{`Date: ${new Date(event.startDate).toLocaleString()}`}</p>
+                </div>
+              </Popup>
+            );
+          }
+          return null;
         })}
       </Map>
     </div>
