@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState, useRef, useCallback, useEffect } from 'react';
 import {
@@ -17,7 +16,7 @@ import type { FeatureCollection } from 'geojson';
 import * as turf from '@turf/turf';
 import venues from '../../test-data/venues.json';
 import events from '../../test-data/events.json';
-
+import ButtonGroup from '../components/ButtonGroup';
 import 'maplibre-gl/dist/maplibre-gl.css';
 
 export const Route = createFileRoute('/')({
@@ -29,16 +28,6 @@ export const Route = createFileRoute('/')({
 const geojson: FeatureCollection = {
   type: 'FeatureCollection',
   features: venues.features as Feature<Point>[]
-};
-
-//  layerStyle renders the points
-const layerStyle: CircleLayer = {
-  id: 'point',
-  type: 'circle',
-  paint: {
-    'circle-radius': 8,
-    'circle-color': '#007cfb'
-  }
 };
 
 // boundary around points area
@@ -57,16 +46,19 @@ function HomeComponent() {
     latitude: 51.5,
     zoom: 5
   });
+  const [filteredEvents, setFilteredEvents] = useState(events.events);
   // const [filteredEvents, setFilteredEvents] = useState(events.events);
+  const [showPopup, setShowPopup] = useState<boolean>(true);
   const mapRef = useRef<MapRef | null>(null);
 
   // loads map based on geofence
   // will need to be updated so it loads at client location
   const onMapLoad = useCallback(() => {
     const bounds = turf.bbox(geojson) as [number, number, number, number];
-    mapRef.current?.fitBounds(bounds, { padding: 20, maxZoom: 14 });
+    mapRef.current?.fitBounds(bounds, { padding: 50, maxZoom: 12 });
   }, []);
 
+  // moving the map and zooming
   const onMove = useCallback((event: MapEvent) => {
     const { viewState } = event; // Extract viewState from MapEvent
     const newCenter = [viewState.longitude, viewState.latitude];
@@ -74,6 +66,15 @@ function HomeComponent() {
     if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
       setViewState(viewState);
     }
+  }, []);
+
+  useEffect(() => {
+    const today = new Date();
+    const filtered = events.events.filter((event) => {
+      const eventDate = new Date(event.startDate);
+      return eventDate.toDateString() === today.toDateString();
+    });
+    setFilteredEvents(filtered);
   }, []);
 
   return (
@@ -89,27 +90,13 @@ function HomeComponent() {
       >
         <NavigationControl />
         <GeolocateControl />
-        <Source id="venues-data" type="geojson" data={geojson}>
-          <Layer {...layerStyle} />
-        </Source>
-        {events.events.map((event) => {
-          const venue = venues.features.find((v) => v.properties.id === event.venue_id);
+        <Source id="venues-data" type="geojson" data={geojson}></Source>
+        {filteredEvents.map((event) => {
+          const venue = venues.features.find((venue) => venue.properties.id === event.venue_id);
           if (venue) {
             const [longitude, latitude] = venue.geometry.coordinates as [number, number];
             return (
-              <Popup
-                key={event.id}
-                longitude={longitude}
-                latitude={latitude}
-                anchor="bottom"
-                closeButton={false}
-                closeOnClick={false}
-              >
-                <div>
-                  <h3 className="font-bold">{event.title}</h3>
-                  <p>{`Date: ${new Date(event.startDate).toLocaleString()}`}</p>
-                </div>
-              </Popup>
+              <Marker longitude={longitude} latitude={latitude} anchor="bottom" onClick={() => setShowPopup(true)} />
             );
           }
           return null;
