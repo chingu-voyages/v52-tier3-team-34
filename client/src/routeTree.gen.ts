@@ -14,7 +14,9 @@ import { Route as rootRoute } from './routes/__root';
 import { Route as RegisterImport } from './routes/register';
 import { Route as PrivacyPolicyImport } from './routes/privacy-policy';
 import { Route as LoginImport } from './routes/login';
+import { Route as ProtectImport } from './routes/_protect';
 import { Route as IndexImport } from './routes/index';
+import { Route as ProtectSecretImport } from './routes/_protect/secret';
 
 // Create/Update Routes
 
@@ -36,10 +38,21 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute
 } as any);
 
+const ProtectRoute = ProtectImport.update({
+  id: '/_protect',
+  getParentRoute: () => rootRoute
+} as any);
+
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute
+} as any);
+
+const ProtectSecretRoute = ProtectSecretImport.update({
+  id: '/secret',
+  path: '/secret',
+  getParentRoute: () => ProtectRoute
 } as any);
 
 // Populate the FileRoutesByPath interface
@@ -51,6 +64,13 @@ declare module '@tanstack/react-router' {
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/_protect': {
+      id: '/_protect';
+      path: '';
+      fullPath: '';
+      preLoaderRoute: typeof ProtectImport;
       parentRoute: typeof rootRoute;
     };
     '/login': {
@@ -74,44 +94,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport;
       parentRoute: typeof rootRoute;
     };
+    '/_protect/secret': {
+      id: '/_protect/secret';
+      path: '/secret';
+      fullPath: '/secret';
+      preLoaderRoute: typeof ProtectSecretImport;
+      parentRoute: typeof ProtectImport;
+    };
   }
 }
 
 // Create and export the route tree
 
+interface ProtectRouteChildren {
+  ProtectSecretRoute: typeof ProtectSecretRoute;
+}
+
+const ProtectRouteChildren: ProtectRouteChildren = {
+  ProtectSecretRoute: ProtectSecretRoute
+};
+
+const ProtectRouteWithChildren = ProtectRoute._addFileChildren(ProtectRouteChildren);
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
+  '': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
+  '/secret': typeof ProtectSecretRoute;
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute;
+  '': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
+  '/secret': typeof ProtectSecretRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
   '/': typeof IndexRoute;
+  '/_protect': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
+  '/_protect/secret': typeof ProtectSecretRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/login' | '/privacy-policy' | '/register';
+  fullPaths: '/' | '' | '/login' | '/privacy-policy' | '/register' | '/secret';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/login' | '/privacy-policy' | '/register';
-  id: '__root__' | '/' | '/login' | '/privacy-policy' | '/register';
+  to: '/' | '' | '/login' | '/privacy-policy' | '/register' | '/secret';
+  id: '__root__' | '/' | '/_protect' | '/login' | '/privacy-policy' | '/register' | '/_protect/secret';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
+  ProtectRoute: typeof ProtectRouteWithChildren;
   LoginRoute: typeof LoginRoute;
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute;
   RegisterRoute: typeof RegisterRoute;
@@ -119,6 +163,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ProtectRoute: ProtectRouteWithChildren,
   LoginRoute: LoginRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RegisterRoute: RegisterRoute
@@ -133,6 +178,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_protect",
         "/login",
         "/privacy-policy",
         "/register"
@@ -140,6 +186,12 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_protect": {
+      "filePath": "_protect.tsx",
+      "children": [
+        "/_protect/secret"
+      ]
     },
     "/login": {
       "filePath": "login.tsx"
@@ -149,6 +201,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_protect/secret": {
+      "filePath": "_protect/secret.tsx",
+      "parent": "/_protect"
     }
   }
 }
