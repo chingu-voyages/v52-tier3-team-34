@@ -622,6 +622,92 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Events in Zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/events/zone?lat=51.509&lng=-0.118&radius=5",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events", "zone"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "51.509",
+                  "description": "Latitude of search center"
+                },
+                {
+                  "key": "lng",
+                  "value": "-0.118",
+                  "description": "Longitude of search center"
+                },
+                {
+                  "key": "radius",
+                  "value": "5",
+                  "description": "Search radius in kilometers"
+                },
+                {
+                  "key": "startDate",
+                  "value": "2024-03-20T00:00:00Z",
+                  "description": "Filter events starting after this time",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "published",
+                  "description": "Filter by event status",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get events within a specified radius of coordinates"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "status": "OK",
+              "code": 200,
+              "body": {
+                "status": "success",
+                "data": {
+                  "type": "FeatureCollection",
+                  "features": [
+                    {
+                      "type": "Feature",
+                      "geometry": {
+                        "type": "Point",
+                        "coordinates": [-0.082448, 51.527817]
+                      },
+                      "properties": {
+                        "id": 2,
+                        "title": "Acoustic Sessions",
+                        "description": "Local singer-songwriters showcase...",
+                        "startDate": "2024-03-28T20:00:00.000Z",
+                        "endDate": "2024-03-29T00:00:00.000Z",
+                        "status": "published",
+                        "distance": 2.8,
+                        "venue": {
+                          "id": 2,
+                          "name": "The Basement Bar",
+                          "address": "42 Hoxton Square, London N1 6PB"
+                        },
+                        "createdAt": "2024-03-20T10:00:00.000Z",
+                        "updatedAt": "2024-03-20T10:00:00.000Z"
+                      }
+                    }
+                  ],
+                  "center": {
+                    "type": "Point",
+                    "coordinates": [-0.118, 51.509]
+                  },
+                  "radius": 5
+                },
+                "timestamp": "2024-03-20T10:00:00.000Z"
+              }
+            }
+          ]
         }
       ]
     },

@@ -6,7 +6,10 @@ import {
   EventInput,
   EventUpdateInput,
   EventParams,
-  EventGeoJSONFeature
+  EventGeoJSONFeature,
+  EventZoneQuery,
+  EventZoneResponse,
+  EventZoneQueryCoerced
 } from "../types/event.types";
 import { ApiResponse } from "../types/api.types";
 
@@ -288,6 +291,77 @@ export class EventController {
       };
 
       res.status(404).json(response);
+    }
+  }
+
+  static async findInZone(
+    req: Request<{}, {}, {}, EventZoneQueryCoerced>,
+    res: Response
+  ) {
+    try {
+      const { lat, lng, radius, startDate, status } = req.query;
+      const events = await EventService.findInZone(
+        Number(lat),
+        Number(lng),
+        Number(radius)
+      );
+
+      // Filter by startDate and status if provided
+      const filteredEvents = events
+        .filter(({ event }) => {
+          if (startDate && event.startDate < new Date(startDate)) return false;
+          if (status && event.status !== status) return false;
+          return true;
+        });
+
+      const geoJsonResponse: ApiResponse<EventZoneResponse> = {
+        status: "success",
+        data: {
+          type: "FeatureCollection",
+          features: filteredEvents.map(({ event, distance }) => ({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [
+                (event.venue!.coordinates as { lng: number; lat: number }).lng,
+                (event.venue!.coordinates as { lng: number; lat: number }).lat
+              ]
+            },
+            properties: {
+              id: event.id,
+              title: event.title,
+              description: event.description,
+              startDate: event.startDate.toISOString(),
+              endDate: event.endDate.toISOString(),
+              status: event.status as EventResponse["status"],
+              distance: Math.round(distance * 100) / 100, // Round to 2 decimal places
+              venue: {
+                id: event.venue!.id,
+                name: event.venue!.name,
+                address: event.venue!.address
+              },
+              createdAt: event.createdAt.toISOString(),
+              updatedAt: event.updatedAt.toISOString()
+            }
+          })),
+          center: {
+            type: "Point",
+            coordinates: [Number(lng), Number(lat)]
+          },
+          radius: Number(radius)
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(geoJsonResponse);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to fetch events in zone",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(500).json(response);
     }
   }
 }

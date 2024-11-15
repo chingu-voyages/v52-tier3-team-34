@@ -510,6 +510,63 @@ Current variables:
   }
   ```
 
+#### Get Events in Zone
+- **Endpoint**: GET `/api/events/zone`
+- **Query Parameters**: 
+  - lat: number (required, -90 to 90) - Latitude of search center
+  - lng: number (required, -180 to 180) - Longitude of search center
+  - radius: number (required, max 50) - Search radius in kilometers
+  - startDate: string (optional) - Filter events starting after this time
+  - status: string (optional, 'draft'|'published'|'cancelled') - Filter by event status
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "type": "FeatureCollection",
+      "features": [
+        {
+          "type": "Feature",
+          "geometry": {
+            "type": "Point",
+            "coordinates": [-0.082448, 51.527817]  // [longitude, latitude]
+          },
+          "properties": {
+            "id": 2,
+            "title": "Acoustic Sessions",
+            "description": "Local singer-songwriters showcase...",
+            "startDate": "2024-03-28T20:00:00.000Z",
+            "endDate": "2024-03-29T00:00:00.000Z",
+            "status": "published",
+            "distance": 2.8,  // Distance in kilometers from search center
+            "venue": {
+              "id": 2,
+              "name": "The Basement Bar",
+              "address": "42 Hoxton Square, London N1 6PB"
+            },
+            "createdAt": "2024-03-20T10:00:00.000Z",
+            "updatedAt": "2024-03-20T10:00:00.000Z"
+          }
+        }
+      ],
+      "center": {
+        "type": "Point",
+        "coordinates": [-0.118, 51.509]  // Search center [longitude, latitude]
+      },
+      "radius": 5  // Search radius in kilometers
+    },
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+- **Error Response** (400):
+  ```json
+  {
+    "status": "error",
+    "message": "Invalid coordinates or radius",
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
 ### Venues
 
 #### List Venues
