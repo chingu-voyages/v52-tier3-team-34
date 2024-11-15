@@ -20,6 +20,10 @@ async function main() {
           email: "info@bluenote.net",
           website: "https://www.bluenotejazz.com"
         },
+        coordinates: {
+          lat: 40.730483,
+          lng: -74.000339
+        },
         images: [
           "https://example.com/venues/bluenote1.jpg",
           "https://example.com/venues/bluenote2.jpg"
@@ -36,6 +40,10 @@ async function main() {
           email: "bookings@basementbar.co.uk",
           website: "https://www.thebasementbar.co.uk"
         },
+        coordinates: {
+          lat: 51.527817,
+          lng: -0.082448
+        },
         images: [
           "https://example.com/venues/basement1.jpg"
         ]
@@ -50,6 +58,10 @@ async function main() {
           phone: "+34-91-547-2672",
           email: "hola@flamencacasa.es",
           website: "https://www.flamencacasa.es"
+        },
+        coordinates: {
+          lat: 40.423697,
+          lng: -3.710432
         },
         images: [
           "https://example.com/venues/flamenco1.jpg",

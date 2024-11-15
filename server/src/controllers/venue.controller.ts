@@ -6,6 +6,8 @@ import {
   VenueInput,
   VenueUpdateInput,
   VenueParams,
+  GeoJSONFeature,
+  VenueProperties
 } from "../types/venue.types";
 import { ApiResponse } from "../types/api.types";
 
@@ -23,6 +25,7 @@ export class VenueController {
           description: venue.description,
           address: venue.address,
           contact: venue.contact as VenueResponse["contact"],
+          coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
@@ -54,6 +57,7 @@ export class VenueController {
           description: venue.description,
           address: venue.address,
           contact: venue.contact as VenueResponse["contact"],
+          coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
@@ -86,6 +90,7 @@ export class VenueController {
           description: venue.description,
           address: venue.address,
           contact: venue.contact as VenueResponse["contact"],
+          coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
@@ -120,6 +125,7 @@ export class VenueController {
           description: venue.description,
           address: venue.address,
           contact: venue.contact as VenueResponse["contact"],
+          coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
@@ -157,6 +163,7 @@ export class VenueController {
           description: venue.description,
           address: venue.address,
           contact: venue.contact as VenueResponse["contact"],
+          coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
@@ -201,6 +208,48 @@ export class VenueController {
         ? 404
         : 400;
       res.status(statusCode).json(response);
+    }
+  }
+
+  static async getGeoJson(req: Request<VenueParams>, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const venue = await VenueService.findById(id);
+
+      const geoJsonResponse: ApiResponse<GeoJSONFeature> = {
+        status: "success",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              (venue.coordinates as { lng: number; lat: number }).lng,
+              (venue.coordinates as { lng: number; lat: number }).lat
+            ]
+          },
+          properties: {
+            id: venue.id,
+            name: venue.name,
+            description: venue.description,
+            address: venue.address,
+            contact: venue.contact as VenueProperties["contact"],
+            images: venue.images,
+            createdAt: venue.createdAt.toISOString(),
+            updatedAt: venue.updatedAt.toISOString()
+          }
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(geoJsonResponse);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Venue not found",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(404).json(response);
     }
   }
 } 

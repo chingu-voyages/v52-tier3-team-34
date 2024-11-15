@@ -515,6 +515,10 @@ Current variables:
       "email": "contact@venue.com",
       "website": "https://www.venue.com"
     },
+    "coordinates": {
+      "lat": 51.509865,
+      "lng": -0.118092
+    },
     "images": ["https://example.com/venue1.jpg"]
   }
   ```
@@ -540,6 +544,82 @@ Current variables:
   {
     "status": "success",
     "message": "Venue deleted successfully",
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
+#### Response Format
+Venues can be returned in two formats:
+
+1. **Standard Format**:
+```json
+{
+  "id": 1,
+  "name": "Blue Note Jazz Club",
+  "coordinates": {
+    "lat": 40.730483,
+    "lng": -74.000339
+  }
+  // ... other fields
+}
+```
+
+2. **GeoJSON Format** (for map integration):
+```json
+{
+  "type": "Feature",
+  "geometry": {
+    "type": "Point",
+    "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
+  },
+  "properties": {
+    "id": 1,
+    "name": "Blue Note Jazz Club"
+    // ... other venue properties
+  }
+}
+```
+
+#### Get Venue GeoJSON
+- **Endpoint**: GET `/api/venues/:id/geojson`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
+      },
+      "properties": {
+        "id": 1,
+        "name": "Blue Note Jazz Club",
+        "description": "Historic jazz venue featuring nightly live performances...",
+        "address": "131 W 3rd St, New York, NY 10012",
+        "contact": {
+          "phone": "+1-212-475-8592",
+          "email": "info@bluenote.net",
+          "website": "https://www.bluenotejazz.com"
+        },
+        "images": [
+          "https://example.com/venues/bluenote1.jpg",
+          "https://example.com/venues/bluenote2.jpg"
+        ],
+        "createdAt": "2024-03-20T10:00:00.000Z",
+        "updatedAt": "2024-03-20T10:00:00.000Z"
+      }
+    },
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "Venue not found",
     "timestamp": "2024-03-20T10:00:00.000Z"
   }
   ```

@@ -46,7 +46,8 @@ export class VenueService {
       const venue = await prisma.venue.create({
         data: {
           ...data,
-          contact: data.contact as Prisma.InputJsonValue
+          contact: data.contact as Prisma.InputJsonValue,
+          coordinates: data.coordinates as Prisma.InputJsonValue
         }
       });
 
@@ -68,7 +69,8 @@ export class VenueService {
         where: { id: venueId },
         data: {
           ...data,
-          contact: data.contact ? data.contact as Prisma.InputJsonValue : undefined
+          contact: data.contact ? data.contact as Prisma.InputJsonValue : undefined,
+          coordinates: data.coordinates ? data.coordinates as Prisma.InputJsonValue : undefined
         }
       });
 
@@ -93,7 +95,8 @@ export class VenueService {
         where: { id: venueId },
         data: {
           ...data,
-          contact: data.contact as Prisma.InputJsonValue
+          contact: data.contact as Prisma.InputJsonValue,
+          coordinates: data.coordinates as Prisma.InputJsonValue
         }
       });
 

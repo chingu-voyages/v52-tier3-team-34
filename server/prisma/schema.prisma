@@ -39,6 +39,7 @@ model Venue {
   address     String
   contact     Json     // {phone, email, website}
   images      String[] // Array of image URLs
+  coordinates Json     // {lat: number, lng: number}
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

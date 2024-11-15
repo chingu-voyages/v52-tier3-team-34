@@ -1,5 +1,15 @@
 import { z } from "zod";
 
+// Schema for coordinates
+const CoordinatesSchema = z.object({
+  lat: z.number()
+    .min(-90, "Latitude must be between -90 and 90")
+    .max(90, "Latitude must be between -90 and 90"),
+  lng: z.number()
+    .min(-180, "Longitude must be between -180 and 180")
+    .max(180, "Longitude must be between -180 and 180")
+});
+
 // Schema for contact information
 const ContactSchema = z.object({
   phone: z.string().optional(),
@@ -14,6 +24,7 @@ export const VenueSchema = z.object({
   address: z.string().min(1, "Address is required").max(200),
   contact: ContactSchema,
   images: z.array(z.string().url()).min(1, "At least one image is required"),
+  coordinates: CoordinatesSchema
 });
 
 // Schema for PATCH operations - all fields are optional
@@ -41,6 +52,33 @@ export type VenueUpdateInput = z.infer<typeof VenueUpdateSchema>;
 export type VenueQuery = z.infer<typeof VenueQuerySchema>;
 export type VenueParams = z.infer<typeof VenueParamsSchema>;
 
+// GeoJSON types
+export type GeoJSONPoint = {
+  type: 'Point';
+  coordinates: [number, number]; // [longitude, latitude]
+};
+
+export type GeoJSONFeature = {
+  type: 'Feature';
+  geometry: GeoJSONPoint;
+  properties: VenueProperties;
+};
+
+export type VenueProperties = {
+  id: number;
+  name: string;
+  description: string;
+  address: string;
+  contact: {
+    phone?: string;
+    email?: string;
+    website?: string;
+  };
+  images: string[];
+  createdAt: string;
+  updatedAt: string;
+};
+
 // Type for API responses
 export type VenueResponse = {
   id: number;
@@ -51,6 +89,10 @@ export type VenueResponse = {
     phone?: string;
     email?: string;
     website?: string;
+  };
+  coordinates: {
+    lat: number;
+    lng: number;
   };
   images: string[];
   createdAt: string;

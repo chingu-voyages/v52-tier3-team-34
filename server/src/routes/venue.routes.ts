@@ -39,4 +39,10 @@ router.delete("/:id",
   VenueController.delete
 );
 
+// Get venue in GeoJSON format
+router.get("/:id/geojson", 
+  validateRequest.params(VenueParamsSchema),
+  VenueController.getGeoJson
+);
+
 export default router; 
