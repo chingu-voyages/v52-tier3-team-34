@@ -444,6 +444,106 @@ Current variables:
   }
   ```
 
+### Venues
+
+#### List Venues
+- **Endpoint**: GET `/api/venues`
+- **Query Parameters**: 
+  - page: number (optional, default: 1)
+  - limit: number (optional, default: 10, max: 100)
+  - orderBy: string (optional, values: 'name', 'createdAt')
+  - order: string (optional, values: 'asc', 'desc')
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": [
+      {
+        "id": 1,
+        "name": "Blue Note Jazz Club",
+        "description": "Historic jazz venue featuring nightly live performances...",
+        "address": "131 W 3rd St, New York, NY 10012",
+        "contact": {
+          "phone": "+1-212-475-8592",
+          "email": "info@bluenote.net",
+          "website": "https://www.bluenotejazz.com"
+        },
+        "images": [
+          "https://example.com/venues/bluenote1.jpg",
+          "https://example.com/venues/bluenote2.jpg"
+        ],
+        "createdAt": "2024-03-20T10:00:00.000Z",
+        "updatedAt": "2024-03-20T10:00:00.000Z"
+      }
+    ],
+    "pagination": {
+      "currentPage": 1,
+      "totalPages": 1,
+      "totalItems": 3,
+      "itemsPerPage": 10,
+      "hasNextPage": false,
+      "hasPreviousPage": false
+    },
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
+#### Get Venue by ID
+- **Endpoint**: GET `/api/venues/:id`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200): Same structure as single venue in list response
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "Venue not found",
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
+#### Create Venue
+- **Endpoint**: POST `/api/venues`
+- **Request Body**: 
+  ```json
+  {
+    "name": "New Venue",
+    "description": "Venue description",
+    "address": "Venue address",
+    "contact": {
+      "phone": "+1-555-0123",
+      "email": "contact@venue.com",
+      "website": "https://www.venue.com"
+    },
+    "images": ["https://example.com/venue1.jpg"]
+  }
+  ```
+- **Success Response** (201): Same structure as Get Venue response
+
+#### Update Venue
+- **Endpoint**: PATCH `/api/venues/:id`
+- **Parameters**: id (number)
+- **Request Body** (all fields optional): Same structure as Create
+- **Success Response** (200): Same structure as Get Venue response
+
+#### Replace Venue
+- **Endpoint**: PUT `/api/venues/:id`
+- **Parameters**: id (number)
+- **Request Body** (all fields required): Same structure as Create
+- **Success Response** (200): Same structure as Get Venue response
+
+#### Delete Venue
+- **Endpoint**: DELETE `/api/venues/:id`
+- **Parameters**: id (number)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "message": "Venue deleted successfully",
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
 ## Testing Instructions
 
 ### Basic Request Testing

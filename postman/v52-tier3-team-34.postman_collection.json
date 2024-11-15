@@ -546,6 +546,227 @@
           }
         }
       ]
+    },
+    {
+      "name": "Venues",
+      "item": [
+        {
+          "name": "List Venues",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/venues?page=1&limit=10&orderBy=name&order=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Items per page (optional)",
+                  "disabled": true
+                },
+                {
+                  "key": "orderBy",
+                  "value": "name",
+                  "description": "Sort field (name, createdAt)",
+                  "disabled": true
+                },
+                {
+                  "key": "order",
+                  "value": "asc",
+                  "description": "Sort order (asc, desc)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Get a list of venues with optional pagination and sorting"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/venues"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": [
+                  {
+                    "id": 1,
+                    "name": "Blue Note Jazz Club",
+                    "description": "Historic jazz venue featuring nightly live performances and full bar service.",
+                    "address": "131 W 3rd St, New York, NY 10012",
+                    "contact": {
+                      "phone": "+1-212-475-8592",
+                      "email": "info@bluenote.net",
+                      "website": "https://www.bluenotejazz.com"
+                    },
+                    "images": [
+                      "https://example.com/venues/bluenote1.jpg",
+                      "https://example.com/venues/bluenote2.jpg"
+                    ],
+                    "createdAt": "2024-03-20T10:00:00.000Z",
+                    "updatedAt": "2024-03-20T10:00:00.000Z"
+                  }
+                ],
+                "pagination": {
+                  "currentPage": 1,
+                  "totalPages": 1,
+                  "totalItems": 3,
+                  "itemsPerPage": 10,
+                  "hasNextPage": false,
+                  "hasPreviousPage": false
+                },
+                "timestamp": "2024-03-20T10:00:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get Venue by ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues", "1"]
+            },
+            "description": "Get a venue by its ID"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{baseUrl}}/api/venues/1"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "name": "Blue Note Jazz Club",
+                  "description": "Historic jazz venue featuring nightly live performances and full bar service.",
+                  "address": "131 W 3rd St, New York, NY 10012",
+                  "contact": {
+                    "phone": "+1-212-475-8592",
+                    "email": "info@bluenote.net",
+                    "website": "https://www.bluenotejazz.com"
+                  },
+                  "images": [
+                    "https://example.com/venues/bluenote1.jpg",
+                    "https://example.com/venues/bluenote2.jpg"
+                  ],
+                  "createdAt": "2024-03-20T10:00:00.000Z",
+                  "updatedAt": "2024-03-20T10:00:00.000Z"
+                },
+                "timestamp": "2024-03-20T10:00:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Venue",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"New Test Venue\",\n  \"description\": \"A great new venue for live music\",\n  \"address\": \"123 Test Street, Test City\",\n  \"contact\": {\n    \"phone\": \"+1-555-0123\",\n    \"email\": \"contact@testvenue.com\",\n    \"website\": \"https://www.testvenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/venues/test1.jpg\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues"]
+            },
+            "description": "Create a new venue"
+          }
+        },
+        {
+          "name": "Update Venue",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Venue Name\",\n  \"images\": [\n    \"https://example.com/venues/updated1.jpg\",\n    \"https://example.com/venues/updated2.jpg\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues", "1"]
+            },
+            "description": "Update specific fields of a venue"
+          }
+        },
+        {
+          "name": "Replace Venue",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Completely New Venue\",\n  \"description\": \"A completely updated venue description\",\n  \"address\": \"456 New Street, New City\",\n  \"contact\": {\n    \"phone\": \"+1-555-9999\",\n    \"email\": \"new@venue.com\",\n    \"website\": \"https://www.newvenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/venues/new1.jpg\",\n    \"https://example.com/venues/new2.jpg\"\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues", "1"]
+            },
+            "description": "Replace an entire venue. All fields required."
+          }
+        },
+        {
+          "name": "Delete Venue",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/venues/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "venues", "1"]
+            },
+            "description": "Delete a venue by ID"
+          }
+        }
+      ]
     }
   ]
 }

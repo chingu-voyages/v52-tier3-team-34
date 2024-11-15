@@ -31,3 +31,14 @@ model Event {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
+
+model Venue {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  address     String
+  contact     Json     // {phone, email, website}
+  images      String[] // Array of image URLs
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
