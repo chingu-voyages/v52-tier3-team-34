@@ -478,15 +478,47 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"New Test Event\",\n  \"description\": \"This is a test event\",\n  \"startDate\": \"2024-04-01T10:00:00Z\",\n  \"endDate\": \"2024-04-01T12:00:00Z\",\n  \"location\": \"Test Location\",\n  \"status\": \"draft\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/events",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "events"]
-            },
-            "description": "Create a new event"
-          }
+              "raw": {
+                "title": "New Jazz Night",
+                "description": "Live jazz performance",
+                "startDate": "2024-04-01T19:00:00Z",
+                "endDate": "2024-04-01T23:00:00Z",
+                "status": "published",
+                "venueId": 1
+              }
+            }
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "status": "Created",
+              "code": 201,
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "title": "New Jazz Night",
+                  "description": "Live jazz performance",
+                  "startDate": "2024-04-01T19:00:00.000Z",
+                  "endDate": "2024-04-01T23:00:00.000Z",
+                  "status": "published",
+                  "venueId": 1,
+                  "venue": {
+                    "id": 1,
+                    "name": "Blue Note Jazz Club",
+                    "address": "131 W 3rd St, New York, NY 10012",
+                    "coordinates": {
+                      "lat": 40.730483,
+                      "lng": -74.000339
+                    }
+                  },
+                  "createdAt": "2024-03-20T10:00:00.000Z",
+                  "updatedAt": "2024-03-20T10:00:00.000Z"
+                },
+                "timestamp": "2024-03-20T10:00:00.000Z"
+              }
+            }
+          ]
         },
         {
           "name": "Update Event",
@@ -544,6 +576,52 @@
             },
             "description": "Delete an event by ID"
           }
+        },
+        {
+          "name": "Get Event GeoJSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/events/1/geojson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "events", "1", "geojson"]
+            },
+            "description": "Get event details in GeoJSON format for map integration"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "status": "OK",
+              "code": 200,
+              "body": {
+                "status": "success",
+                "data": {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [-74.000339, 40.730483]
+                  },
+                  "properties": {
+                    "id": 1,
+                    "title": "Jazz Night at Blue Note",
+                    "description": "Live jazz quartet performing classic standards...",
+                    "startDate": "2024-03-25T19:00:00.000Z",
+                    "endDate": "2024-03-25T23:00:00.000Z",
+                    "status": "published",
+                    "venue": {
+                      "id": 1,
+                      "name": "Blue Note Jazz Club",
+                      "address": "131 W 3rd St, New York, NY 10012"
+                    },
+                    "createdAt": "2024-03-20T10:00:00.000Z",
+                    "updatedAt": "2024-03-20T10:00:00.000Z"
+                  }
+                },
+                "timestamp": "2024-03-20T10:00:00.000Z"
+              }
+            }
+          ]
         }
       ]
     },

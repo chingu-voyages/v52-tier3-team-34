@@ -13,9 +13,9 @@ export const EventSchema = z.object({
   description: z.string().min(1, "Description is required").max(1000),
   startDate: z.string().datetime(),  // ISO 8601 format
   endDate: z.string().datetime(),    // ISO 8601 format
-  location: z.string().min(1, "Location is required").max(200),
   status: z.enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
-    .default(EventStatus.DRAFT)
+    .default(EventStatus.DRAFT),
+  venueId: z.number().positive("Venue ID is required")
 });
 
 // Schema for PATCH operations - all fields are optional
@@ -50,8 +50,41 @@ export type EventResponse = {
   description: string;
   startDate: string;
   endDate: string;
-  location: string;
   status: keyof typeof EventStatus;
+  venueId: number;
+  venue?: {
+    id: number;
+    name: string;
+    address: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
   createdAt: string;
   updatedAt: string;
+};
+
+// GeoJSON types for events
+export type EventGeoJSONFeature = {
+  type: 'Feature';
+  geometry: {
+    type: 'Point';
+    coordinates: [number, number]; // [longitude, latitude] from venue
+  };
+  properties: {
+    id: number;
+    title: string;
+    description: string;
+    startDate: string;
+    endDate: string;
+    status: keyof typeof EventStatus;
+    venue: {
+      id: number;
+      name: string;
+      address: string;
+    };
+    createdAt: string;
+    updatedAt: string;
+  };
 }; 

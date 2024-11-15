@@ -39,4 +39,10 @@ router.delete("/:id",
   EventController.delete
 );
 
+// Get event in GeoJSON format
+router.get("/:id/geojson", 
+  validateRequest.params(EventParamsSchema),
+  EventController.getGeoJson
+);
+
 export default router; 

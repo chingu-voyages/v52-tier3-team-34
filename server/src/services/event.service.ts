@@ -6,6 +6,9 @@ export class EventService {
   static async findById(id: number) {
     const event = await prisma.event.findUnique({
       where: { id },
+      include: {
+        venue: true
+      }
     });
 
     if (!event) {
@@ -27,6 +30,9 @@ export class EventService {
         skip,
         take: limit,
         orderBy: orderBy ? { [orderBy]: order || 'asc' } : undefined,
+        include: {
+          venue: true
+        }
       }),
       prisma.event.count({ where }),
     ]);
@@ -52,11 +58,17 @@ export class EventService {
           startDate: new Date(data.startDate),
           endDate: new Date(data.endDate),
         },
+        include: {
+          venue: true
+        }
       });
 
       return event;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === "P2003") {
+          throw new Error("Venue not found");
+        }
         throw new Error(`Failed to create event: ${error.message}`);
       }
       throw error;
@@ -65,16 +77,19 @@ export class EventService {
 
   static async update(id: string, data: EventUpdateInput) {
     try {
-      const userId = Number(id);
-      if (isNaN(userId)) throw new Error('Invalid event ID');
+      const eventId = Number(id);
+      if (isNaN(eventId)) throw new Error('Invalid event ID');
 
       const event = await prisma.event.update({
-        where: { id: userId },
+        where: { id: eventId },
         data: {
           ...data,
           startDate: data.startDate ? new Date(data.startDate) : undefined,
           endDate: data.endDate ? new Date(data.endDate) : undefined,
         },
+        include: {
+          venue: true
+        }
       });
 
       return event;
@@ -82,6 +97,9 @@ export class EventService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === "P2025") {
           throw new Error("Event not found");
+        }
+        if (error.code === "P2003") {
+          throw new Error("Venue not found");
         }
         throw new Error(`Failed to update event: ${error.message}`);
       }
@@ -101,6 +119,9 @@ export class EventService {
           startDate: new Date(data.startDate),
           endDate: new Date(data.endDate),
         },
+        include: {
+          venue: true
+        }
       });
 
       return event;
@@ -108,6 +129,9 @@ export class EventService {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === "P2025") {
           throw new Error("Event not found");
+        }
+        if (error.code === "P2003") {
+          throw new Error("Venue not found");
         }
         throw new Error(`Failed to replace event: ${error.message}`);
       }

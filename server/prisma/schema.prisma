@@ -26,8 +26,9 @@ model Event {
   description String
   startDate   DateTime
   endDate     DateTime
-  location    String
   status      String   @default("draft") // draft, published, cancelled
+  venue       Venue    @relation(fields: [venueId], references: [id])
+  venueId     Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -40,6 +41,7 @@ model Venue {
   contact     Json     // {phone, email, website}
   images      String[] // Array of image URLs
   coordinates Json     // {lat: number, lng: number}
+  events      Event[]  // Add this relation field
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

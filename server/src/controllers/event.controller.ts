@@ -6,7 +6,7 @@ import {
   EventInput,
   EventUpdateInput,
   EventParams,
-  EventStatus,
+  EventGeoJSONFeature
 } from "../types/event.types";
 import { ApiResponse } from "../types/api.types";
 
@@ -24,8 +24,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -56,8 +62,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         })),
@@ -89,8 +101,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -124,8 +142,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -162,8 +186,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -207,6 +237,57 @@ export class EventController {
         ? 404
         : 400;
       res.status(statusCode).json(response);
+    }
+  }
+
+  static async getGeoJson(req: Request<EventParams>, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const event = await EventService.findById(id);
+
+      if (!event.venue) {
+        throw new Error("Event venue not found");
+      }
+
+      const geoJsonResponse: ApiResponse<EventGeoJSONFeature> = {
+        status: "success",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              (event.venue.coordinates as { lng: number; lat: number }).lng,
+              (event.venue.coordinates as { lng: number; lat: number }).lat
+            ]
+          },
+          properties: {
+            id: event.id,
+            title: event.title,
+            description: event.description,
+            startDate: event.startDate.toISOString(),
+            endDate: event.endDate.toISOString(),
+            status: event.status as EventResponse["status"],
+            venue: {
+              id: event.venue.id,
+              name: event.venue.name,
+              address: event.venue.address
+            },
+            createdAt: event.createdAt.toISOString(),
+            updatedAt: event.updatedAt.toISOString()
+          }
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(geoJsonResponse);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Event not found",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(404).json(response);
     }
   }
 }

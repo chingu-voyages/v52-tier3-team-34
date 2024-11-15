@@ -17,11 +17,13 @@ postman/
 The API can be tested in two environments:
 
 ### 1. Local Environment
+
 - File: `local.postman_environment.json`
 - Base URL: `http://localhost:3000`
 - Use for local development and testing
 
 ### 2. Production Environment
+
 - File: `production.postman_environment.json`
 - Base URL: `https://v52-tier3-team-34.onrender.com`
 - Use for testing the deployed API
@@ -35,6 +37,7 @@ The API can be tested in two environments:
 ### Environment Variables
 
 Current variables:
+
 - `baseUrl`: Base URL for all API requests
   - Local: `http://localhost:3000`
   - Production: `https://v52-tier3-team-34.onrender.com`
@@ -88,8 +91,9 @@ Current variables:
 ### Users
 
 #### List Users
+
 - **Endpoint**: GET `/api/users`
-- **Query Parameters**: 
+- **Query Parameters**:
   - page: number (optional, default: 1)
   - limit: number (optional, default: 10, max: 100)
   - orderBy: string (optional, values: 'name', 'email', 'createdAt')
@@ -120,8 +124,9 @@ Current variables:
   ```
 
 #### Get User by ID
+
 - **Endpoint**: GET `/api/users/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200):
   ```json
@@ -147,14 +152,15 @@ Current variables:
   ```
 
 #### Create User
+
 - **Endpoint**: POST `/api/users`
-- **Request Body**: 
+- **Request Body**:
   ```json
   {
     "email": "new.user@example.com",
     "name": "New User",
     "googleId": "google_new_123",
-    "profileImage": "https://example.com/avatars/new.jpg"  // optional
+    "profileImage": "https://example.com/avatars/new.jpg" // optional
   }
   ```
 - **Success Response** (201):
@@ -181,10 +187,11 @@ Current variables:
   ```
 
 #### Update User
+
 - **Endpoint**: PATCH `/api/users/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
-- **Request Body** (all fields optional): 
+- **Request Body** (all fields optional):
   ```json
   {
     "email": "updated.email@example.com",
@@ -217,16 +224,17 @@ Current variables:
   ```
 
 #### Replace User
+
 - **Endpoint**: PUT `/api/users/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
-- **Request Body** (all fields required): 
+- **Request Body** (all fields required):
   ```json
   {
     "email": "replaced.user@example.com",
     "name": "Replaced User",
     "googleId": "google_replaced_123",
-    "profileImage": "https://example.com/avatars/replaced.jpg"  // optional
+    "profileImage": "https://example.com/avatars/replaced.jpg" // optional
   }
   ```
 - **Success Response** (200):
@@ -253,8 +261,9 @@ Current variables:
   ```
 
 #### Delete User
+
 - **Endpoint**: DELETE `/api/users/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200):
   ```json
@@ -276,8 +285,9 @@ Current variables:
 ### Events
 
 #### List Events
+
 - **Endpoint**: GET `/api/events`
-- **Query Parameters**: 
+- **Query Parameters**:
   - page: number (optional, default: 1)
   - limit: number (optional, default: 10, max: 100)
   - status: string (optional, values: 'draft', 'published', 'cancelled')
@@ -313,8 +323,9 @@ Current variables:
   ```
 
 #### Get Event by ID
+
 - **Endpoint**: GET `/api/events/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200):
   ```json
@@ -336,16 +347,17 @@ Current variables:
   ```
 
 #### Create Event
+
 - **Endpoint**: POST `/api/events`
-- **Request Body**: 
+- **Request Body**:
   ```json
   {
-    "title": "New Event",
-    "description": "Event description",
-    "startDate": "2024-04-01T10:00:00Z",
-    "endDate": "2024-04-01T12:00:00Z",
-    "location": "Event Location",
-    "status": "draft"
+    "title": "New Jazz Night",
+    "description": "Live jazz performance",
+    "startDate": "2024-04-01T19:00:00Z",
+    "endDate": "2024-04-01T23:00:00Z",
+    "status": "published",
+    "venueId": 1
   }
   ```
 - **Success Response** (201):
@@ -353,25 +365,35 @@ Current variables:
   {
     "status": "success",
     "data": {
-      "id": 5,
-      "title": "New Event",
-      "description": "Event description",
-      "startDate": "2024-04-01T10:00:00.000Z",
-      "endDate": "2024-04-01T12:00:00.000Z",
-      "location": "Event Location",
-      "status": "draft",
-      "createdAt": "2024-03-12T10:00:00.000Z",
-      "updatedAt": "2024-03-12T10:00:00.000Z"
+      "id": 1,
+      "title": "New Jazz Night",
+      "description": "Live jazz performance",
+      "startDate": "2024-04-01T19:00:00.000Z",
+      "endDate": "2024-04-01T23:00:00.000Z",
+      "status": "published",
+      "venueId": 1,
+      "venue": {
+        "id": 1,
+        "name": "Blue Note Jazz Club",
+        "address": "131 W 3rd St, New York, NY 10012",
+        "coordinates": {
+          "lat": 40.730483,
+          "lng": -74.000339
+        }
+      },
+      "createdAt": "2024-03-20T10:00:00.000Z",
+      "updatedAt": "2024-03-20T10:00:00.000Z"
     },
-    "timestamp": "2024-03-12T10:00:00.000Z"
+    "timestamp": "2024-03-20T10:00:00.000Z"
   }
   ```
 
 #### Update Event
+
 - **Endpoint**: PATCH `/api/events/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
-- **Request Body** (all fields optional): 
+- **Request Body** (all fields optional):
   ```json
   {
     "title": "Updated Event Title",
@@ -398,10 +420,11 @@ Current variables:
   ```
 
 #### Replace Event
+
 - **Endpoint**: PUT `/api/events/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
-- **Request Body** (all fields required): 
+- **Request Body** (all fields required):
   ```json
   {
     "title": "Replaced Event",
@@ -432,8 +455,9 @@ Current variables:
   ```
 
 #### Delete Event
+
 - **Endpoint**: DELETE `/api/events/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200):
   ```json
@@ -444,11 +468,54 @@ Current variables:
   }
   ```
 
+#### Get Event GeoJSON
+- **Endpoint**: GET `/api/events/:id/geojson`
+- **Parameters**: 
+  - id: number (positive integer)
+- **Success Response** (200):
+  ```json
+  {
+    "status": "success",
+    "data": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
+      },
+      "properties": {
+        "id": 1,
+        "title": "Jazz Night at Blue Note",
+        "description": "Live jazz quartet performing classic standards...",
+        "startDate": "2024-03-25T19:00:00.000Z",
+        "endDate": "2024-03-25T23:00:00.000Z",
+        "status": "published",
+        "venue": {
+          "id": 1,
+          "name": "Blue Note Jazz Club",
+          "address": "131 W 3rd St, New York, NY 10012"
+        },
+        "createdAt": "2024-03-20T10:00:00.000Z",
+        "updatedAt": "2024-03-20T10:00:00.000Z"
+      }
+    },
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+- **Error Response** (404):
+  ```json
+  {
+    "status": "error",
+    "message": "Event not found",
+    "timestamp": "2024-03-20T10:00:00.000Z"
+  }
+  ```
+
 ### Venues
 
 #### List Venues
+
 - **Endpoint**: GET `/api/venues`
-- **Query Parameters**: 
+- **Query Parameters**:
   - page: number (optional, default: 1)
   - limit: number (optional, default: 10, max: 100)
   - orderBy: string (optional, values: 'name', 'createdAt')
@@ -489,8 +556,9 @@ Current variables:
   ```
 
 #### Get Venue by ID
+
 - **Endpoint**: GET `/api/venues/:id`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200): Same structure as single venue in list response
 - **Error Response** (404):
@@ -503,8 +571,9 @@ Current variables:
   ```
 
 #### Create Venue
+
 - **Endpoint**: POST `/api/venues`
-- **Request Body**: 
+- **Request Body**:
   ```json
   {
     "name": "New Venue",
@@ -525,18 +594,21 @@ Current variables:
 - **Success Response** (201): Same structure as Get Venue response
 
 #### Update Venue
+
 - **Endpoint**: PATCH `/api/venues/:id`
 - **Parameters**: id (number)
 - **Request Body** (all fields optional): Same structure as Create
 - **Success Response** (200): Same structure as Get Venue response
 
 #### Replace Venue
+
 - **Endpoint**: PUT `/api/venues/:id`
 - **Parameters**: id (number)
 - **Request Body** (all fields required): Same structure as Create
 - **Success Response** (200): Same structure as Get Venue response
 
 #### Delete Venue
+
 - **Endpoint**: DELETE `/api/venues/:id`
 - **Parameters**: id (number)
 - **Success Response** (200):
@@ -549,9 +621,11 @@ Current variables:
   ```
 
 #### Response Format
+
 Venues can be returned in two formats:
 
 1. **Standard Format**:
+
 ```json
 {
   "id": 1,
@@ -565,12 +639,13 @@ Venues can be returned in two formats:
 ```
 
 2. **GeoJSON Format** (for map integration):
+
 ```json
 {
   "type": "Feature",
   "geometry": {
     "type": "Point",
-    "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
+    "coordinates": [-74.000339, 40.730483] // [longitude, latitude]
   },
   "properties": {
     "id": 1,
@@ -581,8 +656,9 @@ Venues can be returned in two formats:
 ```
 
 #### Get Venue GeoJSON
+
 - **Endpoint**: GET `/api/venues/:id/geojson`
-- **Parameters**: 
+- **Parameters**:
   - id: number (positive integer)
 - **Success Response** (200):
   ```json
@@ -592,7 +668,7 @@ Venues can be returned in two formats:
       "type": "Feature",
       "geometry": {
         "type": "Point",
-        "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
+        "coordinates": [-74.000339, 40.730483] // [longitude, latitude]
       },
       "properties": {
         "id": 1,
