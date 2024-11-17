@@ -1,15 +1,19 @@
-import express from 'express';
-import { errorHandler } from './middleware/errorHandler';
-import router from './routes';
+import express from "express";
+import cors from "cors";
+import { errorHandler } from "./middleware/errorHandler";
+import router from "./routes";
 
 const app = express();
 const port = process.env.PORT || 3000;
+
+// CORS middleware - allow all origins
+app.use(cors());
 
 // Middleware to parse JSON bodies
 app.use(express.json());
 
 // Mount all routes under /api
-app.use('/api', router);
+app.use("/api", router);
 
 // Error handling middleware should be last
 app.use(errorHandler);
