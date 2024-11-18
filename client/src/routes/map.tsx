@@ -20,7 +20,7 @@ export const Route = createFileRoute('/map')({
 function MapComponent() {
   const searchParams = Route.useSearch();
 
-  const { data, isLoading, error, isError } = useZones();
+  const { data, isLoading, error, isError } = useZones(searchParams.lat, searchParams.lng, searchParams.radius);
   const mapRef = useRef<MapRef | null>(null);
 
   const [viewState, setViewState] = useState<ViewState>({
