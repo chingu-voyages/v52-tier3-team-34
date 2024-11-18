@@ -1,7 +1,7 @@
 import { serverBaseUrl } from '../config';
-import { FetchVenuesOptions, VenuesResponse } from '../types/venues';
+import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '../types/venues';
 
-// Fetch function to get venues
+// GET ALL
 export const fetchVenues = async ({
   queryKey: [, options]
 }: {
@@ -22,5 +22,20 @@ export const fetchVenues = async ({
     throw new Error('Error fetching venues');
   }
 
+  return response.json();
+};
+
+// POST
+export const createVenue = async (data: VenueFormData) => {
+  const response = await fetch(`${serverBaseUrl}/venues`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create venue');
+  }
   return response.json();
 };

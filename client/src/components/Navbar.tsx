@@ -70,13 +70,13 @@ const AuthenticatedMenu = () => {
           Home
         </Link>
         <Link
-          to="/secret"
+          to="/dashboard"
           activeProps={{
             className: 'underline'
           }}
           activeOptions={{ exact: true }}
         >
-          Secret page
+          Dashboard
         </Link>
       </div>
       <hr />
