@@ -6,7 +6,7 @@ import { sleep } from '../utils';
 import { z } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
-const fallback = '/secret' as const;
+const fallback = '/dashboard' as const;
 
 export const Route = createFileRoute('/login')({
   validateSearch: z.object({
