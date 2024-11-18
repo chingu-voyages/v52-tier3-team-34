@@ -1,0 +1,154 @@
+{
+	"features": [
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.118092, 51.509865]
+			},
+			"properties": {
+				"id": "1",
+				"name": "Blue Note Bar & Restaurant",
+				"description": "A sophisticated venue known for its jazz nights and fine dining.",
+				"capacity": 70,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.158616, 51.523021]
+			},
+			"properties": {
+				"id": "2",
+				"name": "The Old Pub",
+				"description": "A cozy pub with a great selection of craft beers and live acoustic sessions.",
+				"capacity": 50,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.124876, 51.487667]
+			},
+			"properties": {
+				"id": "3",
+				"name": "Casa Bonita Restaurant & Bar",
+				"description": "A vibrant Latin venue offering live salsa music and dance lessons.",
+				"capacity": 65,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.14257, 51.53619]
+			},
+			"properties": {
+				"id": "4",
+				"name": "Murphy's Irish Pub",
+				"description": "A lively pub featuring rock cover bands and traditional Irish fare.",
+				"capacity": 90,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.076132, 51.50853]
+			},
+			"properties": {
+				"id": "5",
+				"name": "Regent's Park Cafe",
+				"description": "A quaint cafe hosting small live music events in a scenic setting.",
+				"capacity": 40,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.116354, 51.462874]
+			},
+			"properties": {
+				"id": "6",
+				"name": "Vauxhall Jazz Lounge",
+				"description": "An intimate lounge perfect for smooth jazz and cocktails.",
+				"capacity": 30,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.075374, 51.514469]
+			},
+			"properties": {
+				"id": "7",
+				"name": "Liverpool Street Tavern",
+				"description": "A bustling pub with open mic nights and local talent showcases.",
+				"capacity": 45,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.202597, 51.503321]
+			},
+			"properties": {
+				"id": "8",
+				"name": "Notting Hill Music House",
+				"description": "A trendy spot offering indie music nights and creative cocktails.",
+				"capacity": 60,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.191034, 51.514982]
+			},
+			"properties": {
+				"id": "9",
+				"name": "Hyde Park Brew House",
+				"description": "A laid-back brewery with live performances and a great beer selection.",
+				"capacity": 75,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [-0.033835, 51.543328]
+			},
+			"properties": {
+				"id": "10",
+				"name": "Stratford Acoustic Corner",
+				"description": "A hidden gem in Stratford featuring acoustic music in a cozy atmosphere.",
+				"capacity": 35,
+				"createdAt": "2024-11-12T17:20:24.392Z",
+				"updatedAt": "2024-11-12T17:20:24.392Z"
+			}
+		}
+	]
+}

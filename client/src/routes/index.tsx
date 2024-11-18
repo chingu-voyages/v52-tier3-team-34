@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createFileRoute } from '@tanstack/react-router';
 import { useVenues } from '../../hooks/useVenues'; // Make sure the path is correct
 import { Venue } from '../../types/venues';
