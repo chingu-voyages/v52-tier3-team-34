@@ -1,107 +1,55 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useState, useRef, useCallback, useEffect } from 'react';
-import {
-  Map,
-  Source,
-  Layer,
-  GeolocateControl,
-  Marker,
-  NavigationControl,
-  MapRef,
-  MapEvent,
-  CircleLayer,
-  Popup
-} from '@vis.gl/react-maplibre';
-import type { FeatureCollection } from 'geojson';
-import * as turf from '@turf/turf';
-import venues from '../../test-data/venues.json';
-import events from '../../test-data/events.json';
-import ButtonGroup from '../components/ButtonGroup';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { ZoneFeature } from '../../types/zones';
+import { useZones } from '../../hooks/useZones';
 
 export const Route = createFileRoute('/')({
   component: HomeComponent
 });
 
-// currently using file in test-data folder
-//  source
-const geojson: FeatureCollection = {
-  type: 'FeatureCollection',
-  features: venues.features as Feature<Point>[]
-};
-
-// boundary around points area
-const GEOFENCE = turf.circle([0, 51.5], 10, { units: 'miles' });
-
-//  defines viewstate types. not sure if correct
-type ViewState = {
-  longitude: number;
-  latitude: number;
-  zoom: number;
-};
+// const calculateBoundingBox = (latitude: number, longitude: number, radius: number) => {
+//   const circle = turf.circle([longitude, latitude], radius, { units: 'kilometers' });
+//   return turf.bbox(circle);
+// };
 
 function HomeComponent() {
-  const [ViewState, setViewState] = useState<ViewState>({
-    longitude: 0,
-    latitude: 51.5,
-    zoom: 5
-  });
-  const [filteredEvents, setFilteredEvents] = useState(events.events);
-  // const [filteredEvents, setFilteredEvents] = useState(events.events);
-  const [showPopup, setShowPopup] = useState<boolean>(true);
-  const mapRef = useRef<MapRef | null>(null);
+  const { data, isLoading, error, isError } = useZones();
 
-  // loads map based on geofence
-  // will need to be updated so it loads at client location
-  const onMapLoad = useCallback(() => {
-    const bounds = turf.bbox(geojson) as [number, number, number, number];
-    mapRef.current?.fitBounds(bounds, { padding: 50, maxZoom: 12 });
-  }, []);
+  // const onMove = useCallback(({ viewState }) => {
+  //   setViewState(viewState);
+  // }, []);
 
-  // moving the map and zooming
-  const onMove = useCallback((event: MapEvent) => {
-    const { viewState } = event; // Extract viewState from MapEvent
-    const newCenter = [viewState.longitude, viewState.latitude];
+  // will need to be updated so it loads based on client location
+  // const onMapLoad = useCallback(() => {
+  //   if (mapRef.current) {
+  //     mapRef.current?.fitBounds(
+  //       [
+  //         [-]
+  //       ]
+  //     );
+  //   }
+  // }, [eventsData]);
 
-    if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
-      setViewState(viewState);
-    }
-  }, []);
+  // necessary to move map and zoom
+  // const onMove = useCallback(({ viewState }) => {
+  //   const newCenter = [viewState.longitude, viewState.latitude];
+  //   if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
+  //     setViewState(viewState);
+  //   }
+  // }, []);
 
-  useEffect(() => {
-    const today = new Date();
-    const filtered = events.events.filter((event) => {
-      const eventDate = new Date(event.startDate);
-      return eventDate.toDateString() === today.toDateString();
-    });
-    setFilteredEvents(filtered);
-  }, []);
+  if (isLoading)
+    return (
+      <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
+        <h3 className="text-2xl font-bold">Loading zones...</h3>
+      </div>
+    );
+  if (isError)
+    return (
+      <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
+        <h3 className="text-2xl font-bold">Error loading zones...</h3>
+      </div>
+    );
 
-  return (
-    <div className="p-0 min-h-screen flex flex-col gap-3 justify-center items-center">
-      <Map
-        {...ViewState}
-        ref={mapRef}
-        onLoad={onMapLoad}
-        onMove={onMove}
-        style={{ width: '100svw', height: '100svh' }}
-        mapStyle="https://tiles.openfreemap.org/styles/positron"
-        renderWorldCopies={false}
-      >
-        <NavigationControl />
-        <GeolocateControl />
-        <Source id="venues-data" type="geojson" data={geojson}></Source>
-        {filteredEvents.map((event) => {
-          const venue = venues.features.find((venue) => venue.properties.id === event.venue_id);
-          if (venue) {
-            const [longitude, latitude] = venue.geometry.coordinates as [number, number];
-            return (
-              <Marker longitude={longitude} latitude={latitude} anchor="bottom" onClick={() => setShowPopup(true)} />
-            );
-          }
-          return null;
-        })}
-      </Map>
-    </div>
-  );
+  return <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center"></div>;
 }

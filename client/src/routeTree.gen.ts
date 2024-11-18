@@ -13,6 +13,7 @@
 import { Route as rootRoute } from './routes/__root';
 import { Route as RegisterImport } from './routes/register';
 import { Route as PrivacyPolicyImport } from './routes/privacy-policy';
+import { Route as MapImport } from './routes/map';
 import { Route as LoginImport } from './routes/login';
 import { Route as ProtectImport } from './routes/_protect';
 import { Route as IndexImport } from './routes/index';
@@ -29,6 +30,12 @@ const RegisterRoute = RegisterImport.update({
 const PrivacyPolicyRoute = PrivacyPolicyImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
+  getParentRoute: () => rootRoute
+} as any);
+
+const MapRoute = MapImport.update({
+  id: '/map',
+  path: '/map',
   getParentRoute: () => rootRoute
 } as any);
 
@@ -80,6 +87,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport;
       parentRoute: typeof rootRoute;
     };
+    '/map': {
+      id: '/map';
+      path: '/map';
+      fullPath: '/map';
+      preLoaderRoute: typeof MapImport;
+      parentRoute: typeof rootRoute;
+    };
     '/privacy-policy': {
       id: '/privacy-policy';
       path: '/privacy-policy';
@@ -120,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute;
   '': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
   '/secret': typeof ProtectSecretRoute;
@@ -129,6 +144,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute;
   '': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
   '/secret': typeof ProtectSecretRoute;
@@ -139,6 +155,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute;
   '/_protect': typeof ProtectRouteWithChildren;
   '/login': typeof LoginRoute;
+  '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
   '/_protect/secret': typeof ProtectSecretRoute;
@@ -146,10 +163,10 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '' | '/login' | '/privacy-policy' | '/register' | '/secret';
+  fullPaths: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/secret';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '' | '/login' | '/privacy-policy' | '/register' | '/secret';
-  id: '__root__' | '/' | '/_protect' | '/login' | '/privacy-policy' | '/register' | '/_protect/secret';
+  to: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/secret';
+  id: '__root__' | '/' | '/_protect' | '/login' | '/map' | '/privacy-policy' | '/register' | '/_protect/secret';
   fileRoutesById: FileRoutesById;
 }
 
@@ -157,6 +174,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute;
   ProtectRoute: typeof ProtectRouteWithChildren;
   LoginRoute: typeof LoginRoute;
+  MapRoute: typeof MapRoute;
   PrivacyPolicyRoute: typeof PrivacyPolicyRoute;
   RegisterRoute: typeof RegisterRoute;
 }
@@ -165,6 +183,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProtectRoute: ProtectRouteWithChildren,
   LoginRoute: LoginRoute,
+  MapRoute: MapRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
   RegisterRoute: RegisterRoute
 };
@@ -180,6 +199,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
         "/",
         "/_protect",
         "/login",
+        "/map",
         "/privacy-policy",
         "/register"
       ]
@@ -195,6 +215,9 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/map": {
+      "filePath": "map.tsx"
     },
     "/privacy-policy": {
       "filePath": "privacy-policy.tsx"
