@@ -6,7 +6,10 @@ import {
   EventInput,
   EventUpdateInput,
   EventParams,
-  EventStatus,
+  EventGeoJSONFeature,
+  EventZoneQuery,
+  EventZoneResponse,
+  EventZoneQueryCoerced
 } from "../types/event.types";
 import { ApiResponse } from "../types/api.types";
 
@@ -24,8 +27,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -56,8 +65,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         })),
@@ -89,8 +104,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -124,8 +145,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -162,8 +189,14 @@ export class EventController {
           description: event.description,
           startDate: event.startDate.toISOString(),
           endDate: event.endDate.toISOString(),
-          location: event.location,
-          status: event.status as keyof typeof EventStatus,
+          status: event.status as EventResponse["status"],
+          venueId: event.venueId,
+          venue: event.venue && {
+            id: event.venue.id,
+            name: event.venue.name,
+            address: event.venue.address,
+            coordinates: event.venue.coordinates as { lat: number; lng: number }
+          },
           createdAt: event.createdAt.toISOString(),
           updatedAt: event.updatedAt.toISOString(),
         },
@@ -207,6 +240,128 @@ export class EventController {
         ? 404
         : 400;
       res.status(statusCode).json(response);
+    }
+  }
+
+  static async getGeoJson(req: Request<EventParams>, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const event = await EventService.findById(id);
+
+      if (!event.venue) {
+        throw new Error("Event venue not found");
+      }
+
+      const geoJsonResponse: ApiResponse<EventGeoJSONFeature> = {
+        status: "success",
+        data: {
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [
+              (event.venue.coordinates as { lng: number; lat: number }).lng,
+              (event.venue.coordinates as { lng: number; lat: number }).lat
+            ]
+          },
+          properties: {
+            id: event.id,
+            title: event.title,
+            description: event.description,
+            startDate: event.startDate.toISOString(),
+            endDate: event.endDate.toISOString(),
+            status: event.status as EventResponse["status"],
+            venue: {
+              id: event.venue.id,
+              name: event.venue.name,
+              address: event.venue.address
+            },
+            createdAt: event.createdAt.toISOString(),
+            updatedAt: event.updatedAt.toISOString()
+          }
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(geoJsonResponse);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Event not found",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(404).json(response);
+    }
+  }
+
+  static async findInZone(
+    req: Request<{}, {}, {}, EventZoneQueryCoerced>,
+    res: Response
+  ) {
+    try {
+      const { lat, lng, radius, startDate, status } = req.query;
+      const events = await EventService.findInZone(
+        Number(lat),
+        Number(lng),
+        Number(radius)
+      );
+
+      // Filter by startDate and status if provided
+      const filteredEvents = events
+        .filter(({ event }) => {
+          if (startDate && event.startDate < new Date(startDate)) return false;
+          if (status && event.status !== status) return false;
+          return true;
+        });
+
+      const geoJsonResponse: ApiResponse<EventZoneResponse> = {
+        status: "success",
+        data: {
+          type: "FeatureCollection",
+          features: filteredEvents.map(({ event, distance }) => ({
+            type: "Feature",
+            geometry: {
+              type: "Point",
+              coordinates: [
+                (event.venue!.coordinates as { lng: number; lat: number }).lng,
+                (event.venue!.coordinates as { lng: number; lat: number }).lat
+              ]
+            },
+            properties: {
+              id: event.id,
+              title: event.title,
+              description: event.description,
+              startDate: event.startDate.toISOString(),
+              endDate: event.endDate.toISOString(),
+              status: event.status as EventResponse["status"],
+              distance: Math.round(distance * 100) / 100, // Round to 2 decimal places
+              venue: {
+                id: event.venue!.id,
+                name: event.venue!.name,
+                address: event.venue!.address
+              },
+              createdAt: event.createdAt.toISOString(),
+              updatedAt: event.updatedAt.toISOString()
+            }
+          })),
+          center: {
+            type: "Point",
+            coordinates: [Number(lng), Number(lat)]
+          },
+          radius: Number(radius)
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.json(geoJsonResponse);
+    } catch (error) {
+      const response: ApiResponse<null> = {
+        status: "error",
+        message: error instanceof Error ? error.message : "Failed to fetch events in zone",
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(500).json(response);
     }
   }
 }

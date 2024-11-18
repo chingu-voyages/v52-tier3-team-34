@@ -5,13 +5,23 @@ import {
   EventParamsSchema, 
   EventQuerySchema, 
   EventSchema,
-  EventUpdateSchema 
+  EventUpdateSchema,
+  EventZoneQuerySchema 
 } from "../types/event.types";
 
 const router = Router();
 
 // List events (with query validation)
 router.get("/", validateRequest.query(EventQuerySchema), EventController.list);
+
+// Get events in zone (with query validation)
+router.get("/zone", validateRequest.query(EventZoneQuerySchema), EventController.findInZone);
+
+// Get event in GeoJSON format
+router.get("/:id/geojson", 
+  validateRequest.params(EventParamsSchema),
+  EventController.getGeoJson
+);
 
 // Get event by ID
 router.get("/:id", validateRequest.params(EventParamsSchema), EventController.getById);

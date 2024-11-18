@@ -78,7 +78,7 @@ function HomeComponent() {
   }, []);
 
   return (
-    <div className="p-0">
+    <div className="p-0 min-h-screen flex flex-col gap-3 justify-center items-center">
       <Map
         {...ViewState}
         ref={mapRef}
