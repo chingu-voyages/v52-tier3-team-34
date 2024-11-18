@@ -11,8 +11,8 @@ function HomeComponent() {
   const { data, isLoading, error, isError } = useVenues({
     page: 1,
     limit: 5,
-    orderBy: 'name',
-    order: 'asc'
+    orderBy: 'createdAt',
+    order: 'desc'
   });
 
   const venues: Venue[] = data?.data || [];
