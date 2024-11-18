@@ -1,55 +1,62 @@
 import { createFileRoute } from '@tanstack/react-router';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import { ZoneFeature } from '../../types/zones';
-import { useZones } from '../../hooks/useZones';
+import { useVenues } from '../../hooks/useVenues'; // Make sure the path is correct
+import { Venue } from '../../types/venues';
 
 export const Route = createFileRoute('/')({
   component: HomeComponent
 });
 
-// const calculateBoundingBox = (latitude: number, longitude: number, radius: number) => {
-//   const circle = turf.circle([longitude, latitude], radius, { units: 'kilometers' });
-//   return turf.bbox(circle);
-// };
-
 function HomeComponent() {
-  const { data, isLoading, error, isError } = useZones();
+  const { data, isLoading, error, isError } = useVenues({
+    page: 1,
+    limit: 5,
+    orderBy: 'createdAt',
+    order: 'desc'
+  });
 
-  // const onMove = useCallback(({ viewState }) => {
-  //   setViewState(viewState);
-  // }, []);
+  const venues: Venue[] = data?.data || [];
 
-  // will need to be updated so it loads based on client location
-  // const onMapLoad = useCallback(() => {
-  //   if (mapRef.current) {
-  //     mapRef.current?.fitBounds(
-  //       [
-  //         [-]
-  //       ]
-  //     );
-  //   }
-  // }, [eventsData]);
-
-  // necessary to move map and zoom
-  // const onMove = useCallback(({ viewState }) => {
-  //   const newCenter = [viewState.longitude, viewState.latitude];
-  //   if (turf.booleanPointInPolygon(newCenter, GEOFENCE)) {
-  //     setViewState(viewState);
-  //   }
-  // }, []);
-
-  if (isLoading)
+  if (isLoading) {
     return (
       <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
-        <h3 className="text-2xl font-bold">Loading zones...</h3>
+        <h3 className="text-2xl font-bold">Home page</h3>
+        <p>Loading venues...</p>
       </div>
     );
-  if (isError)
+  }
+
+  if (isError) {
     return (
       <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
-        <h3 className="text-2xl font-bold">Error loading zones...</h3>
+        <h3 className="text-2xl font-bold">Home page</h3>
+        <p>Error loading venues: {error.message}</p>
       </div>
     );
+  }
 
-  return <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center"></div>;
+  return (
+    <div className="p-2 min-h-screen flex flex-col gap-3 justify-center items-center">
+      <h3 className="text-2xl font-bold">Home page</h3>
+      <p>This page is under development</p>
+
+      {/* List of venues */}
+      <div className="mt-5">
+        <h4 className="text-xl font-semibold">Venues</h4>
+        {venues && venues.length > 0 ? (
+          <ul>
+            {venues.map((venue) => (
+              <li key={venue.id} className="border-b p-2">
+                <h5 className="font-semibold">{venue.name}</h5>
+                <p>{venue.description}</p>
+                <p>{venue.address}</p>
+                <p>{venue.contact.phone}</p>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>No venues found</p>
+        )}
+      </div>
+    </div>
+  );
 }

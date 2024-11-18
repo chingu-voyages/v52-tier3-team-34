@@ -17,7 +17,8 @@ import { Route as MapImport } from './routes/map';
 import { Route as LoginImport } from './routes/login';
 import { Route as ProtectImport } from './routes/_protect';
 import { Route as IndexImport } from './routes/index';
-import { Route as ProtectSecretImport } from './routes/_protect/secret';
+import { Route as ProtectDashboardIndexImport } from './routes/_protect/dashboard/index';
+import { Route as ProtectDashboardRegisterVenueImport } from './routes/_protect/dashboard/register-venue';
 
 // Create/Update Routes
 
@@ -56,9 +57,15 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute
 } as any);
 
-const ProtectSecretRoute = ProtectSecretImport.update({
-  id: '/secret',
-  path: '/secret',
+const ProtectDashboardIndexRoute = ProtectDashboardIndexImport.update({
+  id: '/dashboard/',
+  path: '/dashboard/',
+  getParentRoute: () => ProtectRoute
+} as any);
+
+const ProtectDashboardRegisterVenueRoute = ProtectDashboardRegisterVenueImport.update({
+  id: '/dashboard/register-venue',
+  path: '/dashboard/register-venue',
   getParentRoute: () => ProtectRoute
 } as any);
 
@@ -108,11 +115,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RegisterImport;
       parentRoute: typeof rootRoute;
     };
-    '/_protect/secret': {
-      id: '/_protect/secret';
-      path: '/secret';
-      fullPath: '/secret';
-      preLoaderRoute: typeof ProtectSecretImport;
+    '/_protect/dashboard/register-venue': {
+      id: '/_protect/dashboard/register-venue';
+      path: '/dashboard/register-venue';
+      fullPath: '/dashboard/register-venue';
+      preLoaderRoute: typeof ProtectDashboardRegisterVenueImport;
+      parentRoute: typeof ProtectImport;
+    };
+    '/_protect/dashboard/': {
+      id: '/_protect/dashboard/';
+      path: '/dashboard';
+      fullPath: '/dashboard';
+      preLoaderRoute: typeof ProtectDashboardIndexImport;
       parentRoute: typeof ProtectImport;
     };
   }
@@ -121,11 +135,13 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface ProtectRouteChildren {
-  ProtectSecretRoute: typeof ProtectSecretRoute;
+  ProtectDashboardRegisterVenueRoute: typeof ProtectDashboardRegisterVenueRoute;
+  ProtectDashboardIndexRoute: typeof ProtectDashboardIndexRoute;
 }
 
 const ProtectRouteChildren: ProtectRouteChildren = {
-  ProtectSecretRoute: ProtectSecretRoute
+  ProtectDashboardRegisterVenueRoute: ProtectDashboardRegisterVenueRoute,
+  ProtectDashboardIndexRoute: ProtectDashboardIndexRoute
 };
 
 const ProtectRouteWithChildren = ProtectRoute._addFileChildren(ProtectRouteChildren);
@@ -137,7 +153,8 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
-  '/secret': typeof ProtectSecretRoute;
+  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
+  '/dashboard': typeof ProtectDashboardIndexRoute;
 }
 
 export interface FileRoutesByTo {
@@ -147,7 +164,8 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
-  '/secret': typeof ProtectSecretRoute;
+  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
+  '/dashboard': typeof ProtectDashboardIndexRoute;
 }
 
 export interface FileRoutesById {
@@ -158,15 +176,33 @@ export interface FileRoutesById {
   '/map': typeof MapRoute;
   '/privacy-policy': typeof PrivacyPolicyRoute;
   '/register': typeof RegisterRoute;
-  '/_protect/secret': typeof ProtectSecretRoute;
+  '/_protect/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
+  '/_protect/dashboard/': typeof ProtectDashboardIndexRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/secret';
+  fullPaths:
+    | '/'
+    | ''
+    | '/login'
+    | '/map'
+    | '/privacy-policy'
+    | '/register'
+    | '/dashboard/register-venue'
+    | '/dashboard';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/secret';
-  id: '__root__' | '/' | '/_protect' | '/login' | '/map' | '/privacy-policy' | '/register' | '/_protect/secret';
+  to: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/dashboard/register-venue' | '/dashboard';
+  id:
+    | '__root__'
+    | '/'
+    | '/_protect'
+    | '/login'
+    | '/map'
+    | '/privacy-policy'
+    | '/register'
+    | '/_protect/dashboard/register-venue'
+    | '/_protect/dashboard/';
   fileRoutesById: FileRoutesById;
 }
 
@@ -210,7 +246,8 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/_protect": {
       "filePath": "_protect.tsx",
       "children": [
-        "/_protect/secret"
+        "/_protect/dashboard/register-venue",
+        "/_protect/dashboard/"
       ]
     },
     "/login": {
@@ -225,8 +262,12 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/register": {
       "filePath": "register.tsx"
     },
-    "/_protect/secret": {
-      "filePath": "_protect/secret.tsx",
+    "/_protect/dashboard/register-venue": {
+      "filePath": "_protect/dashboard/register-venue.tsx",
+      "parent": "/_protect"
+    },
+    "/_protect/dashboard/": {
+      "filePath": "_protect/dashboard/index.tsx",
       "parent": "/_protect"
     }
   }
