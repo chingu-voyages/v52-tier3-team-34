@@ -66,6 +66,15 @@ export class VenueService {
           ...data,
           contact: data.contact as Prisma.InputJsonValue,
           coordinates: data.coordinates as Prisma.InputJsonValue
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -89,6 +98,15 @@ export class VenueService {
           ...data,
           contact: data.contact ? data.contact as Prisma.InputJsonValue : undefined,
           coordinates: data.coordinates ? data.coordinates as Prisma.InputJsonValue : undefined
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -115,6 +133,15 @@ export class VenueService {
           ...data,
           contact: data.contact as Prisma.InputJsonValue,
           coordinates: data.coordinates as Prisma.InputJsonValue
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
