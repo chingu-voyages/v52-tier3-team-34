@@ -6,6 +6,37 @@ async function main() {
   // Clear existing data
   await prisma.event.deleteMany();
   await prisma.venue.deleteMany();
+  await prisma.user.deleteMany();
+
+  // Create venue managers/owners
+  const users = await Promise.all([
+    prisma.user.create({
+      data: {
+        email: "ny.manager@example.com",
+        name: "New York Venue Manager",
+        googleId: "g_ny_123",
+        profileImage: "https://example.com/profiles/ny_manager.jpg"
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: "paris.manager@example.com",
+        name: "Paris Venue Manager",
+        googleId: "g_paris_123",
+        profileImage: "https://example.com/profiles/paris_manager.jpg"
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: "berlin.manager@example.com",
+        name: "Berlin Venue Manager",
+        googleId: "g_berlin_123",
+        profileImage: "https://example.com/profiles/berlin_manager.jpg"
+      }
+    })
+  ]);
+
+  const [nyManager, parisManager, berlinManager] = users;
 
   // New York Venues (Times Square as center: 40.7580, -73.9855)
   const nyVenues = await Promise.all([
@@ -20,7 +51,8 @@ async function main() {
           website: "https://www.bluenote.com"
         },
         coordinates: { lat: 40.7302, lng: -74.0003 },
-        images: ["https://example.com/venues/bluenote1.jpg"]
+        images: ["https://example.com/venues/bluenote1.jpg"],
+        userId: nyManager.id
       }
     }),
     prisma.venue.create({
@@ -34,7 +66,8 @@ async function main() {
           website: "https://www.villagevanguard.com"
         },
         coordinates: { lat: 40.7347, lng: -74.0023 },
-        images: ["https://example.com/venues/vanguard1.jpg"]
+        images: ["https://example.com/venues/vanguard1.jpg"],
+        userId: nyManager.id
       }
     }),
     prisma.venue.create({
@@ -48,7 +81,8 @@ async function main() {
           website: "https://www.birdlandjazz.com"
         },
         coordinates: { lat: 40.7589, lng: -73.9910 },
-        images: ["https://example.com/venues/birdland1.jpg"]
+        images: ["https://example.com/venues/birdland1.jpg"],
+        userId: nyManager.id
       }
     }),
     prisma.venue.create({
@@ -62,7 +96,8 @@ async function main() {
           website: "https://www.theiridium.com"
         },
         coordinates: { lat: 40.7620, lng: -73.9837 },
-        images: ["https://example.com/venues/iridium1.jpg"]
+        images: ["https://example.com/venues/iridium1.jpg"],
+        userId: nyManager.id
       }
     }),
     prisma.venue.create({
@@ -76,7 +111,8 @@ async function main() {
           website: "https://www.boweryballroom.com"
         },
         coordinates: { lat: 40.7204, lng: -73.9934 },
-        images: ["https://example.com/venues/bowery1.jpg"]
+        images: ["https://example.com/venues/bowery1.jpg"],
+        userId: nyManager.id
       }
     }),
     prisma.venue.create({
@@ -90,7 +126,8 @@ async function main() {
           website: "https://www.brooklynsteel.com"
         },
         coordinates: { lat: 40.7168, lng: -73.9396 },
-        images: ["https://example.com/venues/bksteel1.jpg"]
+        images: ["https://example.com/venues/bksteel1.jpg"],
+        userId: nyManager.id
       }
     })
   ]);
@@ -108,7 +145,8 @@ async function main() {
           website: "https://www.olympiahall.com"
         },
         coordinates: { lat: 48.8700, lng: 2.3283 },
-        images: ["https://example.com/venues/olympia1.jpg"]
+        images: ["https://example.com/venues/olympia1.jpg"],
+        userId: parisManager.id
       }
     }),
     prisma.venue.create({
@@ -122,7 +160,8 @@ async function main() {
           website: "https://www.bataclan.fr"
         },
         coordinates: { lat: 48.8632, lng: 2.3702 },
-        images: ["https://example.com/venues/bataclan1.jpg"]
+        images: ["https://example.com/venues/bataclan1.jpg"],
+        userId: parisManager.id
       }
     }),
     prisma.venue.create({
@@ -136,7 +175,8 @@ async function main() {
           website: "https://www.newmorning.com"
         },
         coordinates: { lat: 48.8729, lng: 2.3502 },
-        images: ["https://example.com/venues/newmorning1.jpg"]
+        images: ["https://example.com/venues/newmorning1.jpg"],
+        userId: parisManager.id
       }
     }),
     prisma.venue.create({
@@ -150,7 +190,8 @@ async function main() {
           website: "https://www.lacigale.fr"
         },
         coordinates: { lat: 48.8827, lng: 2.3401 },
-        images: ["https://example.com/venues/cigale1.jpg"]
+        images: ["https://example.com/venues/cigale1.jpg"],
+        userId: parisManager.id
       }
     }),
     prisma.venue.create({
@@ -164,7 +205,8 @@ async function main() {
           website: "https://www.petitjournal.com"
         },
         coordinates: { lat: 48.8524, lng: 2.3384 },
-        images: ["https://example.com/venues/petitjournal1.jpg"]
+        images: ["https://example.com/venues/petitjournal1.jpg"],
+        userId: parisManager.id
       }
     })
   ]);
@@ -182,7 +224,8 @@ async function main() {
           website: "https://www.berghain.de"
         },
         coordinates: { lat: 52.5111, lng: 13.4399 },
-        images: ["https://example.com/venues/berghain1.jpg"]
+        images: ["https://example.com/venues/berghain1.jpg"],
+        userId: berlinManager.id
       }
     }),
     prisma.venue.create({
@@ -196,7 +239,8 @@ async function main() {
           website: "https://www.so36.de"
         },
         coordinates: { lat: 52.5001, lng: 13.4285 },
-        images: ["https://example.com/venues/so361.jpg"]
+        images: ["https://example.com/venues/so361.jpg"],
+        userId: berlinManager.id
       }
     }),
     prisma.venue.create({
@@ -210,7 +254,8 @@ async function main() {
           website: "https://www.lido-berlin.de"
         },
         coordinates: { lat: 52.4977, lng: 13.4422 },
-        images: ["https://example.com/venues/lido1.jpg"]
+        images: ["https://example.com/venues/lido1.jpg"],
+        userId: berlinManager.id
       }
     }),
     prisma.venue.create({
@@ -224,7 +269,8 @@ async function main() {
           website: "https://www.astra-berlin.de"
         },
         coordinates: { lat: 52.5066, lng: 13.4542 },
-        images: ["https://example.com/venues/astra1.jpg"]
+        images: ["https://example.com/venues/astra1.jpg"],
+        userId: berlinManager.id
       }
     })
   ]);
