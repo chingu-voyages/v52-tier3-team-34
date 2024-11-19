@@ -24,7 +24,8 @@ export const VenueSchema = z.object({
   address: z.string().min(1, "Address is required").max(200),
   contact: ContactSchema,
   images: z.array(z.string().url()).min(1, "At least one image is required"),
-  coordinates: CoordinatesSchema
+  coordinates: CoordinatesSchema,
+  userId: z.number().int().positive("User ID must be a positive integer")
 });
 
 // Schema for PATCH operations - all fields are optional
@@ -80,7 +81,7 @@ export type VenueProperties = {
 };
 
 // Type for API responses
-export type VenueResponse = {
+export interface VenueResponse {
   id: number;
   name: string;
   description: string;
@@ -95,6 +96,7 @@ export type VenueResponse = {
     lng: number;
   };
   images: string[];
+  userId: number;
   createdAt: string;
   updatedAt: string;
 };
