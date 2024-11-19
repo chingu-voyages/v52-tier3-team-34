@@ -1,16 +1,13 @@
 import { ZoneResponse } from '../types/zones';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
+import { QueryFunctionContext } from '@tanstack/react-query';
 
 const apiClient = axios.create({
   baseURL: 'https://v52-tier3-team-34.onrender.com/api'
 });
 
-export const fetchZones = ({
-  queryKey
-}: {
-  queryKey: readonly ['zones', { lat: number; lng: number; radius: number }];
-}): Promise<ZoneResponse> => {
-  const [, { lat, lng, radius }] = queryKey;
+export const fetchZones = ({ queryKey }: QueryFunctionContext): Promise<ZoneResponse> => {
+  const [, { lat, lng, radius }] = queryKey as [string, { lat: number; lng: number; radius: number }];
 
   const params = new URLSearchParams({
     lat: lat.toString(),
@@ -21,9 +18,9 @@ export const fetchZones = ({
   return apiClient
     .get<ZoneResponse>(`events/zone?${params.toString()}`)
     .then((response) => response.data)
-    .catch((error) => {
+    .catch((error: AxiosError) => {
       if (axios.isAxiosError(error)) {
-        throw new Error(error.response?.data?.message || 'Error fetching zones');
+        throw new Error(error.message || 'Error fetching zones');
       }
       throw new Error('Unknown error');
     });

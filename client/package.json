@@ -32,7 +32,7 @@
     "@tanstack/react-router": "^1.79.0",
     "@tanstack/router-devtools": "^1.79.0",
     "@turf/turf": "^7.1.0",
-    "@vis.gl/react-maplibre": "^1.0.0-alpha.4",
+    "@vis.gl/react-maplibre": "^1.0.0-alpha.5",
     "axios": "^1.7.7",
     "lucide-react": "^0.456.0",
     "maplibre-gl": "^4.7.1",
