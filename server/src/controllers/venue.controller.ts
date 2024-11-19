@@ -108,6 +108,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -143,6 +149,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -181,6 +193,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
