@@ -97,6 +97,11 @@ export interface VenueResponse {
   };
   images: string[];
   userId: number;
+  user?: {
+    id: number;
+    name: string;
+    email: string;
+  };
   createdAt: string;
   updatedAt: string;
 };
