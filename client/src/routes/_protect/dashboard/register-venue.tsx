@@ -45,8 +45,6 @@ function RegisterVenueForm() {
 
   const onSubmit = (data: VenueFormData) => {
     const userId = 1;
-    console.log({ ...data, userId });
-
     const venueData = { ...data, userId };
     mutation.mutate(venueData);
   };
