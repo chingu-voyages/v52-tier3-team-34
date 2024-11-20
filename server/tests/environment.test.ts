@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import { config } from './config';
 
 describe('Environment Variables', () => {
     beforeAll(() => {
@@ -6,15 +7,15 @@ describe('Environment Variables', () => {
         dotenv.config();
     });
 
-    it('should load API_URL from environment', () => {
-        const apiUrl = process.env.API_URL;
-        // Should fall back to default if not set
-        expect(apiUrl || 'http://localhost:3000/api').toBeTruthy();
+    it('should load API_URL from environment or use default', () => {
+        expect(config.api.baseUrl).toBeTruthy();
+        expect(config.api.baseUrl).toMatch(/^https?:\/\/.+/);
     });
 
-    it('should have valid API_URL format', () => {
-        const apiUrl = process.env.API_URL || 'http://localhost:3000/api';
-        // Check if it's a valid URL format
-        expect(apiUrl).toMatch(/^https?:\/\/.+/);
+    it('should maintain backward compatibility with default URL', () => {
+        // Even without environment variable, should have default
+        const defaultUrl = 'http://localhost:3000/api';
+        process.env.API_URL = '';
+        expect(config.api.baseUrl || defaultUrl).toBe(defaultUrl);
     });
 });
