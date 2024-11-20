@@ -10,6 +10,7 @@ This is the backend REST API built with Node.js, Express, TypeScript, Prisma, SQ
 - **ORM**: Prisma
 - **Database**: SQLite/PostgreSQL
 - **Validation**: Zod
+- **Testing**: Jest, ts-jest
 
 ## Quick Start (SQLite)
 
@@ -223,6 +224,68 @@ Remember: Schema changes should be tested locally with SQLite before applying to
      - `.env.development` - SQLite/local PostgreSQL
      - `.env.team` - Shared PostgreSQL
      - `.env.production` - Production database
+
+## Testing
+
+### Test Structure
+```
+/tests
+├── api/                    # API endpoint tests
+│   └── venues.test.ts      # Venue endpoint tests
+├── integration/            # Integration tests
+├── unit/                   # Unit tests
+├── scripts/               # Test utility scripts
+├── config.ts              # Test configuration
+├── setup.ts              # Test setup and teardown
+└── types.d.ts            # TypeScript declarations
+```
+
+### Running Tests
+
+1. Ensure development environment is ready:
+```bash
+# Start the development server
+npm run dev
+
+# In a new terminal, ensure database is migrated and seeded
+npx prisma migrate reset
+```
+
+2. Run tests:
+```bash
+# Run all tests
+npm test
+
+# Run API tests only
+npm run test:api
+
+# Run specific test file
+npm run test:api venues.test.ts
+
+# Run tests with coverage
+npm run test -- --coverage
+
+# Watch mode for development
+npm run test -- --watch
+```
+
+### Test Coverage Requirements
+- Minimum 80% coverage for:
+  - Statements
+  - Branches
+  - Functions
+  - Lines
+
+### Debugging Tests
+```bash
+# Run tests in verbose mode
+npm test -- --verbose
+
+# Debug mode
+node --inspect-brk node_modules/.bin/jest --runInBand
+```
+
+For detailed testing documentation, see [Testing Infrastructure Documentation](/docs/testing-infrastructure.md).
 
 ## Project Structure
 

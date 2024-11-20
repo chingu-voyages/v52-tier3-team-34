@@ -16,6 +16,7 @@ model User {
   name          String
   googleId      String   @unique
   profileImage  String?
+  venues        Venue[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -41,7 +42,9 @@ model Venue {
   contact     Json     // {phone, email, website}
   images      String[] // Array of image URLs
   coordinates Json     // {lat: number, lng: number}
-  events      Event[]  // Add this relation field
+  events      Event[]
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

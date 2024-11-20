@@ -27,6 +27,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -49,20 +55,30 @@ export class VenueController {
     try {
       const result = await VenueService.findAll(req.query);
 
-      const response: ApiResponse<VenueResponse[]> = {
+      const venues = result.venues.map(venue => ({
+        id: venue.id,
+        name: venue.name,
+        description: venue.description,
+        address: venue.address,
+        contact: venue.contact as VenueResponse["contact"],
+        coordinates: venue.coordinates as VenueResponse["coordinates"],
+        images: venue.images,
+        userId: venue.userId,
+        user: venue.user ? {
+          id: venue.user.id,
+          name: venue.user.name,
+          email: venue.user.email
+        } : undefined,
+        createdAt: venue.createdAt.toISOString(),
+        updatedAt: venue.updatedAt.toISOString(),
+      }));
+
+      const response: ApiResponse<{ venues: VenueResponse[]; pagination: typeof result.pagination }> = {
         status: "success",
-        data: result.venues.map(venue => ({
-          id: venue.id,
-          name: venue.name,
-          description: venue.description,
-          address: venue.address,
-          contact: venue.contact as VenueResponse["contact"],
-          coordinates: venue.coordinates as VenueResponse["coordinates"],
-          images: venue.images,
-          createdAt: venue.createdAt.toISOString(),
-          updatedAt: venue.updatedAt.toISOString(),
-        })),
-        pagination: result.pagination,
+        data: {
+          venues,
+          pagination: result.pagination,
+        },
         timestamp: new Date().toISOString(),
       };
 
@@ -92,6 +108,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -127,6 +149,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -165,6 +193,12 @@ export class VenueController {
           contact: venue.contact as VenueResponse["contact"],
           coordinates: venue.coordinates as VenueResponse["coordinates"],
           images: venue.images,
+          userId: venue.userId,
+          user: venue.user ? {
+            id: venue.user.id,
+            name: venue.user.name,
+            email: venue.user.email
+          } : undefined,
           createdAt: venue.createdAt.toISOString(),
           updatedAt: venue.updatedAt.toISOString(),
         },
@@ -252,4 +286,4 @@ export class VenueController {
       res.status(404).json(response);
     }
   }
-} 
+}

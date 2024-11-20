@@ -5,7 +5,16 @@ import { Prisma } from "@prisma/client";
 export class VenueService {
   static async findById(id: number) {
     const venue = await prisma.venue.findUnique({
-      where: { id }
+      where: { id },
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
     });
 
     if (!venue) {
@@ -24,6 +33,15 @@ export class VenueService {
         skip,
         take: limit,
         orderBy: orderBy ? { [orderBy]: order || 'asc' } : undefined,
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
       }),
       prisma.venue.count()
     ]);
@@ -48,6 +66,15 @@ export class VenueService {
           ...data,
           contact: data.contact as Prisma.InputJsonValue,
           coordinates: data.coordinates as Prisma.InputJsonValue
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -71,6 +98,15 @@ export class VenueService {
           ...data,
           contact: data.contact ? data.contact as Prisma.InputJsonValue : undefined,
           coordinates: data.coordinates ? data.coordinates as Prisma.InputJsonValue : undefined
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -97,6 +133,15 @@ export class VenueService {
           ...data,
           contact: data.contact as Prisma.InputJsonValue,
           coordinates: data.coordinates as Prisma.InputJsonValue
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
         }
       });
 
@@ -132,4 +177,4 @@ export class VenueService {
       throw error;
     }
   }
-} 
+}
