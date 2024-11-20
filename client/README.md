@@ -106,3 +106,5 @@ chore: install Tailwind CSS with postcss and autoprefixer dependencies
 ```
 
 Happy coding!
+
+# Test change for CI workflow - 20/11/2024
