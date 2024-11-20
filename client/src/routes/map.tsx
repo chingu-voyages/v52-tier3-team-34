@@ -56,7 +56,7 @@ function MapComponent() {
             longitude={feature.geometry.coordinates[0]}
             latitude={feature.geometry.coordinates[1]}
           />
-        ))}
+        ))
       </Map>
       <Link to="/" className="mt-4 text-blue-500 underline">
         View List
