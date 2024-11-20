@@ -1,6 +1,14 @@
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+// Get API URL from environment or use default
+const getApiBaseUrl = () => process.env.API_URL || 'http://localhost:3000/api';
+
 export const config = {
     api: {
-        baseUrl: 'http://localhost:3000/api',
+        baseUrl: getApiBaseUrl(),
         endpoints: {
             venues: '/venues'
         }
