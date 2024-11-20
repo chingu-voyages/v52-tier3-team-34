@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export interface FetchVenuesOptions {
   page?: number;
@@ -34,6 +34,7 @@ export interface Venue {
   images: string[];
   createdAt: string;
   updatedAt: string;
+  userId: number;
 }
 
 export interface Pagination {
