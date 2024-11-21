@@ -1,4 +1,4 @@
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient, User, Venue } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -26,6 +26,12 @@ export async function validateTestData(): Promise<void> {
         errors.push('No users found in database');
     }
 
+    // Check for at least one venue
+    const venueCount = await prisma.venue.count();
+    if (venueCount === 0) {
+        errors.push('No venues found in database');
+    }
+
     // If any validation failed, throw error with all messages
     if (errors.length > 0) {
         throw new TestDataError(
@@ -49,9 +55,44 @@ export async function getTestUser(): Promise<User> {
             'No test user found in database.\n' +
             'Please either:\n' +
             '1. Run `npm run seed` to populate test data, or\n' +
-            '2. Create a test user manually in the database'
+            '2. Create a test user manually'
         );
     }
-    
+
     return user;
+}
+
+/**
+ * Retrieves a valid venue for testing purposes
+ * @returns {Promise<Venue>} A valid venue from the database
+ * @throws {TestDataError} If no valid venue is found in the database
+ */
+export async function getTestVenue(): Promise<Venue> {
+    const venue = await prisma.venue.findFirst({
+        where: {
+            user: {
+                id: (await getTestUser()).id
+            }
+        }
+    });
+    
+    if (!venue) {
+        throw new TestDataError(
+            'No test venue found in database.\n' +
+            'Please either:\n' +
+            '1. Run `npm run seed` to populate test data, or\n' +
+            '2. Create a test venue manually'
+        );
+    }
+
+    return venue;
+}
+
+/**
+ * Clean up test data after tests
+ * Useful for cleaning up data created during tests
+ */
+export async function cleanupTestData(): Promise<void> {
+    // Add cleanup logic as needed
+    await prisma.$disconnect();
 }

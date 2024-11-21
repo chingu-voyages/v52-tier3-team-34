@@ -1,5 +1,6 @@
 /**
  * Common API response wrapper
+ * Used for both API responses and test responses to avoid circular references
  */
 export interface ApiResponse<T> {
     status: number;
@@ -10,23 +11,9 @@ export interface ApiResponse<T> {
 }
 
 /**
- * Venue related types
+ * Error response structure
  */
-export interface Venue {
-    id: number;
-    name: string;
-    description?: string;
-    userId: number;
-    user?: {
-        id: number;
-        name: string;
-    };
-}
-
-export interface VenueListResponse {
-    venues: Venue[];
-}
-
-export interface VenueSingleResponse {
-    venue: Venue;
+export interface ApiErrorResponse {
+    status: number;
+    message: string;
 }

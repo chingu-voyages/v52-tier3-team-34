@@ -3,18 +3,25 @@
 ## Overview
 This document outlines the testing infrastructure for the Live Music Finder backend. Our testing strategy includes API tests, integration tests, and unit tests, with a focus on maintaining high code quality and test coverage.
 
-## Test Structure
-```
-/server/tests/
-├── api/                    # API endpoint tests
-│   └── venues.test.ts      # Venue endpoint tests
-├── integration/            # Integration tests
-├── unit/                   # Unit tests
-├── scripts/               # Test utility scripts
-├── config.ts              # Test configuration
-├── setup.ts              # Test setup and teardown
-└── types.d.ts            # TypeScript declarations
-```
+> For implementation details and directory structure, see [Test Implementation Guide](/server/tests/README.md).
+
+## Testing Strategy
+
+### Test Types
+1. **API Tests**
+   - End-to-end testing of API endpoints
+   - Verify request/response formats
+   - Test error handling and edge cases
+
+2. **Integration Tests**
+   - Database interactions
+   - External service integration
+   - Cross-module functionality
+
+3. **Unit Tests**
+   - Individual function testing
+   - Business logic verification
+   - Input validation
 
 ## Technology Stack
 - **Test Framework**: Jest
@@ -22,31 +29,21 @@ This document outlines the testing infrastructure for the Live Music Finder back
 - **HTTP Client**: Axios
 - **Coverage Tool**: Jest's built-in coverage reporter
 
-## Configuration Files
+## Configuration
 
-### Jest Configuration (jest.config.ts)
+### Jest Configuration
 ```typescript
 {
     preset: 'ts-jest',
     testEnvironment: 'node',
     rootDir: '.',
     roots: ['<rootDir>/tests'],
-    testMatch: [
-        '**/__tests__/**/*.+(ts|tsx|js)',
-        '**/?(*.)+(spec|test).+(ts|tsx|js)'
-    ],
-    transform: {
-        '^.+\\.(ts|tsx)$': 'ts-jest'
-    },
+    testMatch: ['**/?(*.)+(spec|test).+(ts|tsx|js)'],
+    transform: { '^.+\\.(ts|tsx)$': 'ts-jest' },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
     testTimeout: 10000,
     verbose: true,
     collectCoverage: true,
-    collectCoverageFrom: [
-        'src/**/*.{js,ts}',
-        '!src/**/*.d.ts',
-        '!src/**/*.test.{js,ts}'
-    ],
     coverageDirectory: 'coverage',
     coverageThreshold: {
         global: {
@@ -59,143 +56,129 @@ This document outlines the testing infrastructure for the Live Music Finder back
 }
 ```
 
-### TypeScript Configuration (tsconfig.json)
-```json
-{
-    "compilerOptions": {
-        "types": ["node", "jest"],
-        "typeRoots": ["./node_modules/@types", "./tests"]
-    },
-    "include": ["src/**/*", "prisma/**/*", "tests/**/*"]
-}
-```
+## Best Practices
 
-## Running Tests
+### Test Organization
+1. **Structure**
+   - Group related tests using `describe`
+   - Clear, descriptive test names
+   - Follow AAA pattern (Arrange, Act, Assert)
 
-### Available Commands
-```bash
-# Run all tests
-npm test
-
-# Run API tests only
-npm run test:api
-
-# Run specific test file
-npm run test:api venues.test.ts
-
-# Run tests with coverage
-npm run test -- --coverage
-
-# Watch mode for development
-npm run test -- --watch
-```
-
-### Environment Setup
-1. Ensure the development server is running
-2. Database should be migrated and seeded
-3. Required environment variables should be set
-
-## Writing Tests
-
-### API Test Example
-```typescript
-describe('Venues API', () => {
-    describe('GET /venues', () => {
-        it('should return a list of venues', async () => {
-            const response = await axios.get('/api/venues');
-            expect(response.status).toBe(200);
-            expect(Array.isArray(response.data)).toBe(true);
-        });
-    });
-});
-```
-
-### Best Practices
-1. **Test Organization**
-   - Group related tests using `describe` blocks
-   - Use clear, descriptive test names
-   - Follow the AAA pattern (Arrange, Act, Assert)
-
-2. **Test Isolation**
-   - Each test should be independent
-   - Clean up test data after tests
-   - Use beforeEach/afterEach hooks when needed
+2. **Isolation**
+   - Independent tests
+   - Clean test data
+   - Use setup/teardown hooks
 
 3. **Error Handling**
-   - Test both success and error cases
-   - Verify error messages and status codes
-   - Test edge cases and boundary conditions
+   - Test success and error cases
+   - Verify error messages
+   - Test edge cases
+
+### Test Data Management
+1. **Data Organization**
+   - Separate test data by resource
+   - Environment-specific datasets
+   - Type-safe fixtures
+
+2. **Data Cleanup**
+   - Clean up after tests
+   - Use transactions when possible
+   - Maintain test isolation
+
+## Environment Support
+
+### Available Environments
+- Development (default)
+- Staging
+- Production
+
+### Configuration Hierarchy
+1. Environment Variables
+   - `NODE_ENV`
+   - `API_URL`
+2. Environment-specific config
+3. Default configuration
 
 ## Coverage Requirements
-- Minimum 80% coverage for:
-  - Statements
-  - Branches
-  - Functions
-  - Lines
+
+### Minimum Thresholds
+- 80% Statements
+- 80% Branches
+- 80% Functions
+- 80% Lines
+
+### Coverage Reports
+- Generated automatically
+- Available in coverage/ directory
+- Required for pull requests
 
 ## Continuous Integration
-- Tests run automatically on pull requests
-- Coverage reports generated and checked
-- All tests must pass before merging
 
-## Debugging Tests
-1. Use `--verbose` flag for detailed output
-2. Enable Jest debug mode:
+### CI Pipeline
+1. Install dependencies
+2. Run linter
+3. Execute tests
+4. Generate coverage
+5. Check thresholds
+
+### Requirements
+- All tests must pass
+- Coverage thresholds met
+- No linting errors
+
+## Debugging
+
+### Tools
+1. Jest Debug Mode
    ```bash
    node --inspect-brk node_modules/.bin/jest --runInBand
    ```
-3. Use console.log() or debug breakpoints
+2. VS Code Debug Configuration
+3. Console logging
 
-## Common Issues and Solutions
+### Common Issues
 1. **Timeouts**
-   - Increase timeout in jest.config.ts
-   - Check for async operations not being properly awaited
+   - Increase in jest.config.ts
+   - Check async operations
+   - Verify test isolation
 
-2. **Database Conflicts**
-   - Ensure proper cleanup between tests
-   - Use unique test data
-   - Reset database state in setup/teardown
+2. **Database Issues**
+   - Clean test data
+   - Use transactions
+   - Reset database state
 
 3. **Type Errors**
-   - Verify tsconfig.json includes test files
-   - Check @types dependencies are installed
-   - Ensure proper type definitions in tests/types.d.ts
+   - Check tsconfig.json
+   - Verify @types packages
+   - Update type definitions
 
-## Test Performance
+## Performance
 
-### Test Timing Thresholds
-- Tests taking longer than 10 seconds are marked as "slow" (highlighted in red)
-- This threshold is configured in `jest.config.ts` using `slowTestThreshold: 10`
-- API tests naturally take longer due to:
-  - HTTP requests
-  - Database operations
-  - Server response time
+### Optimization
+1. **Parallel Execution**
+   - Default for Jest
+   - Use --runInBand when needed
+   - Configure in CI/CD
 
-### Optimizing Test Performance
-1. **Parallel Test Execution**
-   - Jest runs tests in parallel by default
-   - Use `--runInBand` for sequential execution when needed
+2. **Resource Management**
+   - Efficient data cleanup
+   - Mock external services
+   - Use test timeouts
 
-2. **Database Operations**
-   - Use transactions when possible
-   - Clean up test data efficiently
-   - Consider using test database snapshots
-
-3. **Network Requests**
-   - Mock external services when appropriate
-   - Use local development server
-   - Consider request timeouts
-
-## Adding New Tests
-1. Create test file in appropriate directory
-2. Import required dependencies and types
-3. Follow existing test patterns
-4. Update coverage thresholds if needed
-5. Document any new test utilities or helpers
+### Monitoring
+- Test execution times
+- Resource usage
+- Coverage trends
 
 ## Future Improvements
-- [ ] Add E2E testing with Cypress
-- [ ] Implement test data factories
-- [ ] Add performance testing
-- [ ] Improve test reporting
-- [ ] Add API contract testing
+- [ ] E2E testing (Cypress)
+- [ ] Test data factories
+- [ ] Performance testing
+- [ ] Enhanced reporting
+- [ ] API contract testing
+
+## Contributing
+1. Follow existing patterns
+2. Update documentation
+3. Maintain test coverage
+4. Add implementation notes
