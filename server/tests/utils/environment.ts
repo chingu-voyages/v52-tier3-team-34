@@ -23,7 +23,7 @@ export const getApiBaseUrl = (): string => {
  */
 export const getCurrentEnvironment = (): Environment => {
     const defaultEnv: Environment = 'development';
-    const env = process.env.NODE_ENV?.toLowerCase() || defaultEnv;
+    const env = process.env.NODE_ENV?.toLowerCase().trim() || defaultEnv;
     return validateEnvironment(env);
 };
 
@@ -35,7 +35,7 @@ export const getCurrentEnvironment = (): Environment => {
  */
 export const validateEnvironment = (env: string): Environment => {
     const validEnvironments: Environment[] = ['development', 'staging', 'production'];
-    const normalizedEnv = env?.toLowerCase() || 'development';
+    const normalizedEnv = env?.toLowerCase().trim() || 'development';
     
     if (!validEnvironments.includes(normalizedEnv as Environment)) {
         throw new Error(
