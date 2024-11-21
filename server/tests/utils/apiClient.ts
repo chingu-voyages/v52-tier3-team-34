@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
-import { TestResponse, TestErrorResponse } from '../types/testResponse';
-import { getApiBaseUrl } from './environment';
+import { ApiResponse, ApiErrorResponse } from '../types/api';
+import { config } from '../config';
 import { transformResponse, transformError } from './responseTransformer';
 
 /**
@@ -11,7 +11,7 @@ export class ApiClient {
 
     constructor() {
         this.api = axios.create({
-            baseURL: getApiBaseUrl(),
+            baseURL: config.api.baseUrl,
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -21,7 +21,7 @@ export class ApiClient {
     /**
      * Make a GET request
      */
-    async get<T>(url: string): Promise<TestResponse<T>> {
+    async get<T>(url: string): Promise<ApiResponse<T>> {
         try {
             const response = await this.api.get(url);
             return transformResponse<T>(response);
@@ -33,7 +33,7 @@ export class ApiClient {
     /**
      * Make a POST request
      */
-    async post<T>(url: string, data: any): Promise<TestResponse<T>> {
+    async post<T>(url: string, data: any): Promise<ApiResponse<T>> {
         try {
             const response = await this.api.post(url, data);
             return transformResponse<T>(response);
@@ -45,7 +45,7 @@ export class ApiClient {
     /**
      * Make a PATCH request
      */
-    async patch<T>(url: string, data: any): Promise<TestResponse<T>> {
+    async patch<T>(url: string, data: any): Promise<ApiResponse<T>> {
         try {
             const response = await this.api.patch(url, data);
             return transformResponse<T>(response);
@@ -57,7 +57,7 @@ export class ApiClient {
     /**
      * Make a PUT request
      */
-    async put<T>(url: string, data: any): Promise<TestResponse<T>> {
+    async put<T>(url: string, data: any): Promise<ApiResponse<T>> {
         try {
             const response = await this.api.put(url, data);
             return transformResponse<T>(response);
@@ -69,7 +69,7 @@ export class ApiClient {
     /**
      * Make a DELETE request
      */
-    async delete<T>(url: string): Promise<TestResponse<T>> {
+    async delete<T>(url: string): Promise<ApiResponse<T>> {
         try {
             const response = await this.api.delete(url);
             return transformResponse<T>(response);

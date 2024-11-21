@@ -1,10 +1,10 @@
 import { AxiosResponse } from 'axios';
-import { TestResponse, TestErrorResponse } from '../types/testResponse';
+import { ApiResponse, ApiErrorResponse } from '../types/api';
 
 /**
  * Safely transforms an Axios response into our clean test response format
  */
-export function transformResponse<T>(response: AxiosResponse): TestResponse<T> {
+export function transformResponse<T>(response: AxiosResponse): ApiResponse<T> {
     return {
         status: response.status,
         data: {
@@ -17,7 +17,7 @@ export function transformResponse<T>(response: AxiosResponse): TestResponse<T> {
 /**
  * Creates a clean error response from an error object
  */
-export function transformError(error: any): TestErrorResponse {
+export function transformError(error: any): ApiErrorResponse {
     if (error.response) {
         return {
             status: error.response.status,

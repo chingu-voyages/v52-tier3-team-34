@@ -12,6 +12,7 @@ export type EnvironmentConfig = {
         baseUrl: string;
         endpoints: {
             venues: string;
+            events: string;
             // Add more endpoints as needed
         };
     };
@@ -28,7 +29,8 @@ const defaultConfig: EnvironmentConfig = {
     api: {
         baseUrl: 'http://localhost:3000/api',
         endpoints: {
-            venues: '/venues'
+            venues: '/venues',
+            events: '/events'
         }
     },
     timeouts: {

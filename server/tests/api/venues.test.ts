@@ -3,8 +3,8 @@ import { describe, expect, it, beforeAll } from '@jest/globals';
 import { getCurrentEnvironment } from '../utils/environment';
 import { venueTestData } from '../data/venues';
 import { ApiClient } from '../utils/apiClient';
-import { VenueListResponse, Venue } from '../types/api';
-import { TestErrorResponse } from '../types/testResponse';
+import { Venue, VenueListResponse } from '../types/venues';
+import { ApiErrorResponse } from '../types/api';
 import { getTestUser, validateTestData } from '../utils/testData';
 import { User } from '@prisma/client';
 
@@ -68,7 +68,7 @@ describe('Venues API', () => {
                 // If we get here, the request didn't throw as expected
                 expect('Request should have thrown a 404').toBeFalsy();
             } catch (error) {
-                const errorResponse = error as TestErrorResponse;
+                const errorResponse = error as ApiErrorResponse;
                 expect(errorResponse.status).toBe(404);
             }
         });
@@ -113,7 +113,7 @@ describe('Venues API', () => {
                 // If we get here, the request didn't throw as expected
                 expect('Request should have thrown a 404').toBeFalsy();
             } catch (error) {
-                const errorResponse = error as TestErrorResponse;
+                const errorResponse = error as ApiErrorResponse;
                 expect(errorResponse.status).toBe(404);
             }
         });
