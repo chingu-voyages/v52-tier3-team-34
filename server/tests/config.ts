@@ -1,55 +1,82 @@
 import dotenv from 'dotenv';
+import { getCurrentEnvironment } from './utils/environment';
 
 // Load environment variables
 dotenv.config();
 
-// Get API URL from environment or use default
-const getApiBaseUrl = () => process.env.API_URL || 'http://localhost:3000/api';
-
-export const config = {
+/**
+ * Environment-specific configuration type
+ */
+export type EnvironmentConfig = {
     api: {
-        baseUrl: getApiBaseUrl(),
+        baseUrl: string;
+        endpoints: {
+            venues: string;
+            // Add more endpoints as needed
+        };
+    };
+    timeouts: {
+        default: number;
+        long: number;
+    };
+};
+
+/**
+ * Default configuration values
+ */
+const defaultConfig: EnvironmentConfig = {
+    api: {
+        baseUrl: 'http://localhost:3000/api',
         endpoints: {
             venues: '/venues'
         }
     },
-    testData: {
-        venues: {
-            new: {
-                name: 'Test Venue',
-                description: 'A test venue',
-                address: '123 Test St',
-                contact: {
-                    email: 'test@venue.com',
-                    phone: '+1-555-0123',
-                    website: 'https://test.venue.com'
-                },
-                coordinates: {
-                    lat: 40.7128,
-                    lng: -74.0060
-                },
-                images: ['https://example.com/test1.jpg'],
-                userId: 4
-            },
-            update: {
-                description: 'An updated test venue'
-            },
-            replace: {
-                name: 'Replaced Venue',
-                description: 'A completely replaced venue',
-                address: '456 Replace St',
-                contact: {
-                    email: 'replaced@venue.com',
-                    phone: '+1-555-9999',
-                    website: 'https://replaced.venue.com'
-                },
-                coordinates: {
-                    lat: 40.7128,
-                    lng: -74.0060
-                },
-                images: ['https://example.com/replaced1.jpg'],
-                userId: 4
-            }
+    timeouts: {
+        default: 5000,
+        long: 30000
+    }
+};
+
+/**
+ * Environment-specific configurations
+ */
+const environmentConfigs: Record<string, Partial<EnvironmentConfig>> = {
+    development: defaultConfig,
+    staging: {
+        api: {
+            baseUrl: process.env.API_URL || defaultConfig.api.baseUrl,
+            endpoints: defaultConfig.api.endpoints
+        }
+    },
+    production: {
+        api: {
+            baseUrl: process.env.API_URL || defaultConfig.api.baseUrl,
+            endpoints: defaultConfig.api.endpoints
+        },
+        timeouts: {
+            default: 10000,
+            long: 60000
         }
     }
 };
+
+/**
+ * Get configuration for current environment
+ * @returns {EnvironmentConfig} Configuration for current environment
+ */
+function getEnvironmentConfig(): EnvironmentConfig {
+    const env = getCurrentEnvironment();
+    const envConfig = environmentConfigs[env] || defaultConfig;
+    
+    return {
+        ...defaultConfig,
+        ...envConfig,
+        api: {
+            ...defaultConfig.api,
+            ...envConfig.api,
+            baseUrl: process.env.API_URL || envConfig.api?.baseUrl || defaultConfig.api.baseUrl
+        }
+    };
+}
+
+export const config = getEnvironmentConfig();
