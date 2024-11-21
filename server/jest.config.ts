@@ -3,19 +3,17 @@ import type { Config } from '@jest/types';
 const config: Config.InitialOptions = {
     preset: 'ts-jest',
     testEnvironment: 'node',
-    rootDir: '.',
+    moduleFileExtensions: ['ts', 'js'],
     roots: ['<rootDir>/tests'],
     testMatch: [
-        '**/__tests__/**/*.+(ts|tsx|js)',
-        '**/?(*.)+(spec|test).+(ts|tsx|js)'
+        '**/__tests__/**/*.+(ts|js)',
+        '**/?(*.)+(spec|test).+(ts|js)'
     ],
     transform: {
         '^.+\\.(ts|tsx)$': 'ts-jest'
     },
     setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
-    testTimeout: 10000,
-    slowTestThreshold: 10,  // Set threshold for slow tests to 10 seconds
-    verbose: true,
+    // Coverage configuration
     collectCoverage: true,
     collectCoverageFrom: [
         'src/**/*.{js,ts}',
@@ -23,7 +21,6 @@ const config: Config.InitialOptions = {
         '!src/**/*.test.{js,ts}'
     ],
     coverageDirectory: 'coverage',
-    coverageReporters: ['text', 'lcov', 'clover'],
     coverageThreshold: {
         global: {
             branches: 80,
