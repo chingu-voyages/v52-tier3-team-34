@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, AxiosResponse } from 'axios';
-import { ApiResponse } from '../types/api';
+import axios, { AxiosInstance } from 'axios';
+import { TestResponse, TestErrorResponse } from '../types/testResponse';
 import { getApiBaseUrl } from './environment';
+import { transformResponse, transformError } from './responseTransformer';
 
 /**
  * API Client for making HTTP requests in tests
@@ -18,119 +19,62 @@ export class ApiClient {
     }
 
     /**
-     * Extract only the necessary data from Axios response
-     */
-    private extractResponse<T>(response: AxiosResponse): ApiResponse<T> {
-        // Create a new object with only the properties we need
-        const cleanResponse = {
-            status: response.status,
-            data: {
-                status: response.data.status,
-                data: response.data.data
-            }
-        };
-
-        // Break circular references by creating a new object
-        return JSON.parse(JSON.stringify(cleanResponse));
-    }
-
-    /**
      * Make a GET request
      */
-    async get<T>(url: string): Promise<ApiResponse<T>> {
+    async get<T>(url: string): Promise<TestResponse<T>> {
         try {
             const response = await this.api.get(url);
-            return this.extractResponse<T>(response);
+            return transformResponse<T>(response);
         } catch (error: any) {
-            if (error.response) {
-                throw {
-                    response: {
-                        status: error.response.status,
-                        data: error.response.data
-                    }
-                };
-            }
-            throw error;
+            throw transformError(error);
         }
     }
 
     /**
      * Make a POST request
      */
-    async post<T>(url: string, data: any): Promise<ApiResponse<T>> {
+    async post<T>(url: string, data: any): Promise<TestResponse<T>> {
         try {
             const response = await this.api.post(url, data);
-            return this.extractResponse<T>(response);
+            return transformResponse<T>(response);
         } catch (error: any) {
-            if (error.response) {
-                throw {
-                    response: {
-                        status: error.response.status,
-                        data: error.response.data
-                    }
-                };
-            }
-            throw error;
+            throw transformError(error);
         }
     }
 
     /**
      * Make a PATCH request
      */
-    async patch<T>(url: string, data: any): Promise<ApiResponse<T>> {
+    async patch<T>(url: string, data: any): Promise<TestResponse<T>> {
         try {
             const response = await this.api.patch(url, data);
-            return this.extractResponse<T>(response);
+            return transformResponse<T>(response);
         } catch (error: any) {
-            if (error.response) {
-                throw {
-                    response: {
-                        status: error.response.status,
-                        data: error.response.data
-                    }
-                };
-            }
-            throw error;
+            throw transformError(error);
         }
     }
 
     /**
      * Make a PUT request
      */
-    async put<T>(url: string, data: any): Promise<ApiResponse<T>> {
+    async put<T>(url: string, data: any): Promise<TestResponse<T>> {
         try {
             const response = await this.api.put(url, data);
-            return this.extractResponse<T>(response);
+            return transformResponse<T>(response);
         } catch (error: any) {
-            if (error.response) {
-                throw {
-                    response: {
-                        status: error.response.status,
-                        data: error.response.data
-                    }
-                };
-            }
-            throw error;
+            throw transformError(error);
         }
     }
 
     /**
      * Make a DELETE request
      */
-    async delete<T>(url: string): Promise<ApiResponse<T>> {
+    async delete<T>(url: string): Promise<TestResponse<T>> {
         try {
             const response = await this.api.delete(url);
-            return this.extractResponse<T>(response);
+            return transformResponse<T>(response);
         } catch (error: any) {
-            if (error.response) {
-                throw {
-                    response: {
-                        status: error.response.status,
-                        data: error.response.data
-                    }
-                };
-            }
-            throw error;
+            throw transformError(error);
         }
     }
 }

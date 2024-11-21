@@ -1,10 +1,12 @@
-import axios from 'axios';
 import { config } from '../config';
 import { describe, expect, it, beforeAll } from '@jest/globals';
-import { getCurrentEnvironment, getApiBaseUrl } from '../utils/environment';
+import { getCurrentEnvironment } from '../utils/environment';
 import { venueTestData } from '../data/venues';
 import { ApiClient } from '../utils/apiClient';
-import { VenueListResponse, VenueSingleResponse, Venue } from '../types/api';
+import { VenueListResponse, Venue } from '../types/api';
+import { TestErrorResponse } from '../types/testResponse';
+import { getTestUser, validateTestData } from '../utils/testData';
+import { User } from '@prisma/client';
 
 const currentEnv = getCurrentEnvironment();
 console.log(`Running venue tests in ${currentEnv} environment`);
@@ -17,9 +19,16 @@ const testData = venueTestData[currentEnv];
 
 describe('Venues API', () => {
     let createdVenueId: number;
+    let testUser: User;
 
-    beforeAll(() => {
-        console.log(`API Base URL: ${api['api'].defaults.baseURL}`);
+    beforeAll(async () => {
+        expect(api).toBeDefined();
+        // Validate required test data exists
+        await validateTestData();
+        // Get a valid test user
+        testUser = await getTestUser();
+        // Update test data with valid user ID
+        testData.new.userId = testUser.id;
     });
 
     describe('GET /venues', () => {
@@ -58,8 +67,9 @@ describe('Venues API', () => {
                 await api.get<Venue>(`${config.api.endpoints.venues}/99999`);
                 // If we get here, the request didn't throw as expected
                 expect('Request should have thrown a 404').toBeFalsy();
-            } catch (error: any) {
-                expect(error.response.status).toBe(404);
+            } catch (error) {
+                const errorResponse = error as TestErrorResponse;
+                expect(errorResponse.status).toBe(404);
             }
         });
     });
@@ -102,8 +112,9 @@ describe('Venues API', () => {
                 await api.get<Venue>(`${config.api.endpoints.venues}/${createdVenueId}`);
                 // If we get here, the request didn't throw as expected
                 expect('Request should have thrown a 404').toBeFalsy();
-            } catch (error: any) {
-                expect(error.response.status).toBe(404);
+            } catch (error) {
+                const errorResponse = error as TestErrorResponse;
+                expect(errorResponse.status).toBe(404);
             }
         });
     });
