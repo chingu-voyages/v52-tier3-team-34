@@ -1,8 +1,10 @@
 // Set default environment if not specified
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
+import { getCurrentEnvironment, getApiBaseUrl } from './utils/environment';
+
 // Increase timeout for all tests
-jest.setTimeout(10000);
+jest.setTimeout(30000); // Increased timeout to allow for server startup
 
 // Add custom matchers if needed
 expect.extend({
@@ -10,7 +12,7 @@ expect.extend({
 });
 
 // Log test environment information
-beforeAll(() => {
-    console.log('Test Environment:', process.env.NODE_ENV);
-    console.log('API URL:', process.env.API_URL || 'http://localhost:3000/api');
+beforeAll(async () => {
+    console.log('Test Environment:', getCurrentEnvironment());
+    console.log('API URL:', getApiBaseUrl());
 });
