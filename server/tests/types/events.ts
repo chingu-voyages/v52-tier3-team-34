@@ -2,33 +2,49 @@ import { ApiResponse } from './api';
 
 export interface Event {
     id: number;
-    name: string;
+    title: string;
     description: string;
-    date: string;
-    time: string;
-    venueId: number;
-    userId: number;
-    ticketPrice: number;
-    capacity: number;
-    category: string;
+    startDate: string;
+    endDate: string;
     status: 'draft' | 'published' | 'cancelled';
+    venueId: number;
     venue?: {
         id: number;
         name: string;
+        address: string;
+        coordinates: {
+            lat: number;
+            lng: number;
+        };
     };
-    user?: {
-        id: number;
-        name: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+export interface EventGeoJSON {
+    type: 'Feature';
+    geometry: {
+        type: 'Point';
+        coordinates: [number, number]; // [longitude, latitude]
     };
+    properties: Event;
 }
 
-export interface EventListResponse {
-    events: Event[];
+export interface EventGeoJSONCollection {
+    type: 'FeatureCollection';
+    features: EventGeoJSON[];
 }
 
-export interface EventSingleResponse {
-    event: Event;
+export interface EventZoneResponse {
+    type: 'FeatureCollection';
+    features: EventGeoJSON[];
+    center: {
+        type: 'Point';
+        coordinates: [number, number];
+    };
+    radius: number;
 }
 
-export type EventApiResponse = ApiResponse<EventSingleResponse>;
-export type EventListApiResponse = ApiResponse<EventListResponse>;
+export type EventListResponse = Event[];
+export type EventResponse = Event;
+export type EventGeoJSONResponse = EventGeoJSONCollection;

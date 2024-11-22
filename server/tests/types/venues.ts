@@ -11,13 +11,10 @@ export interface Venue {
     };
 }
 
-export interface VenueListResponse {
-    venues: Venue[];
-}
+// Updated to use the standardized ApiResponse type
+export type VenueListResponse = ApiResponse<Venue[]>;
+export type VenueResponse = ApiResponse<Venue>;
 
-export interface VenueSingleResponse {
-    venue: Venue;
-}
-
-export type VenueApiResponse = ApiResponse<VenueSingleResponse>;
-export type VenueListApiResponse = ApiResponse<VenueListResponse>;
+// Type aliases for backward compatibility
+export type VenueApiResponse = VenueResponse;
+export type VenueListApiResponse = VenueListResponse;
