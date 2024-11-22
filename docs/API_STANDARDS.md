@@ -158,6 +158,92 @@ All query parameters can be combined to create complex queries:
 - `500 Internal Server Error`: Unexpected server error
 - `503 Service Unavailable`: Service temporarily unavailable
 
+## Error Handling Strategy
+
+### Error Response Structure
+All error responses follow the standard error response format with additional context based on the error type.
+
+### Error Code Pattern
+Error codes follow the pattern: `RESOURCE_ACTION_ERROR`
+- `RESOURCE`: The type of resource (e.g., USER, EVENT, VENUE)
+- `ACTION`: The operation being performed (e.g., CREATE, UPDATE, DELETE)
+- `ERROR`: The type of error (e.g., NOT_FOUND, INVALID_INPUT)
+
+Examples:
+- `USER_NOT_FOUND`: User resource doesn't exist
+- `EVENT_CREATE_ERROR`: Failed to create event
+- `VENUE_UPDATE_ERROR`: Failed to update venue
+
+### Error Handling Layers
+
+#### 1. Request Validation (400)
+The first layer of error handling occurs in the validation middleware:
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Invalid request parameters",
+    "details": {
+      "field": "sortDir",
+      "error": "Must be one of: asc, desc"
+    }
+  }
+}
+```
+
+#### 2. Resource Operations (400/404)
+The second layer handles expected errors in resource operations:
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "EVENT_NOT_FOUND",
+    "message": "Event with ID 123 not found",
+    "details": { "id": "123" }
+  }
+}
+```
+
+#### 3. Server Errors (500)
+The final layer catches unexpected errors through global error handling:
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "INTERNAL_SERVER_ERROR",
+    "message": "An unexpected error occurred"
+  }
+}
+```
+
+### Error Handling Decision Flow
+1. Is it a validation error? → 400 Bad Request
+2. Is the resource not found? → 404 Not Found
+3. Is it a known operation error? → 400 Bad Request
+4. Otherwise → 500 Internal Server Error
+
+### Common Error Scenarios
+
+#### List Operations
+- Invalid query parameters → 400
+- Invalid sort direction → 400
+- Invalid filter values → 400
+
+#### Single Resource Operations
+- Resource not found → 404
+- Invalid resource ID → 400
+- Validation failure → 400
+
+#### Create/Update Operations
+- Invalid input data → 400
+- Validation failure → 400
+- Resource not found (update) → 404
+
+#### Delete Operations
+- Resource not found → 404
+- Resource in use → 400
+
 ## Rate Limiting
 
 To ensure fair usage and protect our API, rate limiting will be implemented:
