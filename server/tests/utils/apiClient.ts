@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { ApiResponse, ApiErrorResponse } from '../types/api';
 import { config } from '../config';
 import { transformResponse, transformError } from './responseTransformer';
@@ -21,9 +21,9 @@ export class ApiClient {
     /**
      * Make a GET request
      */
-    async get<T>(url: string): Promise<ApiResponse<T>> {
+    async get<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         try {
-            const response = await this.api.get(url);
+            const response = await this.api.get(url, config);
             return transformResponse<T>(response);
         } catch (error: any) {
             throw transformError(error);
@@ -33,21 +33,9 @@ export class ApiClient {
     /**
      * Make a POST request
      */
-    async post<T>(url: string, data: any): Promise<ApiResponse<T>> {
+    async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         try {
-            const response = await this.api.post(url, data);
-            return transformResponse<T>(response);
-        } catch (error: any) {
-            throw transformError(error);
-        }
-    }
-
-    /**
-     * Make a PATCH request
-     */
-    async patch<T>(url: string, data: any): Promise<ApiResponse<T>> {
-        try {
-            const response = await this.api.patch(url, data);
+            const response = await this.api.post(url, data, config);
             return transformResponse<T>(response);
         } catch (error: any) {
             throw transformError(error);
@@ -57,9 +45,21 @@ export class ApiClient {
     /**
      * Make a PUT request
      */
-    async put<T>(url: string, data: any): Promise<ApiResponse<T>> {
+    async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         try {
-            const response = await this.api.put(url, data);
+            const response = await this.api.put(url, data, config);
+            return transformResponse<T>(response);
+        } catch (error: any) {
+            throw transformError(error);
+        }
+    }
+
+    /**
+     * Make a PATCH request
+     */
+    async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
+        try {
+            const response = await this.api.patch(url, data, config);
             return transformResponse<T>(response);
         } catch (error: any) {
             throw transformError(error);
@@ -69,9 +69,9 @@ export class ApiClient {
     /**
      * Make a DELETE request
      */
-    async delete<T>(url: string): Promise<ApiResponse<T>> {
+    async delete<T>(url: string, config?: AxiosRequestConfig): Promise<ApiResponse<T>> {
         try {
-            const response = await this.api.delete(url);
+            const response = await this.api.delete(url, config);
             return transformResponse<T>(response);
         } catch (error: any) {
             throw transformError(error);

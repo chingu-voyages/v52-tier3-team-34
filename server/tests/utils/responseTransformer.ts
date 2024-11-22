@@ -1,32 +1,53 @@
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, AxiosError } from 'axios';
 import { ApiResponse, ApiErrorResponse } from '../types/api';
 
+interface ServerResponse<T> {
+    status: 'success' | 'error';
+    data: T;
+    message?: string;
+    timestamp?: string;
+    pagination?: {
+        currentPage: number;
+        totalPages: number;
+        totalItems: number;
+        itemsPerPage: number;
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+    };
+}
+
+interface ServerError {
+    error: string;
+    timestamp?: string;
+}
+
 /**
- * Safely transforms an Axios response into our clean test response format
+ * Transform Axios response to our API response format
  */
-export function transformResponse<T>(response: AxiosResponse): ApiResponse<T> {
+export function transformResponse<T>(response: AxiosResponse<ServerResponse<T>>): ApiResponse<T> {
     return {
-        status: response.status,
-        data: {
-            status: response.data.status,
-            data: response.data.data
-        }
+        status: 'success',
+        data: response.data.data,
+        message: response.data.message,
+        timestamp: response.data.timestamp,
+        pagination: response.data.pagination
     };
 }
 
 /**
- * Creates a clean error response from an error object
+ * Transform Axios error to our API error format
  */
-export function transformError(error: any): ApiErrorResponse {
-    if (error.response) {
+export function transformError(error: AxiosError<ServerError>): ApiErrorResponse {
+    if (error.response?.data) {
         return {
-            status: error.response.status,
-            message: error.response.data?.message || 'Unknown error'
+            status: 'error',
+            error: error.response.data.error,
+            timestamp: error.response.data.timestamp
         };
     }
     
     return {
-        status: 500,
-        message: error.message || 'Internal error'
+        status: 'error',
+        error: error.message
     };
 }

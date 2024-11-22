@@ -14,10 +14,31 @@ export class TestDataError extends Error {
 }
 
 /**
+ * Validates that test data object has required fields
+ * @param data The test data object to validate
+ * @param context The context in which validation is occurring (for error messages)
+ * @throws {TestDataError} If required test data is missing
+ */
+export function validateTestData(data: Record<string, any>, context: string): void {
+    if (!data || typeof data !== 'object') {
+        throw new TestDataError(`Invalid test data for ${context}: data must be an object`);
+    }
+
+    const requiredFields = Object.keys(data);
+    const missingFields = requiredFields.filter(field => data[field] === undefined);
+
+    if (missingFields.length > 0) {
+        throw new TestDataError(
+            `Missing required fields for ${context}: ${missingFields.join(', ')}`
+        );
+    }
+}
+
+/**
  * Validates that minimum required test data exists in the database
  * @throws {TestDataError} If required test data is missing
  */
-export async function validateTestData(): Promise<void> {
+export async function validateDatabaseData(): Promise<void> {
     const errors: string[] = [];
 
     // Check for at least one user
@@ -32,13 +53,8 @@ export async function validateTestData(): Promise<void> {
         errors.push('No venues found in database');
     }
 
-    // If any validation failed, throw error with all messages
     if (errors.length > 0) {
-        throw new TestDataError(
-            'Missing required test data:\n' +
-            errors.map(err => `- ${err}`).join('\n') +
-            '\n\nPlease run `npm run seed` to populate test data'
-        );
+        throw new TestDataError(`Database validation failed: ${errors.join(', ')}`);
     }
 }
 
@@ -49,16 +65,9 @@ export async function validateTestData(): Promise<void> {
  */
 export async function getTestUser(): Promise<User> {
     const user = await prisma.user.findFirst();
-    
     if (!user) {
-        throw new TestDataError(
-            'No test user found in database.\n' +
-            'Please either:\n' +
-            '1. Run `npm run seed` to populate test data, or\n' +
-            '2. Create a test user manually'
-        );
+        throw new TestDataError('No valid test user found in database');
     }
-
     return user;
 }
 
@@ -68,23 +77,10 @@ export async function getTestUser(): Promise<User> {
  * @throws {TestDataError} If no valid venue is found in the database
  */
 export async function getTestVenue(): Promise<Venue> {
-    const venue = await prisma.venue.findFirst({
-        where: {
-            user: {
-                id: (await getTestUser()).id
-            }
-        }
-    });
-    
+    const venue = await prisma.venue.findFirst();
     if (!venue) {
-        throw new TestDataError(
-            'No test venue found in database.\n' +
-            'Please either:\n' +
-            '1. Run `npm run seed` to populate test data, or\n' +
-            '2. Create a test venue manually'
-        );
+        throw new TestDataError('No valid test venue found in database');
     }
-
     return venue;
 }
 
@@ -94,5 +90,5 @@ export async function getTestVenue(): Promise<Venue> {
  */
 export async function cleanupTestData(): Promise<void> {
     // Add cleanup logic as needed
-    await prisma.$disconnect();
+    await Promise.resolve();
 }

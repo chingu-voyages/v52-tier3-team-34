@@ -2,32 +2,16 @@ import { Environment } from '../utils/environment';
 
 type EventTestData = {
     new: {
-        name: string;
+        title: string;
         description: string;
-        date: string;
-        time: string;
-        venueId: number;
-        userId: number;  // Event creator
-        ticketPrice: number;
-        capacity: number;
-        category: string;
+        startDate: string;
+        endDate: string;
         status: 'draft' | 'published' | 'cancelled';
+        venueId: number;
     };
     update: {
         description: string;
-        ticketPrice: number;
-    };
-    replace: {
-        name: string;
-        description: string;
-        date: string;
-        time: string;
-        venueId: number;
-        userId: number;
-        ticketPrice: number;
-        capacity: number;
-        category: string;
-        status: 'draft' | 'published' | 'cancelled';
+        status?: 'draft' | 'published' | 'cancelled';
     };
 };
 
@@ -38,91 +22,43 @@ type EnvironmentTestData = {
 export const eventTestData: EnvironmentTestData = {
     development: {
         new: {
-            name: 'Test Event (dev)',
-            description: 'A test event for development',
-            date: '2024-12-31',
-            time: '20:00',
-            venueId: 0,  // Will be set dynamically
-            userId: 0,   // Will be set dynamically
-            ticketPrice: 25.00,
-            capacity: 100,
-            category: 'concert',
-            status: 'draft'
+            title: 'Test Event (dev)',
+            description: 'A test event in development environment',
+            startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 week from now
+            endDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),  // 1 week + 1 day from now
+            status: 'draft',
+            venueId: 1
         },
         update: {
-            description: 'Updated test event description',
-            ticketPrice: 30.00
-        },
-        replace: {
-            name: 'Replaced Event (dev)',
-            description: 'A completely replaced event',
-            date: '2024-12-31',
-            time: '21:00',
-            venueId: 0,  // Will be set dynamically
-            userId: 0,   // Will be set dynamically
-            ticketPrice: 35.00,
-            capacity: 150,
-            category: 'concert',
+            description: 'Updated test event description (dev)',
             status: 'published'
         }
     },
     staging: {
         new: {
-            name: 'Test Event (staging)',
-            description: 'A test event for staging',
-            date: '2024-12-31',
-            time: '20:00',
-            venueId: 0,
-            userId: 0,
-            ticketPrice: 25.00,
-            capacity: 100,
-            category: 'concert',
-            status: 'draft'
+            title: 'Test Event (staging)',
+            description: 'A test event in staging environment',
+            startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'draft',
+            venueId: 1
         },
         update: {
-            description: 'Updated test event description',
-            ticketPrice: 30.00
-        },
-        replace: {
-            name: 'Replaced Event (staging)',
-            description: 'A completely replaced event',
-            date: '2024-12-31',
-            time: '21:00',
-            venueId: 0,
-            userId: 0,
-            ticketPrice: 35.00,
-            capacity: 150,
-            category: 'concert',
+            description: 'Updated test event description (staging)',
             status: 'published'
         }
     },
     production: {
         new: {
-            name: 'Test Event (prod)',
-            description: 'A test event for production',
-            date: '2024-12-31',
-            time: '20:00',
-            venueId: 0,
-            userId: 0,
-            ticketPrice: 25.00,
-            capacity: 100,
-            category: 'concert',
-            status: 'draft'
+            title: 'Test Event (prod)',
+            description: 'A test event in production environment',
+            startDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+            endDate: new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString(),
+            status: 'draft',
+            venueId: 1
         },
         update: {
-            description: 'Updated test event description',
-            ticketPrice: 30.00
-        },
-        replace: {
-            name: 'Replaced Event (prod)',
-            description: 'A completely replaced event',
-            date: '2024-12-31',
-            time: '21:00',
-            venueId: 0,
-            userId: 0,
-            ticketPrice: 35.00,
-            capacity: 150,
-            category: 'concert',
+            description: 'Updated test event description (prod)',
             status: 'published'
         }
     }
