@@ -79,6 +79,7 @@ function MapComponent() {
                     setActiveEvent(null);
                   }}
                   closeOnClick={false}
+                  closeButton={false}
                 >
                   <ClickAwayListener
                     onClickAway={() => {
@@ -86,7 +87,7 @@ function MapComponent() {
                     }}
                   >
                     <div>
-                      <h4>{activeEvent.properties.title}</h4>
+                      <h3>{activeEvent.properties.title}</h3>
                       <p>{activeEvent.properties.description}</p>
                       <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
                       <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
