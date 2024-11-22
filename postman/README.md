@@ -1,856 +1,583 @@
 # API Testing with Postman
 
-This directory contains Postman collections and environments for testing the V52 Tier3 Team 34 API.
+This directory contains Postman collections and environments for testing the V52 Tier3 Team 34 Live Music Finder API. The collection is designed to align with our [official API documentation](../docs/API_DOCUMENTATION.md).
 
 ## Files Structure
 
 ```
 postman/
-├── v52-tier3-team-34.postman_collection.json  # API endpoints collection
-├── local.postman_environment.json             # Local environment variables
-├── production.postman_environment.json        # Production environment variables
-└── README.md                                  # This file
+├── v52-tier3-team-34_v3.postman_collection.json  # Main API collection
+├── local.postman_environment.json                # Local environment variables
+├── production.postman_environment.json           # Production environment variables
+└── README.md                                     # This file
 ```
+
+## Getting Started
+
+1. Install [Postman](https://www.postman.com/downloads/)
+2. Import the collection file: `v52-tier3-team-34_v3.postman_collection.json`
+3. Import both environment files:
+   - `local.postman_environment.json` for local testing
+   - `production.postman_environment.json` for production testing
+4. Select the appropriate environment in Postman (top-right corner)
 
 ## Environment Setup
 
 The API can be tested in two environments:
 
 ### 1. Local Environment
-
+- Base URL: `http://localhost:3000/api/v1`
+- For local development and testing
+- Requires running the API server locally
 - File: `local.postman_environment.json`
-- Base URL: `http://localhost:3000`
-- Use for local development and testing
 
 ### 2. Production Environment
-
+- Base URL: `https://v52-tier3-team-34.onrender.com/api/v1`
+- For testing the deployed API
 - File: `production.postman_environment.json`
-- Base URL: `https://v52-tier3-team-34.onrender.com`
-- Use for testing the deployed API
 
-### Switching Environments
+## Environment Variables
 
-1. In Postman, look for the environment dropdown in the top right corner
-2. Select either "Local Environment" or "Production Environment"
-3. All requests will automatically use the selected environment's baseUrl
+Both environments include these variables:
+- `baseUrl`: The base URL for the API
+- `userId`: Default user ID for testing (1)
+- `venueId`: Default venue ID for testing (1)
+- `eventId`: Default event ID for testing (1)
+- `apiVersion`: API version (v1)
 
-### Environment Variables
+## Cross-Cutting Concerns
 
-Current variables:
+### Request/Response Format
+All endpoints follow these conventions:
 
-- `baseUrl`: Base URL for all API requests
-  - Local: `http://localhost:3000`
-  - Production: `https://v52-tier3-team-34.onrender.com`
+1. **Success Response Format**
+```json
+{
+  "status": "success",
+  "data": {
+    // Response data here
+  },
+  "meta": {
+    // Metadata like pagination
+  }
+}
+```
 
-## Setup Instructions
+2. **Error Response Format**
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "ERROR_CODE",
+    "message": "Human readable error message",
+    "details": {
+      // Additional error context
+    }
+  },
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
 
-### 1. Install Postman
+### Common Query Parameters
+Available on all GET list endpoints:
 
-- Download and install [Postman](https://www.postman.com/downloads/)
-- Create a free account if you don't have one
+1. **Pagination**
+```
+?page=1&limit=10
+?page=2&limit=20
+?page=1&limit=50
+```
 
-### 2. Import Collection and Environment
+2. **Sorting**
+```
+# Single field sorting
+?sort=name:asc
+?sort=createdAt:desc
+?sort=startDate:asc
 
-#### Method 1: Using Postman UI
+# Multiple field sorting
+?sort=status:asc,createdAt:desc
+?sort=name:asc,id:desc
+```
 
-1. Open Postman
-2. Click "Import" button (top left)
-3. Drag and drop both JSON files:
-   - `v52-tier3-team-34.postman_collection.json`
-   - `local.postman_environment.json`
+3. **Field Selection**
+```
+# Basic fields
+?fields=id,name,email
 
-#### Method 2: Using Files
+# Nested fields
+?fields=id,name,contact.phone,coordinates
 
-1. Open Postman
-2. Click "Import" button
-3. Click "Upload Files"
-4. Select both JSON files from the postman directory
+# Combined with includes
+?fields=id,name,venues.name,venues.address
+```
 
-### 3. Select Environment
+4. **Include Related Resources**
+```
+# Single include
+?include=venues
+?include=events
+?include=user
 
-1. Look for the environment dropdown in the top right corner
-2. Select "Local Environment"
-3. Verify the environment variables:
-   - `baseUrl` should be set to `http://localhost:3000`
+# Multiple includes
+?include=venues,events
+?include=venue,user
+```
+
+### URL Parameter Examples
+
+#### Users API Examples
+
+1. **List Users with Various Filters**
+```
+# Paginated list with includes
+GET /users?page=1&limit=10&include=venues
+
+# Sorted list with specific fields
+GET /users?sort=name:asc&fields=id,name,email
+
+# Combined parameters
+GET /users?page=1&limit=20&sort=createdAt:desc&fields=id,name&include=venues
+
+# Complex query
+GET /users?page=1&limit=10&sort=name:asc,createdAt:desc&fields=id,name,email&include=venues
+```
+
+2. **Get User with Different Includes**
+```
+# Get user with venues
+GET /users/1?include=venues
+
+# Get user with specific venue fields
+GET /users/1?include=venues&fields=id,name,venues.name,venues.address
+```
+
+#### Venues API Examples
+
+1. **List Venues with Filters**
+```
+# Basic pagination
+GET /venues?page=1&limit=10
+
+# Include related data
+GET /venues?include=events,user
+
+# Sort by multiple fields
+GET /venues?sort=name:asc,createdAt:desc
+
+# Filter specific fields with includes
+GET /venues?fields=id,name,address&include=events&page=1&limit=20
+
+# Complex query
+GET /venues?page=1&limit=10&sort=name:asc&fields=id,name,address,contact&include=events,user
+```
+
+2. **Get Venue with Various Options**
+```
+# Get venue with events
+GET /venues/1?include=events
+
+# Get venue with events and user
+GET /venues/1?include=events,user
+
+# Get venue with specific fields and includes
+GET /venues/1?fields=id,name,address,events.title&include=events
+```
+
+#### Events API Examples
+
+1. **List Events with Filters**
+```
+# Filter by status
+GET /events?status=published
+
+# Filter by status with pagination
+GET /events?status=published&page=1&limit=20
+
+# Sort by date with venue include
+GET /events?sort=startDate:asc&include=venue
+
+# Complex filtering
+GET /events?status=published&sort=startDate:asc&include=venue&fields=id,title,startDate,venue.name
+
+# Advanced query
+GET /events?page=1&limit=10&status=published&sort=startDate:asc,title:asc&fields=id,title,startDate&include=venue
+```
+
+2. **Get Event with Options**
+```
+# Get event with venue
+GET /events/1?include=venue
+
+# Get specific event fields
+GET /events/1?fields=id,title,description,startDate,venue.name&include=venue
+```
+
+### Common Combined Examples
+
+1. **Venue Events List**
+```
+# Get venue with upcoming events
+GET /venues/1?include=events&sort=events.startDate:asc
+
+# Get venue with published events
+GET /venues/1?include=events&fields=id,name,events.title,events.startDate&sort=events.startDate:asc
+```
+
+2. **User Venues with Events**
+```
+# Get user with venues and their events
+GET /users/1?include=venues.events
+
+# Get user with venues and published events
+GET /users/1?include=venues.events&fields=id,name,venues.name,venues.events.title
+```
+
+3. **Complex Queries**
+```
+# Paginated venues with events and user info
+GET /venues?page=1&limit=10&include=events,user&fields=id,name,events.title,user.name&sort=name:asc
+
+# Events with venue and sorting
+GET /events?status=published&include=venue&fields=id,title,startDate,venue.name&sort=startDate:asc&page=1&limit=20
+```
+
+### Common HTTP Status Codes
+- 200: Success
+- 201: Created
+- 400: Bad Request
+- 404: Not Found
+- 500: Server Error
 
 ## Available Endpoints
 
-### Health Check
+### 1. Health Check
 
-- **Endpoint**: GET `/api/health`
-- **Purpose**: Verify API server is running
-- **Expected Response**:
-  ```json
-  {
-    "status": "success",
-    "message": "Server is running",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
+#### GET /health
+Check API health status.
 
-### Users
-
-#### List Users
-
-- **Endpoint**: GET `/api/users`
-- **Query Parameters**:
-  - page: number (optional, default: 1)
-  - limit: number (optional, default: 10, max: 100)
-  - orderBy: string (optional, values: 'name', 'email', 'createdAt')
-  - order: string (optional, values: 'asc', 'desc')
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": [
-      {
-        "id": 1,
-        "email": "john.dev@example.com",
-        "name": "John Developer",
-        "profileImage": "https://example.com/avatars/john.jpg",
-        "createdAt": "2024-03-11T10:30:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 2,
-      "totalItems": 10,
-      "itemsPerPage": 5,
-      "hasNextPage": true,
-      "hasPreviousPage": false
-    },
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-#### Get User by ID
-
-- **Endpoint**: GET `/api/users/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "email": "john.dev@example.com",
-      "name": "John Developer",
-      "profileImage": "https://example.com/avatars/john.jpg",
-      "createdAt": "2024-03-11T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "User not found",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-#### Create User
-
-- **Endpoint**: POST `/api/users`
-- **Request Body**:
-  ```json
-  {
-    "email": "new.user@example.com",
-    "name": "New User",
-    "googleId": "google_new_123",
-    "profileImage": "https://example.com/avatars/new.jpg" // optional
-  }
-  ```
-- **Success Response** (201):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 11,
-      "email": "new.user@example.com",
-      "name": "New User",
-      "profileImage": "https://example.com/avatars/new.jpg",
-      "createdAt": "2024-03-11T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-- **Error Response** (400):
-  ```json
-  {
-    "status": "error",
-    "message": "User with this email already exists",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-#### Update User
-
-- **Endpoint**: PATCH `/api/users/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Request Body** (all fields optional):
-  ```json
-  {
-    "email": "updated.email@example.com",
-    "name": "Updated Name",
-    "googleId": "new_google_id",
-    "profileImage": "https://example.com/avatars/updated.jpg"
-  }
-  ```
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "email": "updated.email@example.com",
-      "name": "Updated Name",
-      "profileImage": "https://example.com/avatars/updated.jpg",
-      "createdAt": "2024-03-11T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "User not found",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-#### Replace User
-
-- **Endpoint**: PUT `/api/users/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Request Body** (all fields required):
-  ```json
-  {
-    "email": "replaced.user@example.com",
-    "name": "Replaced User",
-    "googleId": "google_replaced_123",
-    "profileImage": "https://example.com/avatars/replaced.jpg" // optional
-  }
-  ```
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "email": "replaced.user@example.com",
-      "name": "Replaced User",
-      "profileImage": "https://example.com/avatars/replaced.jpg",
-      "createdAt": "2024-03-11T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "User not found",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-#### Delete User
-
-- **Endpoint**: DELETE `/api/users/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "message": "User deleted successfully",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "User not found",
-    "timestamp": "2024-03-11T10:30:00.000Z"
-  }
-  ```
-
-### Events
-
-#### List Events
-
-- **Endpoint**: GET `/api/events`
-- **Query Parameters**:
-  - page: number (optional, default: 1)
-  - limit: number (optional, default: 10, max: 100)
-  - status: string (optional, values: 'draft', 'published', 'cancelled')
-  - orderBy: string (optional, values: 'startDate', 'title', 'createdAt')
-  - order: string (optional, values: 'asc', 'desc')
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": [
-      {
-        "id": 1,
-        "title": "Jazz Night at Blue Note",
-        "description": "Live jazz quartet performing classic standards...",
-        "startDate": "2024-03-25T19:00:00.000Z",
-        "endDate": "2024-03-25T23:00:00.000Z",
-        "location": "Blue Note Bar & Restaurant",
-        "status": "published",
-        "createdAt": "2024-03-12T10:00:00.000Z",
-        "updatedAt": "2024-03-12T10:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 1,
-      "totalItems": 4,
-      "itemsPerPage": 10,
-      "hasNextPage": false,
-      "hasPreviousPage": false
-    },
-    "timestamp": "2024-03-12T10:00:00.000Z"
-  }
-  ```
-
-#### Get Event by ID
-
-- **Endpoint**: GET `/api/events/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "title": "Jazz Night at Blue Note",
-      "description": "Live jazz quartet performing classic standards...",
-      "startDate": "2024-03-25T19:00:00.000Z",
-      "endDate": "2024-03-25T23:00:00.000Z",
-      "location": "Blue Note Bar & Restaurant",
-      "status": "published",
-      "createdAt": "2024-03-12T10:00:00.000Z",
-      "updatedAt": "2024-03-12T10:00:00.000Z"
-    },
-    "timestamp": "2024-03-12T10:00:00.000Z"
-  }
-  ```
-
-#### Create Event
-
-- **Endpoint**: POST `/api/events`
-- **Request Body**:
-  ```json
-  {
-    "title": "New Jazz Night",
-    "description": "Live jazz performance",
-    "startDate": "2024-04-01T19:00:00Z",
-    "endDate": "2024-04-01T23:00:00Z",
-    "status": "published",
-    "venueId": 1
-  }
-  ```
-- **Success Response** (201):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "title": "New Jazz Night",
-      "description": "Live jazz performance",
-      "startDate": "2024-04-01T19:00:00.000Z",
-      "endDate": "2024-04-01T23:00:00.000Z",
-      "status": "published",
-      "venueId": 1,
-      "venue": {
-        "id": 1,
-        "name": "Blue Note Jazz Club",
-        "address": "131 W 3rd St, New York, NY 10012",
-        "coordinates": {
-          "lat": 40.730483,
-          "lng": -74.000339
-        }
-      },
-      "createdAt": "2024-03-20T10:00:00.000Z",
-      "updatedAt": "2024-03-20T10:00:00.000Z"
-    },
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-#### Update Event
-
-- **Endpoint**: PATCH `/api/events/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Request Body** (all fields optional):
-  ```json
-  {
-    "title": "Updated Event Title",
-    "status": "published"
-  }
-  ```
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "title": "Updated Event Title",
-      "description": "Original description...",
-      "startDate": "2024-03-25T19:00:00.000Z",
-      "endDate": "2024-03-25T23:00:00.000Z",
-      "location": "Original location",
-      "status": "published",
-      "createdAt": "2024-03-12T10:00:00.000Z",
-      "updatedAt": "2024-03-12T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-12T10:30:00.000Z"
-  }
-  ```
-
-#### Replace Event
-
-- **Endpoint**: PUT `/api/events/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Request Body** (all fields required):
-  ```json
-  {
-    "title": "Replaced Event",
-    "description": "New description",
-    "startDate": "2024-04-01T10:00:00Z",
-    "endDate": "2024-04-01T12:00:00Z",
-    "location": "New Location",
-    "status": "published"
-  }
-  ```
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "id": 1,
-      "title": "Replaced Event",
-      "description": "New description",
-      "startDate": "2024-04-01T10:00:00.000Z",
-      "endDate": "2024-04-01T12:00:00.000Z",
-      "location": "New Location",
-      "status": "published",
-      "createdAt": "2024-03-12T10:00:00.000Z",
-      "updatedAt": "2024-03-12T10:30:00.000Z"
-    },
-    "timestamp": "2024-03-12T10:30:00.000Z"
-  }
-  ```
-
-#### Delete Event
-
-- **Endpoint**: DELETE `/api/events/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "message": "Event deleted successfully",
-    "timestamp": "2024-03-12T10:30:00.000Z"
-  }
-  ```
-
-#### Get Event GeoJSON
-- **Endpoint**: GET `/api/events/:id/geojson`
-- **Parameters**: 
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-74.000339, 40.730483]  // [longitude, latitude]
-      },
-      "properties": {
-        "id": 1,
-        "title": "Jazz Night at Blue Note",
-        "description": "Live jazz quartet performing classic standards...",
-        "startDate": "2024-03-25T19:00:00.000Z",
-        "endDate": "2024-03-25T23:00:00.000Z",
-        "status": "published",
-        "venue": {
-          "id": 1,
-          "name": "Blue Note Jazz Club",
-          "address": "131 W 3rd St, New York, NY 10012"
-        },
-        "createdAt": "2024-03-20T10:00:00.000Z",
-        "updatedAt": "2024-03-20T10:00:00.000Z"
-      }
-    },
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "Event not found",
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-#### Get Events in Zone
-- **Endpoint**: GET `/api/events/zone`
-- **Query Parameters**: 
-  - lat: number (required, -90 to 90) - Latitude of search center
-  - lng: number (required, -180 to 180) - Longitude of search center
-  - radius: number (required, max 50) - Search radius in kilometers
-  - startDate: string (optional) - Filter events starting after this time
-  - status: string (optional, 'draft'|'published'|'cancelled') - Filter by event status
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "type": "FeatureCollection",
-      "features": [
-        {
-          "type": "Feature",
-          "geometry": {
-            "type": "Point",
-            "coordinates": [-0.082448, 51.527817]  // [longitude, latitude]
-          },
-          "properties": {
-            "id": 2,
-            "title": "Acoustic Sessions",
-            "description": "Local singer-songwriters showcase...",
-            "startDate": "2024-03-28T20:00:00.000Z",
-            "endDate": "2024-03-29T00:00:00.000Z",
-            "status": "published",
-            "distance": 2.8,  // Distance in kilometers from search center
-            "venue": {
-              "id": 2,
-              "name": "The Basement Bar",
-              "address": "42 Hoxton Square, London N1 6PB"
-            },
-            "createdAt": "2024-03-20T10:00:00.000Z",
-            "updatedAt": "2024-03-20T10:00:00.000Z"
-          }
-        }
-      ],
-      "center": {
-        "type": "Point",
-        "coordinates": [-0.118, 51.509]  // Search center [longitude, latitude]
-      },
-      "radius": 5  // Search radius in kilometers
-    },
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-- **Error Response** (400):
-  ```json
-  {
-    "status": "error",
-    "message": "Invalid coordinates or radius",
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-### Venues
-
-#### List Venues
-
-- **Endpoint**: GET `/api/venues`
-- **Query Parameters**:
-  - page: number (optional, default: 1)
-  - limit: number (optional, default: 10, max: 100)
-  - orderBy: string (optional, values: 'name', 'createdAt')
-  - order: string (optional, values: 'asc', 'desc')
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": [
-      {
-        "id": 1,
-        "name": "Blue Note Jazz Club",
-        "description": "Historic jazz venue featuring nightly live performances...",
-        "address": "131 W 3rd St, New York, NY 10012",
-        "contact": {
-          "phone": "+1-212-475-8592",
-          "email": "info@bluenote.net",
-          "website": "https://www.bluenotejazz.com"
-        },
-        "images": [
-          "https://example.com/venues/bluenote1.jpg",
-          "https://example.com/venues/bluenote2.jpg"
-        ],
-        "createdAt": "2024-03-20T10:00:00.000Z",
-        "updatedAt": "2024-03-20T10:00:00.000Z"
-      }
-    ],
-    "pagination": {
-      "currentPage": 1,
-      "totalPages": 1,
-      "totalItems": 3,
-      "itemsPerPage": 10,
-      "hasNextPage": false,
-      "hasPreviousPage": false
-    },
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-#### Get Venue by ID
-
-- **Endpoint**: GET `/api/venues/:id`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200): Same structure as single venue in list response
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "Venue not found",
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-#### Create Venue
-
-- **Endpoint**: POST `/api/venues`
-- **Request Body**:
-  ```json
-  {
-    "name": "New Venue",
-    "description": "Venue description",
-    "address": "Venue address",
-    "contact": {
-      "phone": "+1-555-0123",
-      "email": "contact@venue.com",
-      "website": "https://www.venue.com"
-    },
-    "coordinates": {
-      "lat": 51.509865,
-      "lng": -0.118092
-    },
-    "images": ["https://example.com/venue1.jpg"]
-  }
-  ```
-- **Success Response** (201): Same structure as Get Venue response
-
-#### Update Venue
-
-- **Endpoint**: PATCH `/api/venues/:id`
-- **Parameters**: id (number)
-- **Request Body** (all fields optional): Same structure as Create
-- **Success Response** (200): Same structure as Get Venue response
-
-#### Replace Venue
-
-- **Endpoint**: PUT `/api/venues/:id`
-- **Parameters**: id (number)
-- **Request Body** (all fields required): Same structure as Create
-- **Success Response** (200): Same structure as Get Venue response
-
-#### Delete Venue
-
-- **Endpoint**: DELETE `/api/venues/:id`
-- **Parameters**: id (number)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "message": "Venue deleted successfully",
-    "timestamp": "2024-03-20T10:00:00.000Z"
-  }
-  ```
-
-#### Response Format
-
-Venues can be returned in two formats:
-
-1. **Standard Format**:
-
+**Response Example:**
 ```json
 {
-  "id": 1,
-  "name": "Blue Note Jazz Club",
-  "coordinates": {
-    "lat": 40.730483,
-    "lng": -74.000339
+  "status": "success",
+  "data": {
+    "status": "healthy",
+    "timestamp": "2024-01-01T00:00:00.000Z"
   }
-  // ... other fields
 }
 ```
 
-2. **GeoJSON Format** (for map integration):
+### 2. Users API
 
+#### GET /users
+List all users.
+
+**Query Parameters:**
+- `include`: Related resources to include (venues)
+- `page`, `limit`: Pagination
+- `sort`: Sort field and direction
+- `fields`: Field selection
+
+**Response Example:**
 ```json
 {
-  "type": "Feature",
-  "geometry": {
-    "type": "Point",
-    "coordinates": [-74.000339, 40.730483] // [longitude, latitude]
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "email": "user@example.com",
+      "name": "John Doe",
+      "profileImage": "https://example.com/image.jpg",
+      "createdAt": "2024-01-01T00:00:00.000Z"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+}
+```
+
+#### GET /users/:id
+Get user by ID.
+
+**Query Parameters:**
+- `include`: Related resources to include (venues)
+
+**Response:** Same as list but single object.
+
+#### POST /users
+Create new user.
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "name": "John Doe",
+  "profileImage": "https://example.com/image.jpg"
+}
+```
+
+**Response:** Returns created user with 201 status.
+
+#### PATCH /users/:id
+Update user fields.
+
+**Request Body:**
+```json
+{
+  "name": "Updated Name"
+}
+```
+
+**Response:** Returns updated user.
+
+#### PUT /users/:id
+Replace entire user.
+
+**Request Body:**
+```json
+{
+  "email": "user@example.com",
+  "name": "John Doe",
+  "profileImage": "https://example.com/image.jpg"
+}
+```
+
+**Response:** Returns replaced user.
+
+#### DELETE /users/:id
+Delete user.
+
+**Response:** 200 status with success message.
+
+### 3. Venues API
+
+#### GET /venues
+List all venues.
+
+**Query Parameters:**
+- `include`: Related resources (events, user)
+- `page`, `limit`: Pagination
+- `sort`: Sort field and direction
+- `fields`: Field selection
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "name": "Venue Name",
+      "description": "Venue Description",
+      "address": "123 Main St",
+      "contact": {
+        "phone": "123-456-7890"
+      },
+      "coordinates": {
+        "lat": 40.7128,
+        "lng": -74.0060
+      }
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
+  }
+}
+```
+
+#### GET /venues/:id
+Get venue by ID.
+
+**Query Parameters:**
+- `include`: Related resources (events, user)
+
+**Response:** Same as list but single object.
+
+#### POST /venues
+Create new venue.
+
+**Request Body:**
+```json
+{
+  "name": "Venue Name",
+  "description": "Venue Description",
+  "address": "123 Main St",
+  "contact": {
+    "phone": "123-456-7890"
   },
-  "properties": {
-    "id": 1,
-    "name": "Blue Note Jazz Club"
-    // ... other venue properties
+  "coordinates": {
+    "lat": 40.7128,
+    "lng": -74.0060
   }
 }
 ```
 
-#### Get Venue GeoJSON
+**Response:** Returns created venue with 201 status.
 
-- **Endpoint**: GET `/api/venues/:id/geojson`
-- **Parameters**:
-  - id: number (positive integer)
-- **Success Response** (200):
-  ```json
-  {
-    "status": "success",
-    "data": {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [-74.000339, 40.730483] // [longitude, latitude]
-      },
-      "properties": {
-        "id": 1,
-        "name": "Blue Note Jazz Club",
-        "description": "Historic jazz venue featuring nightly live performances...",
-        "address": "131 W 3rd St, New York, NY 10012",
-        "contact": {
-          "phone": "+1-212-475-8592",
-          "email": "info@bluenote.net",
-          "website": "https://www.bluenotejazz.com"
-        },
-        "images": [
-          "https://example.com/venues/bluenote1.jpg",
-          "https://example.com/venues/bluenote2.jpg"
-        ],
-        "createdAt": "2024-03-20T10:00:00.000Z",
-        "updatedAt": "2024-03-20T10:00:00.000Z"
-      }
-    },
-    "timestamp": "2024-03-20T10:00:00.000Z"
+#### PATCH /venues/:id
+Update venue fields.
+
+**Request Body:**
+```json
+{
+  "name": "Updated Venue Name",
+  "contact": {
+    "phone": "987-654-3210"
   }
-  ```
-- **Error Response** (404):
-  ```json
-  {
-    "status": "error",
-    "message": "Venue not found",
-    "timestamp": "2024-03-20T10:00:00.000Z"
+}
+```
+
+**Response:** Returns updated venue.
+
+#### PUT /venues/:id
+Replace entire venue.
+
+**Request Body:** Same as POST.
+
+**Response:** Returns replaced venue.
+
+#### DELETE /venues/:id
+Delete venue.
+
+**Response:** 200 status with success message.
+
+### 4. Events API
+
+#### GET /events
+List all events.
+
+**Query Parameters:**
+- `include`: Related resources (venue)
+- `page`, `limit`: Pagination
+- `sort`: Sort field and direction
+- `fields`: Field selection
+- `status`: Filter by status (draft, published, cancelled)
+
+**Response Example:**
+```json
+{
+  "status": "success",
+  "data": [
+    {
+      "id": 1,
+      "title": "Event Title",
+      "description": "Event Description",
+      "startDate": "2024-12-01T19:00:00.000Z",
+      "endDate": "2024-12-01T23:00:00.000Z",
+      "status": "published"
+    }
+  ],
+  "meta": {
+    "pagination": {
+      "page": 1,
+      "limit": 10,
+      "total": 100,
+      "totalPages": 10
+    }
   }
-  ```
+}
+```
 
-## Testing Instructions
+#### GET /events/:id
+Get event by ID.
 
-### Basic Request Testing
+**Query Parameters:**
+- `include`: Related resources (venue)
 
-1. Expand the "Health" folder in the collection
-2. Click on "Health Check"
-3. Click "Send" to make the request
-4. Verify the response matches the expected format
+**Response:** Same as list but single object.
 
-### Environment Variables
+#### POST /events
+Create new event.
 
-- The collection uses `{{baseUrl}}` variable
-- This is automatically replaced with `http://localhost:3000` in local environment
-- To test against different environments, update the URL in environment settings
+**Request Body:**
+```json
+{
+  "title": "Event Title",
+  "description": "Event Description",
+  "startDate": "2024-12-01T19:00:00.000Z",
+  "endDate": "2024-12-01T23:00:00.000Z",
+  "status": "draft",
+  "venueId": 1
+}
+```
 
-### Running All Tests
+**Response:** Returns created event with 201 status.
 
-1. Click on the collection name
-2. Click the "Run" button
-3. In the Collection Runner:
-   - Select which requests to run
-   - Set the iteration count
-   - Click "Run" button
+#### PATCH /events/:id
+Update event fields.
 
-## Troubleshooting
+**Request Body:**
+```json
+{
+  "title": "Updated Event Title",
+  "status": "published"
+}
+```
 
-### Common Issues
+**Response:** Returns updated event.
+
+#### PUT /events/:id
+Replace entire event.
+
+**Request Body:** Same as POST.
+
+**Response:** Returns replaced event.
+
+#### DELETE /events/:id
+Delete event.
+
+**Response:** 200 status with success message.
+
+## Testing Tips
+
+1. **Environment Selection**
+   - Always verify the correct environment is selected before testing
+   - Check the environment indicator in Postman's top-right corner
+
+2. **Request Flow Testing**
+   Recommended testing sequence:
+   1. Create a new resource (POST)
+   2. Retrieve it (GET)
+   3. Update it (PATCH/PUT)
+   4. Delete it (DELETE)
+   5. Verify deletion (GET)
+
+3. **Include Parameter Testing**
+   - Test endpoints with and without includes
+   - Verify nested resource data is correct
+
+4. **Pagination Testing**
+   - Test different page sizes
+   - Verify total counts and pagination metadata
+   - Test edge cases (page=0, negative limits)
+
+## Common Issues and Solutions
 
 1. **Cannot connect to server**
+   - Verify the API server is running (for local environment)
+   - Check your internet connection
+   - Verify the environment URL is correct
 
-   - Verify the API server is running
-   - Check if port 3000 is available
-   - Verify no firewall is blocking the connection
+2. **Authentication Issues**
+   - Authentication will be implemented in future versions
+   - Currently, all endpoints are publicly accessible
 
-2. **Environment variables not working**
+3. **Invalid Includes**
+   - Check the API documentation for valid include parameters
+   - Verify the spelling of included resources
 
-   - Ensure the environment is selected
-   - Check if variables are correctly defined
-   - Try reloading Postman
+## Additional Resources
 
-3. **Invalid responses**
-   - Verify server is running in the correct mode
-   - Check console for any server errors
-   - Verify request headers and body format
-
-### Getting Help
-
-If you encounter issues:
-
-1. Check the server logs
-2. Verify your local environment setup
-3. Contact the development team
-4. Create an issue in the project repository
-
-## Contributing
-
-### Adding New Endpoints
-
-1. Open the collection in Postman
-2. Right-click on the collection or folder
-3. Select "Add Request"
-4. Configure the request:
-   - Set method (GET, POST, etc.)
-   - Add path using `{{baseUrl}}`
-   - Configure headers and body
-   - Add description and examples
-
-### Best Practices
-
-1. **Naming Conventions**
-
-   - Use clear, descriptive names for requests
-   - Group related requests in folders
-   - Include HTTP method in request name
-
-2. **Documentation**
-
-   - Add descriptions to requests
-   - Include example responses
-   - Document required headers/body
-
-3. **Testing**
-   - Test all possible responses
-   - Include error cases
-   - Verify against API specifications
-
-## Future Endpoints
-
-As new API endpoints are developed, they will be added to this collection in their respective categories:
-
-- Authentication
-- Users
-- Events
-- Venues
-- etc.
-
-Check the collection regularly for updates!
+- [Official API Documentation](../docs/API_DOCUMENTATION.md)
+- [Postman Learning Center](https://learning.postman.com/docs/getting-started/introduction/)
