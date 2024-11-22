@@ -1,0 +1,440 @@
+{
+  "info": {
+    "name": "V52 Tier3 Team 34 API",
+    "description": "Complete collection for testing the V52 Tier3 Team 34 REST API endpoints, including all available endpoints and examples",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "health"]
+            },
+            "description": "Check if the API server is running"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/health"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "message": "Server is running",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints with various query examples",
+      "item": [
+        {
+          "name": "List Users - Basic",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "description": "Get a list of all users"
+          }
+        },
+        {
+          "name": "List Users - With Pagination",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Get paginated list of users"
+          }
+        },
+        {
+          "name": "List Users - Sorted by Name",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?sort=name:asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "name:asc"
+                }
+              ]
+            },
+            "description": "Get users sorted by name ascending"
+          }
+        },
+        {
+          "name": "List Users - With Venues Include",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?include=venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "venues"
+                }
+              ]
+            },
+            "description": "Get users with their associated venues"
+          }
+        },
+        {
+          "name": "List Users - Complex Query",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users?page=1&limit=20&sort=name:asc,createdAt:desc&fields=id,name,email&include=venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name:asc,createdAt:desc"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,name,email"
+                },
+                {
+                  "key": "include",
+                  "value": "venues"
+                }
+              ]
+            },
+            "description": "Get users with multiple query parameters"
+          }
+        },
+        {
+          "name": "Get User - Basic",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            },
+            "description": "Get a single user by ID"
+          }
+        },
+        {
+          "name": "Get User - With Venues",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}?include=venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "venues"
+                }
+              ]
+            },
+            "description": "Get a user with their venues"
+          }
+        },
+        {
+          "name": "Get User - With Selected Fields",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}?fields=id,name,email,venues.name&include=venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"],
+              "query": [
+                {
+                  "key": "fields",
+                  "value": "id,name,email,venues.name"
+                },
+                {
+                  "key": "include",
+                  "value": "venues"
+                }
+              ]
+            },
+            "description": "Get a user with specific fields and venue names"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Venues",
+      "description": "Venue management endpoints with various query examples",
+      "item": [
+        {
+          "name": "List Venues - Basic",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues"]
+            },
+            "description": "Get all venues"
+          }
+        },
+        {
+          "name": "List Venues - With Events",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues?include=events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "events"
+                }
+              ]
+            },
+            "description": "Get venues with their events"
+          }
+        },
+        {
+          "name": "List Venues - With Events and User",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues?include=events,user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "events,user"
+                }
+              ]
+            },
+            "description": "Get venues with their events and owner"
+          }
+        },
+        {
+          "name": "List Venues - Complex Query",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues?page=1&limit=20&sort=name:asc&fields=id,name,address,events.title&include=events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                },
+                {
+                  "key": "sort",
+                  "value": "name:asc"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,name,address,events.title"
+                },
+                {
+                  "key": "include",
+                  "value": "events"
+                }
+              ]
+            },
+            "description": "Get venues with multiple query parameters"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Events",
+      "description": "Event management endpoints with various query examples",
+      "item": [
+        {
+          "name": "List Events - Basic",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"]
+            },
+            "description": "Get all events"
+          }
+        },
+        {
+          "name": "List Events - Published Only",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?status=published",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "published"
+                }
+              ]
+            },
+            "description": "Get only published events"
+          }
+        },
+        {
+          "name": "List Events - With Venue",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?include=venue",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "venue"
+                }
+              ]
+            },
+            "description": "Get events with their venue information"
+          }
+        },
+        {
+          "name": "List Events - Sorted by Date",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?sort=startDate:asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "startDate:asc"
+                }
+              ]
+            },
+            "description": "Get events sorted by start date"
+          }
+        },
+        {
+          "name": "List Events - Complex Query",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events?status=published&sort=startDate:asc&fields=id,title,startDate,venue.name&include=venue&page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "published"
+                },
+                {
+                  "key": "sort",
+                  "value": "startDate:asc"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,title,startDate,venue.name"
+                },
+                {
+                  "key": "include",
+                  "value": "venue"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Get published events with venue info, sorted by date"
+          }
+        },
+        {
+          "name": "Get Event - With Venue Details",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}?include=venue&fields=id,title,description,startDate,venue.name,venue.address",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "{{eventId}}"],
+              "query": [
+                {
+                  "key": "include",
+                  "value": "venue"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,title,description,startDate,venue.name,venue.address"
+                }
+              ]
+            },
+            "description": "Get event with specific venue details"
+          }
+        }
+      ]
+    }
+  ]
+}
