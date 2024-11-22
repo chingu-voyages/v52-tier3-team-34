@@ -1,8 +1,8 @@
-import { createFileRoute, useSearch } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { useZones } from '../../hooks/useZones';
-import { ZoneResponse, ZoneFeature } from '../../types/zones';
+import { ZoneResponse, ZoneFeature, Event, Venue } from '../../types/zones';
 import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import type { ViewState } from '@vis.gl/react-maplibre';
 import { Link } from '@tanstack/react-router';
 import 'maplibre-gl/dist/maplibre-gl.css';
@@ -19,9 +19,9 @@ export const Route = createFileRoute('/map')({
 
 function MapComponent() {
   const searchParams = Route.useSearch();
+  const mapRef = useRef<MapRef | null>(null);
 
   const { data, isLoading, error, isError } = useZones(searchParams.lat, searchParams.lng, searchParams.radius);
-  const mapRef = useRef<MapRef | null>(null);
 
   const [viewState, setViewState] = useState<ViewState>({
     longitude: searchParams.lng, //default cetre
@@ -32,12 +32,13 @@ function MapComponent() {
     padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
   });
 
+  const [activeEvent, setActiveEvent] = useState<ZoneFeature | null>(null);
+
   if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
   const zoneResponse = data as ZoneResponse;
   const features: ZoneFeature[] = zoneResponse.data.features || [];
-  const center = zoneResponse.data.center.coordinates;
 
   return (
     <div className="p-2 min-h-screen">
@@ -50,13 +51,56 @@ function MapComponent() {
       >
         <NavigationControl />
         <GeolocateControl />
-        {features.map((feature) => (
-          <Marker
-            key={feature.properties.id}
-            longitude={feature.geometry.coordinates[0]}
-            latitude={feature.geometry.coordinates[1]}
-          />
-        ))}
+        {features.map((feature) => {
+          return (
+            <div key={`marker-wrapper-${feature.properties.id}`}>
+              <Marker
+                key={feature.properties.id}
+                longitude={feature.geometry.coordinates[0]}
+                latitude={feature.geometry.coordinates[1]}
+                onClick={() => {
+                  console.log('Marker clicked:', feature); // Logs the feature data
+                  setActiveEvent(feature);
+                }}
+                // anchor="bottom"
+                style={{ cursor: 'pointer' }}
+              ></Marker>
+              {activeEvent ? (
+                <Popup
+                  key={activeEvent.properties.id}
+                  longitude={activeEvent.geometry.coordinates[0]}
+                  latitude={activeEvent.geometry.coordinates[1]}
+                  anchor="bottom"
+                  offset={[0, 1]}
+                  style={{ zIndex: 1000 }}
+                  onClose={() => {
+                    console.log('Popup closed for:', activeEvent); // Logs when the popup is closed
+                    setActiveEvent(null);
+                  }}
+                  closeOnClick={false}
+                >
+                  {(() => {
+                    // Log the coordinates being passed to the Popup
+                    console.log(
+                      'Popup coordinates:',
+                      activeEvent.geometry.coordinates[0],
+                      activeEvent.geometry.coordinates[1]
+                    );
+                    console.log('Rendering popup content:', activeEvent);
+                    return (
+                      <div>
+                        <h4>{activeEvent.properties.title}</h4>
+                        <p>{activeEvent.properties.description}</p>
+                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
+                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
+                      </div>
+                    );
+                  })()}
+                </Popup>
+              ) : null}
+            </div>
+          );
+        })}
       </Map>
       <Link to="/" className="mt-4 text-blue-500 underline">
         View List
