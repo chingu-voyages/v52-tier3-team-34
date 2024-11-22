@@ -36,22 +36,64 @@ export class EventService {
   }
 
   static async findAll(query: EventQuery) {
-    const { page = 1, limit = 10, status, orderBy, order } = query;
+    const { page = 1, limit = 10, sort, fields, include, filter } = query;
     const skip = (page - 1) * limit;
 
-    const where = status ? { status } : {};
+    // Parse sort parameter
+    let orderBy: Prisma.EventOrderByWithRelationInput | undefined;
+    if (sort) {
+      const [field, direction] = sort.split(':');
+      if (direction && !['asc', 'desc'].includes(direction.toLowerCase())) {
+        throw new Error("Sort direction must be either 'asc' or 'desc'");
+      }
+      orderBy = { [field]: direction.toLowerCase() };
+    }
+
+    // Build where clause from filter
+    const where = filter ? 
+      Object.entries(filter).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}) :
+      {};
+
+    // Build query options
+    const queryOptions: Prisma.EventFindManyArgs = {
+      skip,
+      take: limit,
+      where,
+      orderBy,
+    };
+
+    // Handle field selection
+    const select = fields
+      ? Object.fromEntries(fields.split(',').map(field => [field.trim(), true]))
+      : {
+          id: true,
+          title: true,
+          description: true,
+          startDate: true,
+          endDate: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+        };
+
+    // Handle includes/expansions
+    if (include) {
+      const includes = Object.fromEntries(
+        include.split(',').map(relation => [relation.trim(), true])
+      );
+      
+      // Merge select and include
+      queryOptions.select = {
+        ...select,
+        ...includes
+      };
+    } else {
+      queryOptions.select = select;
+    }
 
     const [events, total] = await Promise.all([
-      prisma.event.findMany({
-        where,
-        skip,
-        take: limit,
-        orderBy: orderBy ? { [orderBy]: order || 'asc' } : undefined,
-        include: {
-          venue: true
-        }
-      }),
-      prisma.event.count({ where }),
+      prisma.event.findMany(queryOptions),
+      prisma.event.count({ where })
     ]);
 
     return {
@@ -64,6 +106,15 @@ export class EventService {
         hasNextPage: skip + events.length < total,
         hasPreviousPage: page > 1,
       },
+      meta: {
+        filters: filter || {},
+        sort: sort ? {
+          field: sort.split(':')[0],
+          direction: sort.split(':')[1].toLowerCase() as 'asc' | 'desc'
+        } : undefined,
+        fields: fields?.split(',').map(f => f.trim()),
+        includes: include?.split(',').map(i => i.trim()) || []
+      }
     };
   }
 
@@ -202,4 +253,4 @@ export class EventService {
 
     return eventsInZone;
   }
-} 
+}

@@ -6,10 +6,14 @@ import venueRouter from './venue.routes';
 
 const router = Router();
 
-// Mount routes
-router.use('/health', healthRouter);
-router.use('/users', userRouter);
-router.use('/events', eventRouter);
-router.use('/venues', venueRouter);
+// Mount v1 routes
+const v1Router = Router();
+router.use('/v1', v1Router);
 
-export default router; 
+// Mount resource routes under v1
+v1Router.use('/health', healthRouter);
+v1Router.use('/users', userRouter);
+v1Router.use('/events', eventRouter);
+v1Router.use('/venues', venueRouter);
+
+export default router;

@@ -19,6 +19,8 @@ export interface ApiResponse<T> {
             field: string;
             direction: 'asc' | 'desc';
         };
+        fields?: string[];       // Selected fields
+        includes?: string[];     // Included relationships
     };
     timestamp: string;  // ISO 8601 format
 }
