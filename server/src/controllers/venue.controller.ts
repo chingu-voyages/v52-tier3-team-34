@@ -21,7 +21,8 @@ export class VenueController {
   static async getById(req: Request<VenueParams>, res: Response) {
     try {
       const id = Number(req.params.id);
-      const venue = await VenueService.findById(id);
+      const include = req.query.include as string;
+      const venue = await VenueService.findById(id, include);
 
       const response: ApiResponse<VenueWithUser> = {
         status: "success",

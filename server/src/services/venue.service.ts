@@ -3,18 +3,30 @@ import { VenueInput, VenueUpdateInput, VenueQuery } from "../types/venue.types";
 import { Prisma } from "@prisma/client";
 
 export class VenueService {
-  static async findById(id: number) {
-    const venue = await prisma.venue.findUnique({
-      where: { id },
-      include: {
-        user: {
+  static async findById(id: number, include?: string) {
+    const includeOptions: Prisma.VenueInclude = {};
+    
+    if (include) {
+      const relations = include.split(',').map(i => i.trim());
+      if (relations.includes('events')) {
+        includeOptions.events = true;
+      }
+      if (relations.includes('user')) {
+        includeOptions.user = {
           select: {
             id: true,
+            email: true,
             name: true,
-            email: true
+            profileImage: true,
+            createdAt: true
           }
-        }
+        };
       }
+    }
+
+    const venue = await prisma.venue.findUnique({
+      where: { id },
+      include: Object.keys(includeOptions).length > 0 ? includeOptions : undefined
     });
 
     if (!venue) {
