@@ -73,7 +73,7 @@ export class UserController {
         timestamp: new Date().toISOString()
       };
 
-      res.status(500).json(response);
+      res.status(400).json(response);
     }
   }
 

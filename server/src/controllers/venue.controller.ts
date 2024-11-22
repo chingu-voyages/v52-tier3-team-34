@@ -63,7 +63,11 @@ export class VenueController {
             totalPages: result.pagination.totalPages,
             hasNext: result.pagination.hasNextPage,
             hasPrevious: result.pagination.hasPreviousPage
-          }
+          },
+          filters: result.meta.filters,
+          sort: result.meta.sort,
+          fields: result.meta.fields,
+          includes: result.meta.includes
         },
         timestamp: new Date().toISOString()
       };
@@ -75,12 +79,12 @@ export class VenueController {
         error: {
           code: "VENUE_LIST_ERROR",
           message: error instanceof Error ? error.message : "Failed to retrieve venues",
-          details: req.query
+          details: { query: req.query }
         },
         timestamp: new Date().toISOString()
       };
 
-      res.status(500).json(response);
+      res.status(400).json(response);
     }
   }
 
@@ -98,7 +102,7 @@ export class VenueController {
       const response: ApiErrorResponse = {
         status: "error",
         error: {
-          code: "FAILED_TO_CREATE_VENUE",
+          code: "VENUE_CREATE_ERROR",
           message: error instanceof Error ? error.message : "Failed to create venue",
           details: { ...req.body }
         },
@@ -248,7 +252,7 @@ export class VenueController {
 
       const statusCode = error instanceof Error && error.message === "Venue not found"
         ? 404
-        : 500;
+        : 400;
       res.status(statusCode).json(response);
     }
   }

@@ -63,7 +63,11 @@ export class EventController {
             totalPages: result.pagination.totalPages,
             hasNext: result.pagination.hasNextPage,
             hasPrevious: result.pagination.hasPreviousPage
-          }
+          },
+          filters: result.meta.filters,
+          sort: result.meta.sort,
+          fields: result.meta.fields,
+          includes: result.meta.includes || []
         },
         timestamp: new Date().toISOString(),
       };
@@ -80,7 +84,7 @@ export class EventController {
         timestamp: new Date().toISOString()
       };
 
-      res.status(500).json(response);
+      res.status(400).json(response);
     }
   }
 
@@ -256,7 +260,7 @@ export class EventController {
 
       const statusCode = error instanceof Error && error.message === "Event not found"
         ? 404
-        : 500;
+        : 400;
       res.status(statusCode).json(response);
     }
   }
