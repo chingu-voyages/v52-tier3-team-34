@@ -7,6 +7,7 @@ import type { ViewState } from '@vis.gl/react-maplibre';
 import { Link } from '@tanstack/react-router';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { z } from 'zod';
+import ClickAwayListener from 'react-click-away-listener';
 
 export const Route = createFileRoute('/map')({
   validateSearch: z.object({
@@ -79,23 +80,18 @@ function MapComponent() {
                   }}
                   closeOnClick={false}
                 >
-                  {(() => {
-                    // Log the coordinates being passed to the Popup
-                    console.log(
-                      'Popup coordinates:',
-                      activeEvent.geometry.coordinates[0],
-                      activeEvent.geometry.coordinates[1]
-                    );
-                    console.log('Rendering popup content:', activeEvent);
-                    return (
-                      <div>
-                        <h4>{activeEvent.properties.title}</h4>
-                        <p>{activeEvent.properties.description}</p>
-                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
-                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
-                      </div>
-                    );
-                  })()}
+                  <ClickAwayListener
+                    onClickAway={() => {
+                      setActiveEvent(null);
+                    }}
+                  >
+                    <div>
+                      <h4>{activeEvent.properties.title}</h4>
+                      <p>{activeEvent.properties.description}</p>
+                      <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
+                      <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
+                    </div>
+                  </ClickAwayListener>
                 </Popup>
               ) : null}
             </div>
