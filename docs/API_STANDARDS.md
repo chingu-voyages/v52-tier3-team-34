@@ -1,43 +1,8 @@
 # API Standards Documentation
 
-## Response Structure
+## Overview
 
-### Standard Response Format
-```typescript
-{
-  status: 'success' | 'error',
-  data: T,                    // Direct resource (T[] for lists, T for single)
-  meta?: {                    // Optional metadata
-    pagination?: {
-      page: number,
-      limit: number,
-      total: number,
-      totalPages: number,
-      hasNext: boolean,
-      hasPrevious: boolean
-    },
-    filters?: Record<string, any>,  // Applied filters
-    sort?: {
-      field: string,
-      direction: 'asc' | 'desc'
-    }
-  },
-  timestamp: string           // ISO 8601 format
-}
-```
-
-### Error Response Format
-```typescript
-{
-  status: 'error',
-  error: {
-    code: string,        // e.g., 'RESOURCE_NOT_FOUND'
-    message: string,     // User-friendly message
-    details?: any        // Additional error context
-  },
-  timestamp: string
-}
-```
+This document defines the standard patterns and conventions for our REST API. All resources must follow these standards to ensure consistency across the API.
 
 ## URL Structure
 
@@ -46,8 +11,6 @@ All endpoints must include version prefix:
 ```
 /api/v1/[resource]
 ```
-
-## API Endpoints
 
 ### Resource Endpoints
 - List: `GET /api/v1/[resource]`
@@ -70,7 +33,52 @@ POST /api/v1/auth/google
 GET  /api/v1/auth/google/callback
 ```
 
+## Response Structure
+
+### Standard Success Response
+```typescript
+{
+  status: 'success',
+  data: T,                    // Direct resource (T[] for lists, T for single)
+  meta?: {                    // Optional metadata
+    pagination?: {
+      page: number,          // Current page number
+      limit: number,         // Items per page
+      total: number,         // Total items available
+      totalPages: number,    // Total number of pages
+      hasNext: boolean,      // More pages after this one?
+      hasPrevious: boolean   // Pages before this one?
+    },
+    filters?: Record<string, any>,  // Applied filters
+    sort?: {
+      field: string,         // Field being sorted
+      direction: 'asc' | 'desc'  // Sort direction
+    },
+    fields?: string[],       // Fields selected
+    includes?: string[]      // Relationships included
+  },
+  timestamp: string          // ISO 8601 format
+}
+```
+
+### Standard Error Response
+```typescript
+{
+  status: 'error',
+  error: {
+    code: string,        // e.g., 'RESOURCE_NOT_FOUND'
+    message: string,     // User-friendly message
+    details?: any        // Additional error context
+  },
+  timestamp: string      // ISO 8601 format
+}
+```
+
 ## Query Parameters
+
+All query parameters are optional. When omitted, default behaviors are applied.
+
+### Parameter Formats
 
 #### Pagination
 ```
@@ -97,56 +105,129 @@ GET  /api/v1/auth/google/callback
 ?include=venue,organizer
 ```
 
-## Resource Schemas
+### Default Behaviors
 
-### User Resource
-```typescript
-interface User {
-  id: string;
-  email: string;
-  name: string;
-  // OAuth-ready fields (optional)
-  authProvider?: 'local' | 'google';  // extensible for more providers
-  providerId?: string;                // stores OAuth provider IDs
-  // ... other user fields
+#### Pagination
+- Default page: 1
+- Default limit: 10
+- Example: `?page=1&limit=20`
+
+#### Field Selection
+- When `fields` parameter is omitted, returns all default fields for the resource
+- Example: `?fields=id,name,description`
+
+#### Includes/Expansions
+- When `include` parameter is omitted, no relationships are expanded
+- Can be used together with field selection
+- Example: `?include=related1,related2&fields=id,name`
+
+#### Sorting
+- When `sort` parameter is omitted, uses resource's default sorting
+- Format: `field:direction` (e.g., `name:asc`)
+- Example: `?sort=createdAt:desc`
+
+#### Filtering
+- When `filter` parameter is omitted, no filters are applied
+- Format: `filter[field]=value`
+- Example: `?filter[status]=active&filter[type]=featured`
+
+### Combining Parameters
+
+All query parameters can be combined to create complex queries:
+
+```
+/api/v1/events?fields=id,name&include=venue&sort=date:desc&filter[type]=concert&page=1&limit=10
+```
+
+## HTTP Status Codes
+
+### Success Codes
+- `200 OK`: Successful request
+- `201 Created`: Resource successfully created
+- `204 No Content`: Successful request with no response body (e.g., DELETE)
+
+### Client Error Codes
+- `400 Bad Request`: Invalid request format or parameters
+- `401 Unauthorized`: Authentication required
+- `403 Forbidden`: Authenticated but not authorized
+- `404 Not Found`: Resource not found
+- `422 Unprocessable Entity`: Validation errors
+- `429 Too Many Requests`: Rate limit exceeded
+
+### Server Error Codes
+- `500 Internal Server Error`: Unexpected server error
+- `503 Service Unavailable`: Service temporarily unavailable
+
+## Rate Limiting
+
+To ensure fair usage and protect our API, rate limiting will be implemented:
+
+### Headers
+The following headers will be included in all responses:
+```
+X-RateLimit-Limit: 100         # Requests allowed per window
+X-RateLimit-Remaining: 99      # Requests remaining in current window
+X-RateLimit-Reset: 1640995200  # Unix timestamp when the limit resets
+```
+
+### Limits
+- Default: 100 requests per minute per API key
+- Bulk endpoints: 20 requests per minute per API key
+
+### When Limited
+If you exceed the rate limit, you'll receive:
+- Status code: `429 Too Many Requests`
+- Error response with retry guidance
+```json
+{
+  "status": "error",
+  "error": {
+    "code": "RATE_LIMIT_EXCEEDED",
+    "message": "Too many requests. Please try again in 30 seconds.",
+    "details": {
+      "retryAfter": 30,
+      "limit": 100,
+      "windowSize": "1 minute"
+    }
+  },
+  "timestamp": "2024-01-20T12:00:00Z"
 }
 ```
 
 ## Implementation Phases
 
-### Phase 1: Base Response Structure
+### Phase 1: Base Response Structure 
 - [x] Direct resource access in data field
 - [x] Consistent success/error responses
 - [x] Timestamp field
-- [x] Versioned endpoints
+- [x] Versioned endpoints  (Completed Nov 2024)
 
-### Phase 2: Metadata & Pagination
+### Phase 2: Metadata & Pagination 
 - [x] Pagination metadata
-- [ ] Filter metadata
-- [ ] Sort metadata
-- [x] OAuth-ready User schema
+- [x] Filter metadata
+- [x] Sort metadata
+- [x] Field selection
+- [x] Relationship expansion
 
-### Phase 3: Advanced Features
-- [ ] Field selection
-- [ ] Relationship expansion
+### Phase 3: Advanced Features 
 - [ ] Advanced filtering
-- [ ] Google authentication
-- [ ] Multi-environment testing
+- [ ] Multi-field sorting
+- [ ] Nested includes
+- [ ] Field validation
+- [ ] Rate limiting
 
-### Phase 4: Performance & Security
-- [ ] Rate limiting headers
+### Phase 4: Performance & Security 
 - [ ] Caching (ETag)
 - [ ] CORS configuration
 - [ ] Advanced error tracking
-
-## Benefits
-- Alignment with major API providers (GitHub, Stripe, Digital Ocean)
-- Resource-agnostic structure
-- Clean metadata separation
-- Scalable for future additions
-- Consistent client experience
+- [ ] API metrics
 
 ## Examples
+
+### List Request with All Parameters
+```http
+GET /api/v1/events?fields=id,name,date&include=venue,organizer&sort=date:desc&filter[type]=concert&page=2&limit=20
+```
 
 ### Success Response (List)
 ```json
@@ -155,39 +236,45 @@ interface User {
   "data": [
     {
       "id": 1,
-      "name": "Example Resource",
-      "description": "Description here"
+      "name": "Summer Concert",
+      "date": "2024-07-15T19:00:00Z"
     }
   ],
   "meta": {
     "pagination": {
-      "page": 1,
+      "page": 2,
       "limit": 20,
       "total": 50,
       "totalPages": 3,
       "hasNext": true,
-      "hasPrevious": false
-    }
+      "hasPrevious": true
+    },
+    "filters": {
+      "type": "concert"
+    },
+    "sort": {
+      "field": "date",
+      "direction": "desc"
+    },
+    "fields": ["id", "name", "date"],
+    "includes": ["venue", "organizer"]
   },
   "timestamp": "2024-01-20T12:00:00Z"
 }
 ```
 
-### Error Response
+### Error Response Example
 ```json
 {
   "status": "error",
   "error": {
-    "code": "RESOURCE_NOT_FOUND",
-    "message": "The requested resource was not found",
+    "code": "INVALID_QUERY_PARAMETER",
+    "message": "Invalid sort direction. Must be 'asc' or 'desc'",
     "details": {
-      "resourceId": "123",
-      "resourceType": "event"
+      "parameter": "sort",
+      "value": "date:invalid",
+      "allowedValues": ["asc", "desc"]
     }
   },
   "timestamp": "2024-01-20T12:00:00Z"
 }
-```
-
-## Current Status
-Currently implementing Phase 1, aligning Events and Venues APIs with the standard response structure. Future phases will be implemented incrementally to maintain backward compatibility while improving API consistency.

@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 
 // Mount all routes under /api
+// Example: /api/users, /api/events, /api/venues
 app.use("/api", router);
 
 // Error handling middleware should be last
@@ -20,4 +21,5 @@ app.use(errorHandler);
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
+  console.log(`API endpoints available at: http://localhost:${port}/api/`);
 });

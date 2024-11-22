@@ -24,13 +24,27 @@ export const EventUpdateSchema = EventSchema.partial();
 
 // Schema for query parameters
 export const EventQuerySchema = z.object({
+  // Pagination (optional)
   page: z.coerce.number().positive().optional(),
   limit: z.coerce.number().min(1).max(100).optional(),
-  status: z
-    .enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
+  
+  // Sorting (optional) - format: field:direction (e.g., startDate:asc)
+  sort: z.string()
+    .regex(/^[\w]+:(asc|desc)$/, "Sort must be in format: field:direction")
     .optional(),
-  orderBy: z.enum(["startDate", "title", "createdAt"]).optional(),
-  order: z.enum(["asc", "desc"]).optional(),
+  
+  // Field selection (optional)
+  fields: z.string()
+    .regex(/^[\w]+(,[\w]+)*$/, "Fields must be comma-separated field names")
+    .optional(),
+  
+  // Includes/expansions (optional)
+  include: z.string()
+    .regex(/^[\w]+(,[\w]+)*$/, "Include must be comma-separated relation names")
+    .optional(),
+  
+  // Filtering (optional)
+  filter: z.record(z.string()).optional(),
 });
 
 // Schema for URL parameters

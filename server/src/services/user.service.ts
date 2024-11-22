@@ -48,29 +48,62 @@ export class UserService {
   }
 
   static async findAll(query: UserQuery) {
-    const page = query.page || 1;
-    const limit = query.limit || 10;
+    const { page = 1, limit = 10, sort, fields, include, filter } = query;
     const skip = (page - 1) * limit;
 
-    // Get total count for pagination
-    const total = await prisma.user.count();
+    // Parse sort parameter
+    let orderBy: Prisma.UserOrderByWithRelationInput | undefined;
+    if (sort) {
+      const [field, direction] = sort.split(':');
+      if (direction && !['asc', 'desc'].includes(direction.toLowerCase())) {
+        throw new Error("Sort direction must be either 'asc' or 'desc'");
+      }
+      orderBy = { [field]: direction.toLowerCase() };
+    }
 
-    const users = await prisma.user.findMany({
+    // Build where clause from filter
+    const where = filter ? 
+      Object.entries(filter).reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}) :
+      {};
+
+    // Build query options
+    const queryOptions: Prisma.UserFindManyArgs = {
       skip,
       take: limit,
-      orderBy: query.orderBy
-        ? {
-            [query.orderBy]: query.order || "asc",
-          }
-        : undefined,
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        profileImage: true,
-        createdAt: true,
-      },
-    });
+      where,
+      orderBy,
+    };
+
+    // Handle field selection
+    const select = fields
+      ? Object.fromEntries(fields.split(',').map(field => [field.trim(), true]))
+      : {
+          id: true,
+          email: true,
+          name: true,
+          profileImage: true,
+          createdAt: true,
+        };
+
+    // Handle includes/expansions
+    if (include) {
+      const includes = Object.fromEntries(
+        include.split(',').map(relation => [relation.trim(), true])
+      );
+      
+      // Merge select and include
+      queryOptions.select = {
+        ...select,
+        ...includes
+      };
+    } else {
+      queryOptions.select = select;
+    }
+
+    const [users, total] = await Promise.all([
+      prisma.user.findMany(queryOptions),
+      prisma.user.count({ where })
+    ]);
 
     return {
       users,
@@ -82,6 +115,15 @@ export class UserService {
         hasNextPage: skip + users.length < total,
         hasPreviousPage: page > 1,
       },
+      meta: {
+        filters: filter || {},
+        sort: sort ? {
+          field: sort.split(':')[0],
+          direction: sort.split(':')[1] as 'asc' | 'desc'
+        } : undefined,
+        fields: fields?.split(',').map(f => f.trim()),
+        includes: include?.split(',').map(i => i.trim()) || []
+      }
     };
   }
 
