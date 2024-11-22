@@ -73,7 +73,6 @@ function MapComponent() {
                   latitude={activeEvent.geometry.coordinates[1]}
                   anchor="bottom"
                   offset={[0, 1]}
-                  style={{ zIndex: 1000 }}
                   onClose={() => {
                     console.log('Popup closed for:', activeEvent); // Logs when the popup is closed
                     setActiveEvent(null);
@@ -86,11 +85,13 @@ function MapComponent() {
                       setActiveEvent(null);
                     }}
                   >
-                    <div>
-                      <h3>{activeEvent.properties.title}</h3>
-                      <p>{activeEvent.properties.description}</p>
-                      <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
-                      <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
+                    <div className="bg-white p-4 max-w-xs">
+                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{activeEvent.properties.title}</h3>
+                      <p className="text-sm text-gray-700 mb-4">{activeEvent.properties.description}</p>
+                      <div className="text-sm text-gray-500">
+                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
+                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
+                      </div>
                     </div>
                   </ClickAwayListener>
                 </Popup>
