@@ -39,17 +39,38 @@
 }
 ```
 
+## URL Structure
+
+### Versioning
+All endpoints must include version prefix:
+```
+/api/v1/[resource]
+```
+
 ## API Endpoints
 
 ### Resource Endpoints
-- List: `GET /api/[resource]`
-- Single: `GET /api/[resource]/:id`
-- Create: `POST /api/[resource]`
-- Update: `PATCH /api/[resource]/:id`
-- Replace: `PUT /api/[resource]/:id`
-- Delete: `DELETE /api/[resource]/:id`
+- List: `GET /api/v1/[resource]`
+- Single: `GET /api/v1/[resource]/:id`
+- Create: `POST /api/v1/[resource]`
+- Update: `PATCH /api/v1/[resource]/:id`
+- Replace: `PUT /api/v1/[resource]/:id`
+- Delete: `DELETE /api/v1/[resource]/:id`
 
-### Query Parameters
+### Authentication Endpoints
+Authentication endpoints follow a separate structure:
+```
+POST /api/v1/auth/[provider]           # Initiate auth flow
+GET  /api/v1/auth/[provider]/callback  # OAuth callback
+```
+
+Example for Google OAuth:
+```
+POST /api/v1/auth/google
+GET  /api/v1/auth/google/callback
+```
+
+## Query Parameters
 
 #### Pagination
 ```
@@ -76,22 +97,47 @@
 ?include=venue,organizer
 ```
 
+## Resource Schemas
+
+### User Resource
+```typescript
+interface User {
+  id: string;
+  email: string;
+  name: string;
+  // OAuth-ready fields (optional)
+  authProvider?: 'local' | 'google';  // extensible for more providers
+  providerId?: string;                // stores OAuth provider IDs
+  // ... other user fields
+}
+```
+
 ## Implementation Phases
 
 ### Phase 1: Base Response Structure
 - [x] Direct resource access in data field
-- [ ] Consistent success/error responses
-- [ ] Timestamp field
+- [x] Consistent success/error responses
+- [x] Timestamp field
+- [x] Versioned endpoints
 
 ### Phase 2: Metadata & Pagination
-- [ ] Pagination metadata
+- [x] Pagination metadata
 - [ ] Filter metadata
 - [ ] Sort metadata
+- [x] OAuth-ready User schema
 
 ### Phase 3: Advanced Features
 - [ ] Field selection
 - [ ] Relationship expansion
 - [ ] Advanced filtering
+- [ ] Google authentication
+- [ ] Multi-environment testing
+
+### Phase 4: Performance & Security
+- [ ] Rate limiting headers
+- [ ] Caching (ETag)
+- [ ] CORS configuration
+- [ ] Advanced error tracking
 
 ## Benefits
 - Alignment with major API providers (GitHub, Stripe, Digital Ocean)
