@@ -28,7 +28,16 @@ export class UserService {
     return user;
   }
 
-  static async findById(id: number) {
+  static async findById(id: number, include?: string) {
+    const includeOptions: Prisma.UserInclude = {};
+    
+    if (include) {
+      const relations = include.split(',').map(i => i.trim());
+      if (relations.includes('venues')) {
+        includeOptions.venues = true;
+      }
+    }
+
     const user = await prisma.user.findUnique({
       where: { id },
       select: {
@@ -37,6 +46,7 @@ export class UserService {
         name: true,
         profileImage: true,
         createdAt: true,
+        ...(Object.keys(includeOptions).length > 0 ? includeOptions : {})
       },
     });
 

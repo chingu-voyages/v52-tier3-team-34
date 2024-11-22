@@ -13,7 +13,8 @@ export class UserController {
   static async getById(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const user: UserResponse = await UserService.findById(id);
+      const include = req.query.include as string;
+      const user: UserResponse = await UserService.findById(id, include);
 
       const response: ApiResponse<UserResponse> = {
         status: "success",
