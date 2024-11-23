@@ -13,6 +13,8 @@ export type EnvironmentConfig = {
         endpoints: {
             venues: string;
             events: string;
+            eventsGeoJSON: string;
+            health: string;  // Health check endpoint
             // Add more endpoints as needed
         };
     };
@@ -27,15 +29,17 @@ export type EnvironmentConfig = {
  */
 const defaultConfig: EnvironmentConfig = {
     api: {
-        baseUrl: 'http://localhost:3000/api',
+        baseUrl: process.env.API_BASE_URL || 'http://localhost:3000',
         endpoints: {
-            venues: '/venues',
-            events: '/events'
+            venues: '/api/v1/venues',
+            events: '/api/v1/events',
+            eventsGeoJSON: '/api/v1/events/geojson',
+            health: '/api/v1/health'
         }
     },
     timeouts: {
         default: 5000,
-        long: 30000
+        long: 15000
     }
 };
 

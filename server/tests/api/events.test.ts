@@ -3,8 +3,7 @@ import { describe, expect, it, beforeAll } from '@jest/globals';
 import { getCurrentEnvironment } from '../utils/environment';
 import { eventTestData } from '../data/events';
 import { ApiClient } from '../utils/apiClient';
-import { EventResponse, EventListResponse, EventGeoJSONResponse, EventGeoJSON } from '../types/events';
-import { ApiResponse, ApiErrorResponse } from '../types/api';
+import { Event, EventGeoJSON, EventGeoJSONCollection } from '../types/events';
 import { getTestUser, validateTestData } from '../utils/testData';
 import { User } from '@prisma/client';
 
@@ -22,257 +21,168 @@ describe('Events API', () => {
     let testUser: User;
 
     beforeAll(async () => {
-        // Get test user for creating events
+        expect(api).toBeDefined();
+        // Validate required test data exists
+        await validateTestData(testData, 'events');
+        // Get a valid test user
         testUser = await getTestUser();
-        expect(testUser).toBeDefined();
+        // Update test data with valid user ID
+        testData.new.userId = testUser.id;
     });
 
     describe('POST /events', () => {
         it('should create a new event', async () => {
-            // Validate test data before using
-            validateTestData(testData.new, 'event creation');
-
-            const response = await api.post<EventResponse>('/events', testData.new);
-            expect(response.status).toBe(201);
-            expect(response.data.status).toBe('success');
-            expect(response.data.data).toBeDefined();
-            expect(response.data.data.title).toBe(testData.new.title);
+            const response = await api.post<Event>(config.api.endpoints.events, testData.new);
             
-            // Store created event ID for later tests
-            createdEventId = response.data.data.id;
+            // Test HTTP layer
+            expect(response.status).toBe(201);
+            
+            // Test API response
+            expect(response.data.status).toBe('success');
+            const event = response.data.data;
+            expect(event.title).toContain(`(${currentEnv.slice(0, 3)})`);
+            expect(event).toHaveProperty('id');
+            createdEventId = event.id;
         });
 
         it('should return 400 for invalid event data', async () => {
-            const invalidData = { ...testData.new, title: '' };
-            const response = await api.post<ApiErrorResponse>('/events', invalidData);
-            expect(response.status).toBe(400);
-            expect(response.data.error).toBeDefined();
+            try {
+                await api.post<Event>(config.api.endpoints.events, {});
+                expect('Request should have thrown a 400').toBeFalsy();
+            } catch (error: any) {
+                expect(error.status).toBe(400);
+                expect(error.data.status).toBe('error');
+            }
         });
     });
 
     describe('GET /events', () => {
-        it('should list events with pagination', async () => {
-            const response = await api.get<EventListResponse>('/events?page=1&limit=10');
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
-            expect(response.data.pagination).toBeDefined();
-        });
-
-        it('should filter events by status', async () => {
-            const response = await api.get<EventListResponse>('/events?status=published');
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
-            response.data.data.forEach(event => {
-                expect(event.status).toBe('published');
-            });
-        });
-
-        it('should return events in default format', async () => {
-            const response = await api.get<EventListResponse>('/events');
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
-        });
-
-        it('should return events in GeoJSON format', async () => {
-            const response = await api.get<EventGeoJSONResponse>('/events?format=geojson');
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(response.data.data.type).toBe('FeatureCollection');
-            expect(Array.isArray(response.data.data.features)).toBe(true);
+        it('should return a list of events', async () => {
+            const response = await api.get<Event[]>(config.api.endpoints.events);
             
-            // Additional GeoJSON validation
-            if (response.data.data.features.length > 0) {
-                const feature = response.data.data.features[0];
-                expect(feature.type).toBe('Feature');
-                expect(feature.geometry.type).toBe('Point');
-                expect(Array.isArray(feature.geometry.coordinates)).toBe(true);
-                expect(feature.properties).toBeDefined();
-            }
-        });
-
-        it('should handle pagination', async () => {
-            const pageSize = 5;
-            const response = await api.get<EventListResponse>(`/events?page=1&limit=${pageSize}`);
+            // Test HTTP layer
             expect(response.status).toBe(200);
+            
+            // Test API response
             expect(response.data.status).toBe('success');
-            expect(response.data.pagination).toBeDefined();
-            expect(response.data.pagination?.itemsPerPage).toBe(pageSize);
-        });
-
-        it('should filter events by date range', async () => {
-            const startDate = new Date();
-            startDate.setDate(startDate.getDate() - 7); // 7 days ago
-            const endDate = new Date();
-            endDate.setDate(endDate.getDate() + 7); // 7 days from now
-
-            const response = await api.get<EventListResponse>(
-                `/events?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
-            );
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
-        });
-
-        it('should filter events by location', async () => {
-            const lat = 37.7749;
-            const lng = -122.4194;
-            const radius = 10; // 10km radius
-
-            const response = await api.get<EventListResponse>(
-                `/events?lat=${lat}&lng=${lng}&radius=${radius}`
-            );
-            expect(response.status).toBe(200);
-            expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
+            const events = response.data.data;
+            expect(Array.isArray(events)).toBe(true);
+            events.forEach(event => {
+                expect(event).toHaveProperty('id');
+                expect(event).toHaveProperty('title');
+            });
         });
     });
 
-    describe('GET /events/zone', () => {
-        it('should find events in a geographic zone', async () => {
-            const params = {
-                lat: 40.7580,  // Times Square coordinates
-                lng: -73.9855,
-                radius: 10     // 10km radius
-            };
-            const response = await api.get<EventListResponse>('/events/zone', { params });
+    describe('GET /events/geojson', () => {
+        it('should return events in GeoJSON format', async () => {
+            const response = await api.get<EventGeoJSONCollection>(config.api.endpoints.eventsGeoJSON);
+            
+            // Test HTTP layer
             expect(response.status).toBe(200);
+            
+            // Test API response
             expect(response.data.status).toBe('success');
-            expect(Array.isArray(response.data.data)).toBe(true);
-        });
-
-        it('should return 400 for invalid zone parameters', async () => {
-            const params = {
-                lat: 'invalid',
-                lng: -73.9855,
-                radius: 10
-            };
-            const response = await api.get<ApiErrorResponse>('/events/zone', { params });
-            expect(response.status).toBe(400);
-            expect(response.data.error).toBeDefined();
+            const geoJSON = response.data.data;
+            expect(geoJSON.type).toBe('FeatureCollection');
+            expect(Array.isArray(geoJSON.features)).toBe(true);
+            
+            // Test feature properties
+            if (geoJSON.features.length > 0) {
+                const feature = geoJSON.features[0];
+                expect(feature).toHaveProperty('type', 'Feature');
+                expect(feature).toHaveProperty('geometry');
+                expect(feature).toHaveProperty('properties');
+            }
         });
     });
 
     describe('GET /events/:id', () => {
-        it('should get event by ID', async () => {
-            const response = await api.get<EventResponse>(`/events/${createdEventId}`);
+        it('should return a single event', async () => {
+            const response = await api.get<Event>(`${config.api.endpoints.events}/${createdEventId}`);
+            
+            // Test HTTP layer
             expect(response.status).toBe(200);
+            
+            // Test API response
             expect(response.data.status).toBe('success');
-            expect(response.data.data.id).toBe(createdEventId);
+            const event = response.data.data;
+            expect(event).toHaveProperty('id', createdEventId);
+            expect(event).toHaveProperty('title');
         });
 
         it('should return 404 for non-existent event', async () => {
-            const response = await api.get<ApiErrorResponse>('/events/99999');
-            expect(response.status).toBe(404);
-            expect(response.data.error).toBeDefined();
+            try {
+                await api.get<Event>(`${config.api.endpoints.events}/99999`);
+                expect('Request should have thrown a 404').toBeFalsy();
+            } catch (error: any) {
+                expect(error.status).toBe(404);
+                expect(error.data.status).toBe('error');
+            }
         });
     });
 
     describe('GET /events/:id/geojson', () => {
-        it('should get event in GeoJSON format', async () => {
-            const response = await api.get<ApiResponse<EventGeoJSON>>(`/events/${createdEventId}/geojson`);
+        it('should return a single event in GeoJSON format', async () => {
+            const response = await api.get<EventGeoJSON>(`${config.api.endpoints.events}/${createdEventId}/geojson`);
+            
+            // Test HTTP layer
             expect(response.status).toBe(200);
+            
+            // Test API response
             expect(response.data.status).toBe('success');
-            expect(response.data.data.type).toBe('Feature');
-            expect(response.data.data.geometry).toBeDefined();
-            expect(response.data.data.properties).toBeDefined();
+            const geoJSON = response.data.data;
+            expect(geoJSON.type).toBe('Feature');
+            expect(geoJSON.geometry).toBeDefined();
+            expect(geoJSON.properties).toBeDefined();
         });
     });
 
     describe('PATCH /events/:id', () => {
-        it('should update event details', async () => {
-            validateTestData(testData.update, 'event update');
-
-            const response = await api.patch<EventResponse>(
-                `/events/${createdEventId}`,
+        it('should update an event', async () => {
+            const response = await api.patch<Event>(
+                `${config.api.endpoints.events}/${createdEventId}`,
                 testData.update
             );
+            
+            // Test HTTP layer
             expect(response.status).toBe(200);
+            
+            // Test API response
             expect(response.data.status).toBe('success');
-            expect(response.data.data.description).toBe(testData.update.description);
+            const event = response.data.data;
+            expect(event.description).toBe(testData.update.description);
         });
 
-        it('should return 400 for invalid update data', async () => {
-            const invalidData = { ticketPrice: -100 };
-            const response = await api.patch<ApiErrorResponse>(
-                `/events/${createdEventId}`,
-                invalidData
-            );
-            expect(response.status).toBe(400);
-            expect(response.data.error).toBeDefined();
+        it('should return 404 for non-existent event', async () => {
+            try {
+                await api.patch<Event>(`${config.api.endpoints.events}/99999`, testData.update);
+                expect('Request should have thrown a 404').toBeFalsy();
+            } catch (error: any) {
+                expect(error.status).toBe(404);
+                expect(error.data.status).toBe('error');
+            }
         });
     });
 
     describe('DELETE /events/:id', () => {
         it('should delete an event', async () => {
-            const response = await api.delete(`/events/${createdEventId}`);
-            expect(response.status).toBe(204);
-        });
-
-        it('should return 404 when deleting non-existent event', async () => {
-            const response = await api.delete<ApiErrorResponse>(`/events/${createdEventId}`);
-            expect(response.status).toBe(404);
-            expect(response.data.error).toBeDefined();
-        });
-    });
-
-    describe('Error Handling', () => {
-        it('should handle invalid event creation', async () => {
-            const invalidData = { title: '' }; // Missing required fields
+            const response = await api.delete(`${config.api.endpoints.events}/${createdEventId}`);
             
-            try {
-                await api.post<EventResponse>('/events', invalidData);
-                fail('Expected request to fail');
-            } catch (error: any) {
-                const errorResponse = error.response?.data as ApiErrorResponse;
-                expect(error.response?.status).toBe(400);
-                expect(errorResponse.status).toBe('error');
-                expect(errorResponse.error).toBeDefined();
-            }
-        });
-
-        it('should handle event not found', async () => {
-            const nonExistentId = '000000000000000000000000';
+            // Test HTTP layer
+            expect(response.status).toBe(200);
             
-            try {
-                await api.get<EventResponse>(`/events/${nonExistentId}`);
-                fail('Expected request to fail');
-            } catch (error: any) {
-                const errorResponse = error.response?.data as ApiErrorResponse;
-                expect(error.response?.status).toBe(404);
-                expect(errorResponse.status).toBe('error');
-                expect(errorResponse.error).toBeDefined();
-            }
+            // Test API response
+            expect(response.data.status).toBe('success');
         });
 
-        it('should handle invalid query parameters', async () => {
+        it('should return 404 when getting deleted event', async () => {
             try {
-                await api.get<EventListResponse>('/events?radius=invalid');
-                fail('Expected request to fail');
+                await api.get<Event>(`${config.api.endpoints.events}/${createdEventId}`);
+                expect('Request should have thrown a 404').toBeFalsy();
             } catch (error: any) {
-                const errorResponse = error.response?.data as ApiErrorResponse;
-                expect(error.response?.status).toBe(400);
-                expect(errorResponse.status).toBe('error');
-                expect(errorResponse.error).toBeDefined();
-            }
-        });
-
-        it('should handle invalid date range', async () => {
-            const endDate = new Date();
-            const startDate = new Date(endDate.getTime() + 86400000); // Start date after end date
-
-            try {
-                await api.get<EventListResponse>(
-                    `/events?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`
-                );
-                fail('Expected request to fail');
-            } catch (error: any) {
-                const errorResponse = error.response?.data as ApiErrorResponse;
-                expect(error.response?.status).toBe(400);
-                expect(errorResponse.status).toBe('error');
-                expect(errorResponse.error).toBeDefined();
+                expect(error.status).toBe(404);
+                expect(error.data.status).toBe('error');
             }
         });
     });

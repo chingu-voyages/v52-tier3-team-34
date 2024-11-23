@@ -12,7 +12,11 @@ export async function startTestServer(): Promise<void> {
         // Start the server directly with node
         const serverPath = path.resolve(__dirname, '../../src/server.ts');
         server = spawn('npx', ['ts-node', serverPath], {
-            env: { ...process.env, NODE_ENV: env },
+            env: { 
+                ...process.env, 
+                NODE_ENV: env,
+                API_PREFIX: '/api/v1'  // Add API prefix to match server configuration
+            },
             stdio: 'inherit',
             shell: true
         });

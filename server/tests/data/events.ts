@@ -8,6 +8,7 @@ type EventTestData = {
         endDate: string;
         status: 'draft' | 'published' | 'cancelled';
         venueId: number;
+        userId?: number;
     };
     update: {
         description: string;
