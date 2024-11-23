@@ -28,183 +28,24 @@ Example:
 GET /venues?page=1&limit=20
 ```
 
-## Endpoints
+## System Endpoints
 
-### Users API
+### GET /health
+Health check endpoint for infrastructure monitoring (load balancers, container orchestrators, etc.).
 
-#### GET /users
-List all users with optional filtering and includes.
-
-**Query Parameters:**
-- `include`: Related resources to include
-  - Available includes: `venues`
-- `page`: Page number
-- `limit`: Items per page
-- `sort`: Sort field and direction (e.g., `name:asc`)
-- `fields`: Comma-separated list of fields to return
-
-**Example Response with Venues Include:**
+**Response:**
 ```json
 {
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "email": "user@example.com",
-      "name": "John Doe",
-      "profileImage": "https://example.com/image.jpg",
-      "createdAt": "2024-01-01T00:00:00.000Z",
-      "venues": [
-        {
-          "id": 1,
-          "name": "Venue Name",
-          "description": "Venue Description",
-          // ... other venue fields
-        }
-      ]
-    }
-  ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 100,
-      "totalPages": 10
-    }
-  }
+  "status": "up"
 }
 ```
 
-#### GET /users/:id
-Get a single user by ID with optional includes.
+**Notes:**
+- Returns HTTP 200 when service is healthy
+- Minimal response format optimized for infrastructure tools
+- No authentication required
 
-**Query Parameters:**
-- `include`: Related resources to include
-  - Available includes: `venues`
-
-**Example Response with Venues Include:**
-```json
-{
-  "status": "success",
-  "data": {
-    "id": 1,
-    "email": "user@example.com",
-    "name": "John Doe",
-    "profileImage": "https://example.com/image.jpg",
-    "createdAt": "2024-01-01T00:00:00.000Z",
-    "venues": [
-      {
-        "id": 1,
-        "name": "Venue Name",
-        "description": "Venue Description",
-        // ... other venue fields
-      }
-    ]
-  }
-}
-```
-
-### Venues API
-
-#### GET /venues
-List all venues with optional filtering and includes.
-
-**Query Parameters:**
-- `include`: Related resources to include
-  - Available includes: `events`, `user`
-- `page`: Page number
-- `limit`: Items per page
-- `sort`: Sort field and direction (e.g., `name:asc`)
-- `fields`: Comma-separated list of fields to return
-
-**Example Response with Events and User Include:**
-```json
-{
-  "status": "success",
-  "data": [
-    {
-      "id": 1,
-      "name": "Venue Name",
-      "description": "Venue Description",
-      "address": "123 Main St",
-      "contact": {
-        "phone": "123-456-7890"
-      },
-      "coordinates": {
-        "lat": 40.7128,
-        "lng": -74.0060
-      },
-      "events": [
-        {
-          "id": 1,
-          "title": "Event Title",
-          "description": "Event Description",
-          "startDate": "2024-12-01T19:00:00.000Z",
-          // ... other event fields
-        }
-      ],
-      "user": {
-        "id": 1,
-        "email": "user@example.com",
-        "name": "John Doe",
-        "profileImage": "https://example.com/image.jpg",
-        "createdAt": "2024-01-01T00:00:00.000Z"
-      }
-    }
-  ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 100,
-      "totalPages": 10
-    }
-  }
-}
-```
-
-#### GET /venues/:id
-Get a single venue by ID with optional includes.
-
-**Query Parameters:**
-- `include`: Related resources to include
-  - Available includes: `events`, `user`
-
-**Example Response with Events and User Include:**
-```json
-{
-  "status": "success",
-  "data": {
-    "id": 1,
-    "name": "Venue Name",
-    "description": "Venue Description",
-    "address": "123 Main St",
-    "contact": {
-      "phone": "123-456-7890"
-    },
-    "coordinates": {
-      "lat": 40.7128,
-      "lng": -74.0060
-    },
-    "events": [
-      {
-        "id": 1,
-        "title": "Event Title",
-        "description": "Event Description",
-        "startDate": "2024-12-01T19:00:00.000Z",
-        // ... other event fields
-      }
-    ],
-    "user": {
-      "id": 1,
-      "email": "user@example.com",
-      "name": "John Doe",
-      "profileImage": "https://example.com/image.jpg",
-      "createdAt": "2024-01-01T00:00:00.000Z"
-    }
-  }
-}
-```
+## Resource Endpoints
 
 ### Events API
 
@@ -212,44 +53,233 @@ Get a single venue by ID with optional includes.
 List all events with optional filtering and includes.
 
 **Query Parameters:**
-- `include`: Related resources to include
-  - Available includes: `venue`
+- `include`: Related resources to include (e.g., venue)
 - `page`: Page number
 - `limit`: Items per page
 - `sort`: Sort field and direction (e.g., `startDate:asc`)
 - `fields`: Comma-separated list of fields to return
-- `status`: Filter by status (`draft`, `published`, `cancelled`)
+- `filter`: Additional filters (implementation-specific)
 
-**Example Response with Venue Include:**
+#### GET /events/zone
+Find events within a geographic zone.
+
+**Query Parameters:**
+- `lat`: Latitude of zone center
+- `lng`: Longitude of zone center
+- `radius`: Search radius in meters
+- `startDate`: Optional filter for events after this date
+- `status`: Optional filter by event status
+
+**Response:**
 ```json
 {
-  "status": "success",
-  "data": [
+  "type": "FeatureCollection",
+  "features": [
     {
-      "id": 1,
-      "title": "Event Title",
-      "description": "Event Description",
-      "startDate": "2024-12-01T19:00:00.000Z",
-      "endDate": "2024-12-01T23:00:00.000Z",
-      "status": "published",
-      "venue": {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [longitude, latitude]
+      },
+      "properties": {
         "id": 1,
-        "name": "Venue Name",
-        "description": "Venue Description",
-        // ... other venue fields
+        "title": "Event Title",
+        "description": "Event Description",
+        "startDate": "2024-01-01T00:00:00Z",
+        "endDate": "2024-01-02T00:00:00Z",
+        "status": "published",
+        "venue": {
+          "id": 1,
+          "name": "Venue Name",
+          "address": "Venue Address"
+        }
       }
     }
   ],
-  "meta": {
-    "pagination": {
-      "page": 1,
-      "limit": 10,
-      "total": 100,
-      "totalPages": 10
-    }
-  }
+  "center": {
+    "type": "Point",
+    "coordinates": [longitude, latitude]
+  },
+  "radius": 1000
 }
 ```
+
+#### GET /events/:id
+Get a single event by ID.
+
+**Path Parameters:**
+- `id`: Event ID
+
+#### GET /events/:id/geojson
+Get event details in GeoJSON format.
+
+**Path Parameters:**
+- `id`: Event ID
+
+#### POST /events
+Create a new event.
+
+**Request Body:**
+```json
+{
+  "title": "string",
+  "description": "string",
+  "startDate": "ISO 8601 datetime",
+  "endDate": "ISO 8601 datetime",
+  "status": "draft|published|cancelled",
+  "venueId": "number"
+}
+```
+
+#### PATCH /events/:id
+Update specific fields of an event.
+
+**Path Parameters:**
+- `id`: Event ID
+
+**Request Body:**
+Same fields as POST, all optional
+
+#### PUT /events/:id
+Replace an entire event.
+
+**Path Parameters:**
+- `id`: Event ID
+
+**Request Body:**
+Same as POST, all fields required
+
+#### DELETE /events/:id
+Delete an event.
+
+**Path Parameters:**
+- `id`: Event ID
+
+### Venues API
+
+#### GET /venues
+List all venues with optional filtering and includes.
+
+**Query Parameters:**
+- `include`: Related resources to include (e.g., events, user)
+- `page`: Page number
+- `limit`: Items per page
+- `sort`: Sort field and direction (e.g., `name:asc`)
+- `fields`: Comma-separated list of fields to return
+
+#### GET /venues/:id
+Get a single venue by ID.
+
+**Path Parameters:**
+- `id`: Venue ID
+
+#### GET /venues/:id/geojson
+Get venue details in GeoJSON format.
+
+**Path Parameters:**
+- `id`: Venue ID
+
+#### POST /venues
+Create a new venue.
+
+**Request Body:**
+```json
+{
+  "name": "string",
+  "description": "string",
+  "address": "string",
+  "contact": {
+    "phone": "string (optional)",
+    "email": "string (optional)",
+    "website": "string (optional)"
+  },
+  "images": ["string (URL)"],
+  "coordinates": {
+    "lat": "number (-90 to 90)",
+    "lng": "number (-180 to 180)"
+  },
+  "userId": "number"
+}
+```
+
+#### PATCH /venues/:id
+Update specific fields of a venue.
+
+**Path Parameters:**
+- `id`: Venue ID
+
+**Request Body:**
+Same fields as POST, all optional
+
+#### PUT /venues/:id
+Replace an entire venue.
+
+**Path Parameters:**
+- `id`: Venue ID
+
+**Request Body:**
+Same as POST, all fields required
+
+#### DELETE /venues/:id
+Delete a venue.
+
+**Path Parameters:**
+- `id`: Venue ID
+
+### Users API
+
+#### GET /users
+List all users with optional filtering and includes.
+
+**Query Parameters:**
+- `include`: Related resources to include (e.g., venues)
+- `page`: Page number
+- `limit`: Items per page
+- `sort`: Sort field and direction (e.g., `name:asc`)
+- `fields`: Comma-separated list of fields to return
+
+#### GET /users/:id
+Get a single user by ID.
+
+**Path Parameters:**
+- `id`: User ID
+
+#### POST /users
+Create a new user.
+
+**Request Body:**
+```json
+{
+  "googleId": "string",
+  "email": "string",
+  "name": "string",
+  "picture": "string (URL)"
+}
+```
+
+#### PATCH /users/:id
+Update specific fields of a user.
+
+**Path Parameters:**
+- `id`: User ID
+
+**Request Body:**
+Same fields as POST, all optional
+
+#### PUT /users/:id
+Replace an entire user.
+
+**Path Parameters:**
+- `id`: User ID
+
+**Request Body:**
+Same as POST, all fields required
+
+#### DELETE /users/:id
+Delete a user.
+
+**Path Parameters:**
+- `id`: User ID
 
 ## Error Responses
 
@@ -260,27 +290,15 @@ All endpoints follow a consistent error response format:
   "status": "error",
   "error": {
     "code": "ERROR_CODE",
-    "message": "Human readable error message",
-    "details": {
-      // Additional error context
-    }
-  },
-  "timestamp": "2024-01-01T00:00:00.000Z"
+    "message": "Human readable message",
+    "details": {} // Optional additional context
+  }
 }
 ```
 
 Common error codes:
-- `RESOURCE_NOT_FOUND`: The requested resource was not found
-- `INVALID_REQUEST`: The request parameters were invalid
-- `VALIDATION_ERROR`: The request data failed validation
-
-## Rate Limiting
-Rate limiting details will be added in future versions.
-
-## Changelog
-
-### 2024-11-22
-- Added support for includes in single-resource endpoints:
-  - GET /users/:id now supports `venues` include
-  - GET /venues/:id now supports `events` and `user` includes
-- Updated documentation to reflect include capabilities
+- `VALIDATION_ERROR`: Request validation failed
+- `NOT_FOUND`: Resource not found
+- `UNAUTHORIZED`: Authentication required
+- `FORBIDDEN`: Permission denied
+- `INTERNAL_ERROR`: Server error
