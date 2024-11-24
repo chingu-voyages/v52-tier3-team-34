@@ -183,6 +183,38 @@ await expect(api.get('/invalid')).rejects.toMatchObject({
 });
 ```
 
+## Health Endpoint Tests
+
+The health endpoint serves as a basic infrastructure test to verify API availability. Its tests are located in:
+- `server/tests/api/health.test.ts`
+
+### Response Format
+
+1. Success Response:
+```typescript
+{
+  status: 'success',
+  timestamp: string  // ISO 8601 format
+}
+```
+
+2. Error Response:
+```typescript
+{
+  status: 'error',
+  error: {
+    code: 'ERR_BAD_REQUEST',
+    message: string
+  }
+}
+```
+
+### Test Coverage
+- Basic health check (GET request)
+- Method validation (non-GET requests)
+- Response format validation
+- Content-Type header validation
+
 ## Current Status
 ### Implemented
 - [x] Test infrastructure setup

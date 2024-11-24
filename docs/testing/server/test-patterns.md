@@ -131,6 +131,45 @@ it('should return paginated results', async () => {
 });
 ```
 
+## Health Endpoint Testing Pattern
+
+The health endpoint is a special case that doesn't follow our standard controller pattern. Its tests focus on:
+
+1. Basic Functionality
+   ```typescript
+   it('should return 200 OK with success status', async () => {
+     const response = await api.get(config.api.endpoints.health);
+     expect(response.status).toBe(200);
+     expect(response.data).toMatchObject({
+       status: 'success',
+       timestamp: expect.any(String)
+     });
+   });
+   ```
+
+2. Error Handling
+   ```typescript
+   it('should return 404 for invalid HTTP method', async () => {
+     await expect(api.post(config.api.endpoints.health, {}))
+       .rejects.toMatchObject({
+         status: 404,
+         data: {
+           status: 'error',
+           error: {
+             code: 'ERR_BAD_REQUEST',
+             message: expect.any(String)
+           }
+         }
+       });
+   });
+   ```
+
+Key differences from standard endpoints:
+- Simpler response structure
+- Direct method validation in controller
+- No service layer interaction
+- No database operations
+
 ## Header Validation Patterns
 
 ### 1. Common Headers
