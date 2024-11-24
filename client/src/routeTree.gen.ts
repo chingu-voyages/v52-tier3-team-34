@@ -10,178 +10,199 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root';
-import { Route as RegisterImport } from './routes/register';
-import { Route as PrivacyPolicyImport } from './routes/privacy-policy';
-import { Route as MapImport } from './routes/map';
-import { Route as LoginImport } from './routes/login';
-import { Route as ProtectImport } from './routes/_protect';
-import { Route as IndexImport } from './routes/index';
-import { Route as ProtectDashboardIndexImport } from './routes/_protect/dashboard/index';
-import { Route as ProtectDashboardRegisterVenueImport } from './routes/_protect/dashboard/register-venue';
+import { Route as rootRoute } from './routes/__root'
+import { Route as RegisterImport } from './routes/register'
+import { Route as PrivacyPolicyImport } from './routes/privacy-policy'
+import { Route as MapImport } from './routes/map'
+import { Route as LoginImport } from './routes/login'
+import { Route as ProtectImport } from './routes/_protect'
+import { Route as IndexImport } from './routes/index'
+import { Route as ProtectDashboardIndexImport } from './routes/_protect/dashboard/index'
+import { Route as ProtectDashboardRegisterVenueImport } from './routes/_protect/dashboard/register-venue'
+import { Route as ProtectDashboardAddEventImport } from './routes/_protect/dashboard/add-event'
 
 // Create/Update Routes
 
 const RegisterRoute = RegisterImport.update({
   id: '/register',
   path: '/register',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const PrivacyPolicyRoute = PrivacyPolicyImport.update({
   id: '/privacy-policy',
   path: '/privacy-policy',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const MapRoute = MapImport.update({
   id: '/map',
   path: '/map',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ProtectRoute = ProtectImport.update({
   id: '/_protect',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRoute
-} as any);
+  getParentRoute: () => rootRoute,
+} as any)
 
 const ProtectDashboardIndexRoute = ProtectDashboardIndexImport.update({
   id: '/dashboard/',
   path: '/dashboard/',
-  getParentRoute: () => ProtectRoute
-} as any);
+  getParentRoute: () => ProtectRoute,
+} as any)
 
-const ProtectDashboardRegisterVenueRoute = ProtectDashboardRegisterVenueImport.update({
-  id: '/dashboard/register-venue',
-  path: '/dashboard/register-venue',
-  getParentRoute: () => ProtectRoute
-} as any);
+const ProtectDashboardRegisterVenueRoute =
+  ProtectDashboardRegisterVenueImport.update({
+    id: '/dashboard/register-venue',
+    path: '/dashboard/register-venue',
+    getParentRoute: () => ProtectRoute,
+  } as any)
+
+const ProtectDashboardAddEventRoute = ProtectDashboardAddEventImport.update({
+  id: '/dashboard/add-event',
+  path: '/dashboard/add-event',
+  getParentRoute: () => ProtectRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
     '/_protect': {
-      id: '/_protect';
-      path: '';
-      fullPath: '';
-      preLoaderRoute: typeof ProtectImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/_protect'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
-      id: '/login';
-      path: '/login';
-      fullPath: '/login';
-      preLoaderRoute: typeof LoginImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
     '/map': {
-      id: '/map';
-      path: '/map';
-      fullPath: '/map';
-      preLoaderRoute: typeof MapImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapImport
+      parentRoute: typeof rootRoute
+    }
     '/privacy-policy': {
-      id: '/privacy-policy';
-      path: '/privacy-policy';
-      fullPath: '/privacy-policy';
-      preLoaderRoute: typeof PrivacyPolicyImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/privacy-policy'
+      path: '/privacy-policy'
+      fullPath: '/privacy-policy'
+      preLoaderRoute: typeof PrivacyPolicyImport
+      parentRoute: typeof rootRoute
+    }
     '/register': {
-      id: '/register';
-      path: '/register';
-      fullPath: '/register';
-      preLoaderRoute: typeof RegisterImport;
-      parentRoute: typeof rootRoute;
-    };
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterImport
+      parentRoute: typeof rootRoute
+    }
+    '/_protect/dashboard/add-event': {
+      id: '/_protect/dashboard/add-event'
+      path: '/dashboard/add-event'
+      fullPath: '/dashboard/add-event'
+      preLoaderRoute: typeof ProtectDashboardAddEventImport
+      parentRoute: typeof ProtectImport
+    }
     '/_protect/dashboard/register-venue': {
-      id: '/_protect/dashboard/register-venue';
-      path: '/dashboard/register-venue';
-      fullPath: '/dashboard/register-venue';
-      preLoaderRoute: typeof ProtectDashboardRegisterVenueImport;
-      parentRoute: typeof ProtectImport;
-    };
+      id: '/_protect/dashboard/register-venue'
+      path: '/dashboard/register-venue'
+      fullPath: '/dashboard/register-venue'
+      preLoaderRoute: typeof ProtectDashboardRegisterVenueImport
+      parentRoute: typeof ProtectImport
+    }
     '/_protect/dashboard/': {
-      id: '/_protect/dashboard/';
-      path: '/dashboard';
-      fullPath: '/dashboard';
-      preLoaderRoute: typeof ProtectDashboardIndexImport;
-      parentRoute: typeof ProtectImport;
-    };
+      id: '/_protect/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectDashboardIndexImport
+      parentRoute: typeof ProtectImport
+    }
   }
 }
 
 // Create and export the route tree
 
 interface ProtectRouteChildren {
-  ProtectDashboardRegisterVenueRoute: typeof ProtectDashboardRegisterVenueRoute;
-  ProtectDashboardIndexRoute: typeof ProtectDashboardIndexRoute;
+  ProtectDashboardAddEventRoute: typeof ProtectDashboardAddEventRoute
+  ProtectDashboardRegisterVenueRoute: typeof ProtectDashboardRegisterVenueRoute
+  ProtectDashboardIndexRoute: typeof ProtectDashboardIndexRoute
 }
 
 const ProtectRouteChildren: ProtectRouteChildren = {
+  ProtectDashboardAddEventRoute: ProtectDashboardAddEventRoute,
   ProtectDashboardRegisterVenueRoute: ProtectDashboardRegisterVenueRoute,
-  ProtectDashboardIndexRoute: ProtectDashboardIndexRoute
-};
+  ProtectDashboardIndexRoute: ProtectDashboardIndexRoute,
+}
 
-const ProtectRouteWithChildren = ProtectRoute._addFileChildren(ProtectRouteChildren);
+const ProtectRouteWithChildren =
+  ProtectRoute._addFileChildren(ProtectRouteChildren)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
-  '': typeof ProtectRouteWithChildren;
-  '/login': typeof LoginRoute;
-  '/map': typeof MapRoute;
-  '/privacy-policy': typeof PrivacyPolicyRoute;
-  '/register': typeof RegisterRoute;
-  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
-  '/dashboard': typeof ProtectDashboardIndexRoute;
+  '/': typeof IndexRoute
+  '': typeof ProtectRouteWithChildren
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/register': typeof RegisterRoute
+  '/dashboard/add-event': typeof ProtectDashboardAddEventRoute
+  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
+  '/dashboard': typeof ProtectDashboardIndexRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
-  '': typeof ProtectRouteWithChildren;
-  '/login': typeof LoginRoute;
-  '/map': typeof MapRoute;
-  '/privacy-policy': typeof PrivacyPolicyRoute;
-  '/register': typeof RegisterRoute;
-  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
-  '/dashboard': typeof ProtectDashboardIndexRoute;
+  '/': typeof IndexRoute
+  '': typeof ProtectRouteWithChildren
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/register': typeof RegisterRoute
+  '/dashboard/add-event': typeof ProtectDashboardAddEventRoute
+  '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
+  '/dashboard': typeof ProtectDashboardIndexRoute
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
-  '/': typeof IndexRoute;
-  '/_protect': typeof ProtectRouteWithChildren;
-  '/login': typeof LoginRoute;
-  '/map': typeof MapRoute;
-  '/privacy-policy': typeof PrivacyPolicyRoute;
-  '/register': typeof RegisterRoute;
-  '/_protect/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute;
-  '/_protect/dashboard/': typeof ProtectDashboardIndexRoute;
+  __root__: typeof rootRoute
+  '/': typeof IndexRoute
+  '/_protect': typeof ProtectRouteWithChildren
+  '/login': typeof LoginRoute
+  '/map': typeof MapRoute
+  '/privacy-policy': typeof PrivacyPolicyRoute
+  '/register': typeof RegisterRoute
+  '/_protect/dashboard/add-event': typeof ProtectDashboardAddEventRoute
+  '/_protect/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
+  '/_protect/dashboard/': typeof ProtectDashboardIndexRoute
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath;
+  fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | ''
@@ -189,10 +210,20 @@ export interface FileRouteTypes {
     | '/map'
     | '/privacy-policy'
     | '/register'
+    | '/dashboard/add-event'
     | '/dashboard/register-venue'
-    | '/dashboard';
-  fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '' | '/login' | '/map' | '/privacy-policy' | '/register' | '/dashboard/register-venue' | '/dashboard';
+    | '/dashboard'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | ''
+    | '/login'
+    | '/map'
+    | '/privacy-policy'
+    | '/register'
+    | '/dashboard/add-event'
+    | '/dashboard/register-venue'
+    | '/dashboard'
   id:
     | '__root__'
     | '/'
@@ -201,18 +232,19 @@ export interface FileRouteTypes {
     | '/map'
     | '/privacy-policy'
     | '/register'
+    | '/_protect/dashboard/add-event'
     | '/_protect/dashboard/register-venue'
-    | '/_protect/dashboard/';
-  fileRoutesById: FileRoutesById;
+    | '/_protect/dashboard/'
+  fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
-  ProtectRoute: typeof ProtectRouteWithChildren;
-  LoginRoute: typeof LoginRoute;
-  MapRoute: typeof MapRoute;
-  PrivacyPolicyRoute: typeof PrivacyPolicyRoute;
-  RegisterRoute: typeof RegisterRoute;
+  IndexRoute: typeof IndexRoute
+  ProtectRoute: typeof ProtectRouteWithChildren
+  LoginRoute: typeof LoginRoute
+  MapRoute: typeof MapRoute
+  PrivacyPolicyRoute: typeof PrivacyPolicyRoute
+  RegisterRoute: typeof RegisterRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -221,10 +253,12 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   PrivacyPolicyRoute: PrivacyPolicyRoute,
-  RegisterRoute: RegisterRoute
-};
+  RegisterRoute: RegisterRoute,
+}
 
-export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileTypes<FileRouteTypes>();
+export const routeTree = rootRoute
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
 /* ROUTE_MANIFEST_START
 {
@@ -246,6 +280,7 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     "/_protect": {
       "filePath": "_protect.tsx",
       "children": [
+        "/_protect/dashboard/add-event",
         "/_protect/dashboard/register-venue",
         "/_protect/dashboard/"
       ]
@@ -261,6 +296,10 @@ export const routeTree = rootRoute._addFileChildren(rootRouteChildren)._addFileT
     },
     "/register": {
       "filePath": "register.tsx"
+    },
+    "/_protect/dashboard/add-event": {
+      "filePath": "_protect/dashboard/add-event.tsx",
+      "parent": "/_protect"
     },
     "/_protect/dashboard/register-venue": {
       "filePath": "_protect/dashboard/register-venue.tsx",
