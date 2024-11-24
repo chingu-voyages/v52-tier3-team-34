@@ -1,5 +1,6 @@
 import { Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { faker } from '@faker-js/faker';
 
 interface FormData {
   title: string;
@@ -128,14 +129,18 @@ const AddEvent: React.FC = () => {
 
   const autofillExampleData = () => {
     setFormData({
-      title: 'Example Event',
-      description: 'This is a description of the example event.',
-      startDate: '2024-12-01T14:00',
-      duration: { days: '0', hours: '2', minutes: '30' },
-      artist: 'Example Artist',
-      genre: ['rock', 'pop'],
-      price: 25,
-      venueId: '2',
+      title: faker.lorem.words(3),
+      description: faker.lorem.paragraph(),
+      startDate: faker.date.future().toISOString().slice(0, 16), // Format as `YYYY-MM-DDTHH:mm`
+      duration: {
+        days: faker.number.int({ min: 0, max: 1 }).toString(), // Convert to string
+        hours: faker.number.int({ min: 0, max: 5 }).toString(), // Convert to string
+        minutes: faker.helpers.arrayElement(['0', '15', '30', '45']) // Already a string
+      },
+      artist: faker.person.fullName(),
+      genre: faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2),
+      price: faker.number.int({ min: 0, max: 50 }),
+      venueId: '1', // Convert to string if needed
       image: null,
       terms: true
     });
@@ -281,6 +286,7 @@ const AddEvent: React.FC = () => {
             <option value="blues">Blues</option>
             <option value="jazz">Jazz</option>
             <option value="rock">Rock</option>
+            <option value="classical">Classical</option>
             <option value="pop">Pop</option>
           </select>
         </div>
