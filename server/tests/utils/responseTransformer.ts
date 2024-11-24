@@ -1,4 +1,4 @@
-import { AxiosResponse, AxiosError } from 'axios';
+import { AxiosResponse, AxiosError, RawAxiosResponseHeaders, AxiosResponseHeaders } from 'axios';
 import { ApiResponse, ApiErrorResponse } from '../types/api';
 import { TestResponse, TestErrorResponse } from '../types/test';
 
@@ -26,24 +26,53 @@ interface ServerResponse<T> {
 }
 
 /**
+ * Transform Axios headers to our test response format
+ */
+function transformHeaders(headers: RawAxiosResponseHeaders | AxiosResponseHeaders): { [key: string]: string | string[] | undefined } {
+    const transformedHeaders: { [key: string]: string | string[] | undefined } = {};
+    
+    Object.entries(headers).forEach(([key, value]) => {
+        if (value === null || value === undefined) {
+            transformedHeaders[key] = undefined;
+        } else if (Array.isArray(value)) {
+            transformedHeaders[key] = value;
+        } else {
+            transformedHeaders[key] = String(value);
+        }
+    });
+    
+    return transformedHeaders;
+}
+
+/**
  * Transform Axios response to our test response format
  * Separates HTTP status from API response data
  */
-export function transformResponse<T>(response: AxiosResponse<any>): TestResponse<T> {
-    const { data: serverResponse, status: httpStatus } = response;
-    
-    // Handle simple responses (like health endpoint)
-    if (typeof serverResponse === 'object' && 'status' in serverResponse && Object.keys(serverResponse).length === 1) {
-        return {
-            status: httpStatus,
-            data: serverResponse
-        };
+export function transformResponse<T>(response: AxiosResponse<ServerResponse<T>>): TestResponse<T> {
+    const { data: serverResponse, status: httpStatus, headers } = response;
+    const timestamp = serverResponse?.timestamp || new Date().toISOString();
+
+    // Ensure we have a valid server response
+    if (!serverResponse || typeof serverResponse !== 'object') {
+        throw new Error('Invalid server response format');
     }
 
-    // Handle standard API responses
+    // Handle error responses
+    if (serverResponse.status === 'error' && serverResponse.error) {
+        throw new AxiosError(
+            serverResponse.error.message,
+            serverResponse.error.code,
+            response.config,
+            response.request,
+            response
+        );
+    }
+
+    // Create API response
     const apiResponse: ApiResponse<T> = {
         status: 'success',
         data: serverResponse.data,
+        timestamp,
         meta: serverResponse.pagination ? {
             pagination: {
                 page: serverResponse.pagination.currentPage,
@@ -53,13 +82,13 @@ export function transformResponse<T>(response: AxiosResponse<any>): TestResponse
                 hasNext: serverResponse.pagination.hasNextPage,
                 hasPrevious: serverResponse.pagination.hasPreviousPage
             }
-        } : undefined,
-        timestamp: serverResponse.timestamp || new Date().toISOString()
+        } : undefined
     };
 
     return {
         status: httpStatus,
-        data: apiResponse
+        data: apiResponse,
+        headers: transformHeaders(headers)
     };
 }
 
@@ -68,21 +97,41 @@ export function transformResponse<T>(response: AxiosResponse<any>): TestResponse
  * Separates HTTP status from API error response
  */
 export function transformError(error: AxiosError<ServerResponse<unknown>>): TestErrorResponse {
+    const errorResponse = error.response?.data;
     const httpStatus = error.response?.status || 500;
-    const errorData = error.response?.data;
-    
-    const apiError: ApiErrorResponse = {
-        status: 'error',
-        error: {
-            code: errorData?.error?.code || 'UNKNOWN_ERROR',
-            message: errorData?.error?.message || error.message,
-            details: errorData?.error?.details
-        },
-        timestamp: new Date().toISOString()
-    };
+    const headers = error.response?.headers || {};
+    const timestamp = errorResponse?.timestamp || new Date().toISOString();
 
+    // If we have a structured error response from the server
+    if (errorResponse?.error && typeof errorResponse.error === 'object') {
+        const apiError: ApiErrorResponse = {
+            status: 'error',
+            error: {
+                code: String(errorResponse.error.code || error.code || 'UNKNOWN_ERROR'),
+                message: String(errorResponse.error.message || error.message || 'An unknown error occurred'),
+                details: errorResponse.error.details
+            },
+            timestamp
+        };
+
+        return {
+            status: httpStatus,
+            data: apiError,
+            headers: transformHeaders(headers)
+        };
+    }
+
+    // For unstructured errors
     return {
         status: httpStatus,
-        data: apiError
+        data: {
+            status: 'error',
+            error: {
+                code: String(error.code || 'UNKNOWN_ERROR'),
+                message: error.message || 'An unknown error occurred'
+            },
+            timestamp
+        },
+        headers: transformHeaders(headers)
     };
 }

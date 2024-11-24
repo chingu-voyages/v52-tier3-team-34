@@ -1,5 +1,6 @@
 import { TestResponse, TestErrorResponse, UnwrapApiResponse } from '../types/test';
 import { ApiErrorResponse } from '../types/api';
+import { headerValidation } from './headerValidation';
 
 /**
  * Assertions for common API response patterns
@@ -12,6 +13,7 @@ export class TestAssertions {
      */
     static assertSuccessResponse<T>(response: TestResponse<T>, expectedStatus = 200): void {
         expect(response.status).toBe(expectedStatus);
+        headerValidation.validateCommonHeaders(response.headers);
         expect(response.data.status).toBe('success');
         expect(response.data.timestamp).toBeDefined();
     }
@@ -60,6 +62,7 @@ export class TestAssertions {
         expectedCode: string
     ): void {
         expect(error.status).toBe(expectedStatus);
+        headerValidation.validateCommonHeaders(error.headers);
         expect(error.data.status).toBe('error');
         expect(error.data.error.code).toBe(expectedCode);
         expect(error.data.error.message).toBeDefined();
@@ -123,3 +126,49 @@ export class ResponseValidator {
         );
     }
 }
+
+/**
+ * Common test assertions
+ */
+export const testAssertions = {
+    /**
+     * Validates a successful response
+     */
+    validateSuccessResponse<T>(response: TestResponse<T>, expectedStatus = 200) {
+        // Validate HTTP layer
+        expect(response.status).toBe(expectedStatus);
+        headerValidation.validateCommonHeaders(response.headers);
+
+        // Validate API response
+        expect(response.data.status).toBe('success');
+        expect(response.data.data).toBeDefined();
+    },
+
+    /**
+     * Validates an error response
+     */
+    validateErrorResponse(response: TestErrorResponse, expectedStatus: number, expectedCode: string) {
+        // Validate HTTP layer
+        expect(response.status).toBe(expectedStatus);
+        headerValidation.validateCommonHeaders(response.headers);
+
+        // Validate error response
+        expect(response.data.status).toBe('error');
+        expect(response.data.error.code).toBe(expectedCode);
+        expect(response.data.error.message).toBeDefined();
+    },
+
+    /**
+     * Validates pagination metadata
+     */
+    validatePagination(response: TestResponse<any>, expectedPage: number, expectedLimit: number) {
+        expect(response.data.meta?.pagination).toBeDefined();
+        expect(response.data.meta?.pagination?.page).toBe(expectedPage);
+        expect(response.data.meta?.pagination?.limit).toBe(expectedLimit);
+    },
+
+    /**
+     * Header validation utilities
+     */
+    headers: headerValidation
+};
