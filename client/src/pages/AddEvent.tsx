@@ -1,149 +1,114 @@
 import { Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { faker } from '@faker-js/faker';
-
-interface FormData {
-  title: string;
-  description: string;
-  startDate: string;
-  duration: {
-    days: string;
-    hours: string;
-    minutes: string;
-  };
-  artist: string;
-  genre: string[]; // Correcting to string[] for multiple genres
-  price: number;
-  venueId: string;
-  image: File | null; // Correcting to File | null
-  terms: boolean;
-}
+import { useForm, useWatch } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
+import { convertToISO8601 } from '../utils';
 
 const AddEvent: React.FC = () => {
-  const [formData, setFormData] = useState<FormData>({
-    title: '',
-    description: '',
-    startDate: '',
-    duration: { days: '', hours: '1', minutes: '' },
-    artist: '',
-    genre: [],
-    price: 0,
-    venueId: '1',
-    image: null,
-    terms: false
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    control
+  } = useForm<EventFormData>({
+    resolver: zodResolver(eventSchema),
+    defaultValues: {
+      duration: {
+        days: '0',
+        hours: '1',
+        minutes: '0'
+      },
+      image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
+      venueId: 1
+    }
   });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const [calculatedEndDate, setCalculatedEndDate] = useState<string | null>(null);
 
-  const handleSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
+  // Watch the relevant fields
+  const startDate = useWatch({
+    control,
+    name: 'startDate'
+  });
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
+  const duration = useWatch({
+    control,
+    name: 'duration'
+  });
 
-  const handleDurationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      duration: {
-        ...prev.duration,
-        [name]: value // Update the specific part of the duration object
-      }
-    }));
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target;
-    if (files) {
-      setFormData((prev) => ({
-        ...prev,
-        image: files[0]
-      }));
-    }
-  };
-
-  // Function to calculate the end date
-  // Function to calculate the end date
-  // Function to calculate the end date
-  const calculateEndDate = () => {
-    if (!formData.startDate) return null;
-
-    // Parse the start date to ensure it's a Date object
-    const startDate = new Date(formData.startDate); // Parse startDate as a Date object
-    if (isNaN(startDate.getTime())) {
-      // Handle invalid date if necessary
-      return null;
-    }
-
-    const { days, hours, minutes } = formData.duration;
-
-    // Ensure that the duration values are numbers
-    const durationDays = parseInt(days || '0', 10);
-    const durationHours = parseInt(hours || '0', 10);
-    const durationMinutes = parseInt(minutes || '0', 10);
-
-    // Create a new date for endDate
-    const endDate = new Date(startDate); // Clone the start date into endDate
-    endDate.setUTCDate(endDate.getUTCDate() + durationDays);
-    endDate.setUTCHours(endDate.getUTCHours() + durationHours);
-    endDate.setUTCMinutes(endDate.getUTCMinutes() + durationMinutes);
-
-    return endDate.toISOString(); // Return the end date in ISO 8601 format (UTC)
-  };
-
-  // Effect to log the calculated end date whenever relevant fields change
   useEffect(() => {
-    const endDate = calculateEndDate();
-    if (endDate) {
-      const localEndDate = new Date(endDate); // Convert to Date object
-      const localEndDateString = localEndDate.toLocaleString('en-US', {
-        timeZoneName: 'short' // This will include the timezone abbreviation (e.g. UTC, PST, etc.)
-      });
-
-      console.log('Calculated End Date (UTC):', endDate);
-      console.log('Calculated End Date (Local Time):', localEndDateString);
+    // Only calculate if we have both startDate and duration
+    if (startDate && duration) {
+      const endDate = calculateEndDate();
+      if (endDate) {
+        setCalculatedEndDate(endDate);
+        setValue('endDate', endDate);
+      }
     }
-  }, [formData.startDate, formData.duration]);
+  }, [startDate, duration, setValue]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const onSubmit = (formData: EventFormData) => {
+    try {
+      const submissionData: EventSubmissionData = {
+        title: formData.title,
+        description: formData.description,
+        startDate: convertToISO8601(formData.startDate),
+        endDate: calculatedEndDate!,
+        artist: formData.artist,
+        genre: formData.genre,
+        price: Number(formData.price),
+        venueId: formData.venueId,
+        image: formData.image
+      };
 
-    // Calculate the end date
-    const endDate = calculateEndDate();
-
-    // Adjust form data to send only the endDate
-    const eventData = { ...formData, endDate };
-
-    // Log or submit the eventData with the formatted endDate
-    console.log(eventData);
+      console.log('Data to be sent to API:', submissionData);
+    } catch (error) {
+      console.error('Error formatting form data:', error);
+    }
   };
 
   const autofillExampleData = () => {
-    setFormData({
-      title: faker.lorem.words(3),
-      description: faker.lorem.paragraph(),
-      startDate: faker.date.future().toISOString().slice(0, 16), // Format as `YYYY-MM-DDTHH:mm`
-      duration: {
-        days: faker.number.int({ min: 0, max: 1 }).toString(), // Convert to string
-        hours: faker.number.int({ min: 0, max: 5 }).toString(), // Convert to string
-        minutes: faker.helpers.arrayElement(['0', '15', '30', '45']) // Already a string
-      },
-      artist: faker.person.fullName(),
-      genre: faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2),
-      price: faker.number.int({ min: 0, max: 50 }),
-      venueId: '1', // Convert to string if needed
-      image: null,
-      terms: true
+    setValue('title', faker.lorem.words(3));
+    setValue('description', faker.lorem.paragraph());
+    setValue('startDate', faker.date.future().toISOString().slice(0, 16));
+    setValue('duration', {
+      days: faker.number.int({ min: 0, max: 1 }).toString(),
+      hours: faker.number.int({ min: 0, max: 5 }).toString(),
+      minutes: faker.helpers.arrayElement(['0', '15', '30', '45'])
     });
+    setValue('artist', faker.person.fullName());
+    setValue('genre', faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2));
+    setValue('price', faker.number.int({ min: 0, max: 50 }));
+    setValue('venueId', 1);
+    setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
+    setValue('terms', true);
+  };
+
+  const calculateEndDate = () => {
+    if (!startDate || !duration) return null;
+
+    try {
+      const isoStartDate = convertToISO8601(startDate);
+
+      const { days, hours, minutes } = duration;
+
+      const durationDays = parseInt(days || '0', 10);
+      const durationHours = parseInt(hours || '0', 10);
+      const durationMinutes = parseInt(minutes || '0', 10);
+
+      const endDate = new Date(isoStartDate);
+      endDate.setUTCDate(endDate.getUTCDate() + durationDays);
+      endDate.setUTCHours(endDate.getUTCHours() + durationHours);
+      endDate.setUTCMinutes(endDate.getUTCMinutes() + durationMinutes);
+
+      return endDate.toISOString();
+    } catch (error) {
+      console.error('Error calculating end date:', error);
+      return null;
+    }
   };
 
   return (
@@ -157,7 +122,7 @@ const AddEvent: React.FC = () => {
         <Wand2 size={20} />
         Fill Example Data
       </button>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">
             Event Title:
@@ -165,12 +130,10 @@ const AddEvent: React.FC = () => {
           <input
             type="text"
             id="title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
+            {...register('title')} // Registering the field
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
         </div>
 
         <div>
@@ -179,12 +142,10 @@ const AddEvent: React.FC = () => {
           </label>
           <textarea
             id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
+            {...register('description')} // Registering the field
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
         </div>
 
         <div>
@@ -194,12 +155,10 @@ const AddEvent: React.FC = () => {
           <input
             type="datetime-local"
             id="startDate"
-            name="startDate"
-            value={formData.startDate}
-            onChange={handleInputChange}
-            required
+            {...register('startDate')}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.startDate && <p className="text-red-500 text-xs">{errors.startDate.message}</p>}
         </div>
 
         <div className="flex space-x-4">
@@ -209,11 +168,8 @@ const AddEvent: React.FC = () => {
             </label>
             <div className="flex space-x-2">
               <select
-                name="days"
-                value={formData.duration.days}
-                onChange={handleDurationChange}
-                required
-                className="block  w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                {...register('duration.days')}
+                className="block w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Days</option>
                 <option value="1">1 Day</option>
@@ -222,10 +178,7 @@ const AddEvent: React.FC = () => {
                 <option value="4">4 Days</option>
               </select>
               <select
-                name="hours"
-                value={formData.duration.hours}
-                onChange={handleDurationChange}
-                required
+                {...register('duration.hours')}
                 className="block w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Hours</option>
@@ -235,10 +188,7 @@ const AddEvent: React.FC = () => {
                 <option value="4">4 Hours</option>
               </select>
               <select
-                name="minutes"
-                value={formData.duration.minutes}
-                onChange={handleDurationChange}
-                required
+                {...register('duration.minutes')}
                 className="block px-6 w-32 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Minutes</option>
@@ -257,114 +207,128 @@ const AddEvent: React.FC = () => {
           <input
             type="text"
             id="artist"
-            name="artist"
-            value={formData.artist}
-            onChange={handleInputChange}
-            required
+            {...register('artist')} // Registering the field
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.artist && <p className="text-red-500 text-xs">{errors.artist.message}</p>}
         </div>
 
         <div>
           <label htmlFor="genre" className="block text-sm font-medium text-gray-700">
-            Genre: <span className="opacity-50">( hold ctrl to choose more than one )</span>
+            Genre:
           </label>
           <select
-            name="genre"
             multiple
-            required
-            value={formData.genre}
-            onChange={(e) => {
-              const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-              setFormData((prev) => ({
-                ...prev,
-                genre: selectedOptions
-              }));
-            }}
+            {...register('genre')} // Registering the field
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
-            <option value="blues">Blues</option>
-            <option value="jazz">Jazz</option>
             <option value="rock">Rock</option>
-            <option value="classical">Classical</option>
             <option value="pop">Pop</option>
+            <option value="jazz">Jazz</option>
+            <option value="classical">Classical</option>
+            <option value="blues">Blues</option>
           </select>
+          {errors.genre && <p className="text-red-500 text-xs">{errors.genre.message}</p>}
         </div>
 
         <div>
           <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-            Price (EUR):
+            Price:
           </label>
           <input
             type="number"
             id="price"
-            name="price"
-            value={formData.price}
-            onChange={handleInputChange}
+            {...register('price')}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
         </div>
 
         <div>
           <label htmlFor="venueId" className="block text-sm font-medium text-gray-700">
-            Select Venue:
-          </label>
-          <select
-            name="venueId"
-            value={formData.venueId}
-            onChange={handleSelectChange}
-            required
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          >
-            <option value="1">Venue with id:1</option>
-            <option value="2">Venue with id:2</option>
-            <option value="3">Venue with id:3</option>
-            <option value="4">Venue with id:4</option>
-          </select>
-        </div>
-
-        <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">
-            Event Image:
+            Venue ID:
           </label>
           <input
-            disabled
-            type="file"
-            id="image"
-            name="image"
-            accept="image/*"
-            onChange={handleFileChange}
+            type="text"
+            id="venueId"
+            {...register('venueId')}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
+          {errors.venueId && <p className="text-red-500 text-xs">{errors.venueId.message}</p>}
         </div>
 
+        {/* Image URL Input */}
         <div>
-          <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              name="terms"
-              checked={formData.terms}
-              onChange={(e) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  terms: e.target.checked
-                }))
-              }
-              required
-              className="form-checkbox h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-            />
-            <span className="ml-2 text-sm text-gray-700">I accept the terms and conditions</span>
+          <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+            Event Image URL:
           </label>
+          <input
+            type="url"
+            id="image"
+            placeholder="Enter image URL"
+            {...register('image', {
+              required: 'Image URL is required',
+              pattern: {
+                value: /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[^\s]*)?$/i,
+                message: 'Please enter a valid URL'
+              }
+            })}
+            className="mt-1 block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+          />
+          {errors.image && <p className="text-red-500 text-xs">{errors.image.message}</p>}
         </div>
 
-        <div>
-          <button
-            type="submit"
-            className="w-full inline-flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Submit Event
-          </button>
+        <div className="flex flex-col space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div className="flex items-start space-x-3">
+            <div className="flex items-center h-5">
+              <input
+                type="checkbox"
+                id="terms"
+                {...register('terms')}
+                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 transition-colors cursor-pointer"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label htmlFor="terms" className="text-sm font-medium text-gray-700 cursor-pointer">
+                Terms and Conditions
+              </label>
+              <p className="text-xs text-gray-500 mt-1">
+                By checking this box, you agree to our{' '}
+                <a href="#" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  Terms of Service
+                </a>{' '}
+                and{' '}
+                <a href="#" className="text-blue-600 hover:text-blue-800 hover:underline">
+                  Privacy Policy
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+          {errors.terms && (
+            <div className="flex items-center space-x-2 text-red-500">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+              <span className="text-xs font-medium">{errors.terms?.message}</span>
+            </div>
+          )}
         </div>
+
+        <button type="submit" className="w-full px-6 py-3 text-white bg-blue-600 rounded-md hover:bg-blue-700">
+          Create Event
+        </button>
       </form>
     </div>
   );
