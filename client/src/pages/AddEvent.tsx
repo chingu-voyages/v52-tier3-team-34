@@ -5,8 +5,13 @@ import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
 import { convertToISO8601 } from '../utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createEvent } from '../../api/events';
+import { Navigate } from '@tanstack/react-router';
 
 const AddEvent: React.FC = () => {
+  const queryClient = useQueryClient();
+
   const {
     register,
     handleSubmit,
@@ -51,24 +56,29 @@ const AddEvent: React.FC = () => {
   }, [startDate, duration, setValue]);
 
   const onSubmit = (formData: EventFormData) => {
-    try {
-      const submissionData: EventSubmissionData = {
-        title: formData.title,
-        description: formData.description,
-        startDate: convertToISO8601(formData.startDate),
-        endDate: calculatedEndDate!,
-        artist: formData.artist,
-        genre: formData.genre,
-        price: Number(formData.price),
-        venueId: formData.venueId,
-        image: formData.image
-      };
+    const submissionData: EventSubmissionData = {
+      title: formData.title,
+      description: formData.description,
+      startDate: convertToISO8601(formData.startDate),
+      endDate: calculatedEndDate!,
+      artist: formData.artist,
+      genre: formData.genre,
+      price: Number(formData.price),
+      venueId: formData.venueId,
+      image: formData.image
+    };
 
-      console.log('Data to be sent to API:', submissionData);
-    } catch (error) {
-      console.error('Error formatting form data:', error);
-    }
+    mutation.mutate(submissionData);
   };
+
+  const mutation = useMutation({
+    mutationFn: createEvent,
+    onSuccess: () => {
+      // Invalidate and refetch the events query
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+      return <Navigate to="/" />;
+    },
+  });
 
   const autofillExampleData = () => {
     setValue('title', faker.lorem.words(3));
@@ -266,13 +276,7 @@ const AddEvent: React.FC = () => {
             type="url"
             id="image"
             placeholder="Enter image URL"
-            {...register('image', {
-              required: 'Image URL is required',
-              pattern: {
-                value: /^(https?:\/\/)?([a-z0-9-]+\.)+[a-z]{2,6}(\/[^\s]*)?$/i,
-                message: 'Please enter a valid URL'
-              }
-            })}
+            {...register('image')}
             className="mt-1 block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.image && <p className="text-red-500 text-xs">{errors.image.message}</p>}
