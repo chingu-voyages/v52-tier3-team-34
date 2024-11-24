@@ -33,26 +33,33 @@ interface ApiErrorResponse {
 ```typescript
 interface TestResponse<T> {
     status: number;          // HTTP status code
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
     data: ApiResponse<T>;    // API response
 }
 
 interface TestErrorResponse {
     status: number;
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
     data: ApiErrorResponse;
 }
 ```
 
-### 2. API Client (`/server/tests/utils/apiClient.ts`)
+### 2. Response Transformation (`/server/tests/utils/responseTransformer.ts`)
+- Type-safe response transformation
+- Consistent header handling
+- Timestamp normalization
+- Error response standardization
+- Proper type guards and null checks
+
+### 3. API Client (`/server/tests/utils/apiClient.ts`)
 - Type-safe HTTP requests using Axios
 - Automatic response transformation
 - Error handling with type safety
 - Environment-aware configuration
-
-### 3. Response Transformer (`/server/tests/utils/responseTransformer.ts`)
-- Separates HTTP and API concerns
-- Standardizes error handling
-- Maintains type safety
-- Handles pagination metadata
 
 ### 4. Test Configuration (`/server/tests/config.ts`)
 - Environment-specific settings
@@ -75,6 +82,107 @@ Each test suite follows:
 4. Group tests by endpoint functionality
 5. Test both success and error cases
 
+## Test Infrastructure Overview
+
+### Response Types
+
+Our test framework uses a layered response type system:
+
+#### TestResponse<T>
+Base response wrapper that includes:
+- HTTP status code
+- Response headers (for validating content-type, security headers, etc.)
+- API response data
+
+#### ApiResponse<T>
+API-specific response wrapper containing:
+- Response status ('success' | 'error')
+- Actual response data
+- Metadata (pagination, timestamps, etc.)
+
+### Response Validation
+
+#### Basic Validation
+- Status code checks
+- Response body structure
+- Type safety
+
+#### Header Validation
+- Content-type verification
+- Security headers
+- Cache control
+- Custom headers
+
+### Test Utilities
+
+#### Response Assertions
+- Status code validation
+- Data structure validation
+- Header validation
+- Error response validation
+
+#### Data Factories
+- User data generation
+- Venue data generation
+- Event data generation
+
+## Directory Structure
+
+```
+server/tests/
+├── api/              # API endpoint tests
+├── types/           
+│   ├── api.ts       # API type definitions
+│   └── test.ts      # Test framework types
+└── utils/
+    ├── apiClient.ts           # HTTP client wrapper
+    ├── responseTransformer.ts # Response transformation
+    ├── testAssertions.ts     # Test assertion utilities
+    └── testDataFactory.ts    # Test data generation
+```
+
+## Test Flow
+
+1. Test makes request via ApiClient
+2. Response is transformed via ResponseTransformer
+3. Headers and status are validated
+4. Response body is validated
+5. Additional assertions are performed
+
+## Common Patterns
+
+### Response Validation
+```typescript
+const response = await api.get<UserResponse>('/users/1');
+
+// Validate HTTP layer
+expect(response.status).toBe(200);
+expect(response.headers['content-type']).toMatch(/application\/json/);
+
+// Validate API response
+expect(response.data.status).toBe('success');
+expect(response.data.data).toMatchObject({
+  id: 1,
+  name: 'Test User'
+});
+```
+
+### Error Handling
+```typescript
+await expect(api.get('/invalid')).rejects.toMatchObject({
+  status: 404,
+  headers: {
+    'content-type': expect.stringMatching(/application\/json/)
+  },
+  data: {
+    status: 'error',
+    error: {
+      code: 'NOT_FOUND'
+    }
+  }
+});
+```
+
 ## Current Status
 ### Implemented
 - [x] Test infrastructure setup
@@ -90,6 +198,13 @@ Each test suite follows:
 
 ## Next Steps
 See the Test Framework Roadmap for detailed next steps and improvements.
+
+## Future Improvements
+
+1. Response schema validation
+2. Automated header security checks
+3. Performance metric collection
+4. Test data cleanup utilities
 
 ## Usage Examples
 ### Basic Test Structure

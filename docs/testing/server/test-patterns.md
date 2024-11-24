@@ -42,12 +42,18 @@ interface ApiErrorResponse {
 // Success response in tests
 interface TestResponse<T> {
     status: number;          // HTTP status code
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
     data: ApiResponse<T>;    // API response with data
 }
 
 // Error response in tests
 interface TestErrorResponse {
     status: number;          // HTTP status code
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
     data: ApiErrorResponse;  // API error details
 }
 ```
@@ -125,6 +131,74 @@ it('should return paginated results', async () => {
 });
 ```
 
+## Header Validation Patterns
+
+### 1. Common Headers
+```typescript
+// Basic Headers
+expect(response.headers).toMatchObject({
+  'content-type': expect.stringMatching(/application\/json/),
+  'content-length': expect.any(String)
+});
+
+// Security Headers
+expect(response.headers).toMatchObject({
+  'x-frame-options': 'DENY',
+  'x-content-type-options': 'nosniff',
+  'x-xss-protection': '1; mode=block'
+});
+```
+
+### 2. Conditional Headers
+```typescript
+// Cache Headers
+if (isCacheable) {
+  expect(response.headers).toMatchObject({
+    'cache-control': expect.stringMatching(/max-age=/),
+    'etag': expect.any(String)
+  });
+} else {
+  expect(response.headers['cache-control']).toBe('no-cache');
+}
+
+// CORS Headers
+if (isCorsEnabled) {
+  expect(response.headers).toMatchObject({
+    'access-control-allow-origin': '*',
+    'access-control-allow-methods': 'GET, POST, PUT, DELETE'
+  });
+}
+```
+
+### 3. Custom Headers
+```typescript
+// API Version
+expect(response.headers['x-api-version']).toMatch(/v\d+/);
+
+// Request ID
+expect(response.headers['x-request-id']).toMatch(/[\w-]+/);
+
+// Rate Limiting
+expect(response.headers).toMatchObject({
+  'x-ratelimit-limit': expect.any(String),
+  'x-ratelimit-remaining': expect.any(String)
+});
+
+// Common header validation
+expect(response.headers['content-type']).toMatch(/application\/json/);
+expect(response.headers['x-request-id']).toBeDefined();
+
+// Security headers
+expect(response.headers['strict-transport-security']).toBeDefined();
+expect(response.headers['x-content-type-options']).toBe('nosniff');
+
+// Cache control
+expect(response.headers['cache-control']).toContain('no-store');
+
+// CORS headers (when applicable)
+expect(response.headers['access-control-allow-origin']).toBe('*');
+```
+
 ## Best Practices
 
 1. **Type Safety**
@@ -146,3 +220,9 @@ it('should return paginated results', async () => {
    - Always verify pagination metadata structure
    - Check page boundaries
    - Verify navigation flags (hasNext, hasPrevious)
+
+5. **Header Validation**
+   - Always validate headers for every response
+   - Verify common headers (Content-Type, Security Headers)
+   - Check conditional headers (Cache, CORS)
+   - Validate custom headers (API Version, Request ID, Rate Limiting)

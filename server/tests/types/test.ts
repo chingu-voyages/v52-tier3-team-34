@@ -7,6 +7,7 @@ import { ApiResponse, ApiErrorResponse } from './api';
  * @template T The type of data expected in the API response
  * @property status HTTP status code (e.g., 200, 201, 400, etc.)
  * @property data The full API response including status, data, and metadata
+ * @property headers Response headers
  * 
  * @example
  * ```typescript
@@ -18,6 +19,9 @@ import { ApiResponse, ApiErrorResponse } from './api';
 export interface TestResponse<T> {
     status: number;          // HTTP status code
     data: ApiResponse<T>;    // Actual API response
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
 }
 
 /**
@@ -26,6 +30,7 @@ export interface TestResponse<T> {
  * 
  * @property status HTTP status code (e.g., 400, 401, 404, etc.)
  * @property data The API error response containing error details
+ * @property headers Response headers
  * 
  * @example
  * ```typescript
@@ -41,6 +46,9 @@ export interface TestResponse<T> {
 export interface TestErrorResponse {
     status: number;          // HTTP status code
     data: ApiErrorResponse;  // API error response
+    headers: {              // Response headers
+        [key: string]: string | string[] | undefined;
+    };
 }
 
 /**
