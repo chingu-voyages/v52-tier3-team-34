@@ -1,3 +1,4 @@
+import { Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 interface FormData {
@@ -125,9 +126,32 @@ const AddEvent: React.FC = () => {
     console.log(eventData);
   };
 
+  const autofillExampleData = () => {
+    setFormData({
+      title: 'Example Event',
+      description: 'This is a description of the example event.',
+      startDate: '2024-12-01T14:00',
+      duration: { days: '0', hours: '2', minutes: '30' },
+      artist: 'Example Artist',
+      genre: ['rock', 'pop'],
+      price: 25,
+      venueId: '2',
+      image: null,
+      terms: true
+    });
+  };
+
   return (
     <div className="max-w-lg p-6 mx-auto">
       <h1 className="my-3 text-xl font-bold">Create event</h1>
+      <button
+        type="button"
+        onClick={autofillExampleData}
+        className="flex items-center gap-2 mb-5 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+      >
+        <Wand2 size={20} />
+        Fill Example Data
+      </button>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label htmlFor="title" className="block text-sm font-medium text-gray-700">
