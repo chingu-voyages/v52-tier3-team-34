@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { VenueService } from "../services/venue.service";
 import {
-  VenueResponse,
   VenueQuery,
   VenueInput,
   VenueUpdateInput,
@@ -9,45 +8,44 @@ import {
   GeoJSONFeature,
   VenueProperties
 } from "../types/venue.types";
-import { ApiResponse } from "../types/api.types";
+import { ApiResponse, ApiErrorResponse } from "../types/api.types";
+import { Venue, User } from "@prisma/client";
+
+// Only used for endpoints that need user data
+type VenueWithUser = Venue & {
+  user: Pick<User, 'id' | 'name' | 'email'> | null;
+  coordinates: { lng: number; lat: number };
+};
 
 export class VenueController {
   static async getById(req: Request<VenueParams>, res: Response) {
     try {
       const id = Number(req.params.id);
-      const venue = await VenueService.findById(id);
+      const include = req.query.include as string;
+      const venue = await VenueService.findById(id, include);
 
-      const response: ApiResponse<VenueResponse> = {
+      const response: ApiResponse<VenueWithUser> = {
         status: "success",
-        data: {
-          id: venue.id,
-          name: venue.name,
-          description: venue.description,
-          address: venue.address,
-          contact: venue.contact as VenueResponse["contact"],
-          coordinates: venue.coordinates as VenueResponse["coordinates"],
-          images: venue.images,
-          userId: venue.userId,
-          user: venue.user ? {
-            id: venue.user.id,
-            name: venue.user.name,
-            email: venue.user.email
-          } : undefined,
-          createdAt: venue.createdAt.toISOString(),
-          updatedAt: venue.updatedAt.toISOString(),
-        },
+        data: venue as VenueWithUser,
         timestamp: new Date().toISOString(),
       };
 
       res.json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Venue not found",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_NOT_FOUND",
+          message: error instanceof Error ? error.message : "Venue not found",
+          details: { id: req.params.id }
+        },
+        timestamp: new Date().toISOString()
       };
 
-      res.status(404).json(response);
+      const statusCode = error instanceof Error && error.message === "Venue not found"
+        ? 404
+        : 400;
+      res.status(statusCode).json(response);
     }
   }
 
@@ -55,77 +53,61 @@ export class VenueController {
     try {
       const result = await VenueService.findAll(req.query);
 
-      const venues = result.venues.map(venue => ({
-        id: venue.id,
-        name: venue.name,
-        description: venue.description,
-        address: venue.address,
-        contact: venue.contact as VenueResponse["contact"],
-        coordinates: venue.coordinates as VenueResponse["coordinates"],
-        images: venue.images,
-        userId: venue.userId,
-        user: venue.user ? {
-          id: venue.user.id,
-          name: venue.user.name,
-          email: venue.user.email
-        } : undefined,
-        createdAt: venue.createdAt.toISOString(),
-        updatedAt: venue.updatedAt.toISOString(),
-      }));
-
-      const response: ApiResponse<{ venues: VenueResponse[]; pagination: typeof result.pagination }> = {
+      const response: ApiResponse<VenueWithUser[]> = {
         status: "success",
-        data: {
-          venues,
-          pagination: result.pagination,
+        data: result.venues as VenueWithUser[],
+        meta: {
+          pagination: {
+            page: result.pagination.currentPage,
+            limit: result.pagination.itemsPerPage,
+            total: result.pagination.totalItems,
+            totalPages: result.pagination.totalPages,
+            hasNext: result.pagination.hasNextPage,
+            hasPrevious: result.pagination.hasPreviousPage
+          },
+          filters: result.meta.filters,
+          sort: result.meta.sort,
+          fields: result.meta.fields,
+          includes: result.meta.includes
         },
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       res.json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Failed to fetch venues",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_LIST_ERROR",
+          message: error instanceof Error ? error.message : "Failed to retrieve venues",
+          details: { query: req.query }
+        },
+        timestamp: new Date().toISOString()
       };
 
-      res.status(500).json(response);
+      res.status(400).json(response);
     }
   }
 
   static async create(req: Request<{}, {}, VenueInput>, res: Response) {
     try {
       const venue = await VenueService.create(req.body);
-
-      const response: ApiResponse<VenueResponse> = {
+      const response: ApiResponse<VenueWithUser> = {
         status: "success",
-        data: {
-          id: venue.id,
-          name: venue.name,
-          description: venue.description,
-          address: venue.address,
-          contact: venue.contact as VenueResponse["contact"],
-          coordinates: venue.coordinates as VenueResponse["coordinates"],
-          images: venue.images,
-          userId: venue.userId,
-          user: venue.user ? {
-            id: venue.user.id,
-            name: venue.user.name,
-            email: venue.user.email
-          } : undefined,
-          createdAt: venue.createdAt.toISOString(),
-          updatedAt: venue.updatedAt.toISOString(),
-        },
+        data: venue as VenueWithUser,
         timestamp: new Date().toISOString(),
       };
 
       res.status(201).json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Failed to create venue",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_CREATE_ERROR",
+          message: error instanceof Error ? error.message : "Failed to create venue",
+          details: { ...req.body }
+        },
+        timestamp: new Date().toISOString()
       };
 
       res.status(400).json(response);
@@ -138,35 +120,22 @@ export class VenueController {
   ) {
     try {
       const venue = await VenueService.update(req.params.id, req.body);
-
-      const response: ApiResponse<VenueResponse> = {
+      const response: ApiResponse<VenueWithUser> = {
         status: "success",
-        data: {
-          id: venue.id,
-          name: venue.name,
-          description: venue.description,
-          address: venue.address,
-          contact: venue.contact as VenueResponse["contact"],
-          coordinates: venue.coordinates as VenueResponse["coordinates"],
-          images: venue.images,
-          userId: venue.userId,
-          user: venue.user ? {
-            id: venue.user.id,
-            name: venue.user.name,
-            email: venue.user.email
-          } : undefined,
-          createdAt: venue.createdAt.toISOString(),
-          updatedAt: venue.updatedAt.toISOString(),
-        },
+        data: venue as VenueWithUser,
         timestamp: new Date().toISOString(),
       };
 
       res.json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Failed to update venue",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_UPDATE_ERROR",
+          message: error instanceof Error ? error.message : "Failed to update venue",
+          details: { id: req.params.id, ...req.body }
+        },
+        timestamp: new Date().toISOString()
       };
 
       const statusCode = error instanceof Error && error.message === "Venue not found"
@@ -182,35 +151,22 @@ export class VenueController {
   ) {
     try {
       const venue = await VenueService.replace(req.params.id, req.body);
-
-      const response: ApiResponse<VenueResponse> = {
+      const response: ApiResponse<VenueWithUser> = {
         status: "success",
-        data: {
-          id: venue.id,
-          name: venue.name,
-          description: venue.description,
-          address: venue.address,
-          contact: venue.contact as VenueResponse["contact"],
-          coordinates: venue.coordinates as VenueResponse["coordinates"],
-          images: venue.images,
-          userId: venue.userId,
-          user: venue.user ? {
-            id: venue.user.id,
-            name: venue.user.name,
-            email: venue.user.email
-          } : undefined,
-          createdAt: venue.createdAt.toISOString(),
-          updatedAt: venue.updatedAt.toISOString(),
-        },
+        data: venue as VenueWithUser,
         timestamp: new Date().toISOString(),
       };
 
       res.json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Failed to replace venue",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_REPLACE_ERROR",
+          message: error instanceof Error ? error.message : "Failed to replace venue",
+          details: { id: req.params.id, ...req.body }
+        },
+        timestamp: new Date().toISOString()
       };
 
       const statusCode = error instanceof Error && error.message === "Venue not found"
@@ -226,16 +182,20 @@ export class VenueController {
 
       const response: ApiResponse<null> = {
         status: "success",
-        message: "Venue deleted successfully",
+        data: null,
         timestamp: new Date().toISOString(),
       };
 
       res.json(response);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Failed to delete venue",
-        timestamp: new Date().toISOString(),
+        error: {
+          code: "VENUE_DELETE_ERROR",
+          message: error instanceof Error ? error.message : "Failed to delete venue",
+          details: { id: req.params.id }
+        },
+        timestamp: new Date().toISOString()
       };
 
       const statusCode = error instanceof Error && error.message === "Venue not found"
@@ -250,6 +210,10 @@ export class VenueController {
       const id = Number(req.params.id);
       const venue = await VenueService.findById(id);
 
+      if (!venue.coordinates) {
+        throw new Error("Venue coordinates not found");
+      }
+
       const geoJsonResponse: ApiResponse<GeoJSONFeature> = {
         status: "success",
         data: {
@@ -257,8 +221,8 @@ export class VenueController {
           geometry: {
             type: "Point",
             coordinates: [
-              (venue.coordinates as { lng: number; lat: number }).lng,
-              (venue.coordinates as { lng: number; lat: number }).lat
+              (venue as VenueWithUser).coordinates.lng,
+              (venue as VenueWithUser).coordinates.lat
             ]
           },
           properties: {
@@ -277,13 +241,20 @@ export class VenueController {
 
       res.json(geoJsonResponse);
     } catch (error) {
-      const response: ApiResponse<null> = {
+      const response: ApiErrorResponse = {
         status: "error",
-        message: error instanceof Error ? error.message : "Venue not found",
+        error: {
+          code: "VENUE_GEOJSON_ERROR",
+          message: error instanceof Error ? error.message : "Failed to retrieve venue GeoJSON",
+          details: { id: req.params.id }
+        },
         timestamp: new Date().toISOString()
       };
 
-      res.status(404).json(response);
+      const statusCode = error instanceof Error && error.message === "Venue not found"
+        ? 404
+        : 400;
+      res.status(statusCode).json(response);
     }
   }
 }

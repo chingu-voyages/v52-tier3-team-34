@@ -225,6 +225,31 @@ Remember: Schema changes should be tested locally with SQLite before applying to
      - `.env.team` - Shared PostgreSQL
      - `.env.production` - Production database
 
+## Environment Variables
+
+The following environment variables can be configured in your `.env` file:
+
+### Required Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| DATABASE_URL | Database connection string | `file:./dev.db` |
+| PORT | Server port number | `3000` |
+
+### API Configuration
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| API_URL | Base URL for API endpoints | `http://localhost:3000/api` |
+
+### Setting Up Environment Variables
+
+1. Copy the example file:
+```bash
+cp .env.example .env
+```
+2. Modify the variables in `.env` as needed for your environment.
+
 ## Testing
 
 ### Test Structure
