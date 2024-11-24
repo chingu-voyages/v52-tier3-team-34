@@ -46,3 +46,11 @@ export function generateExampleVenue() {
     images: [`https://source.unsplash.com/800x600/?${encodeURIComponent(venueType.toLowerCase())}`]
   };
 }
+
+export const convertToISO8601 = (dateString: string): string => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error('Invalid date');
+  }
+  return date.toISOString();
+};
