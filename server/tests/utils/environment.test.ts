@@ -27,7 +27,7 @@ describe('Environment Utils', () => {
             jest.resetModules();
             const { config } = require('../config');
             const result = config.api.baseUrl;
-            expect(result).toBe('http://localhost:3000/api');
+            expect(result).toBe('http://localhost:3000/api/v1');
             expect(result).toMatch(/^https?:\/\/.+/);
         });
     });
