@@ -15,7 +15,7 @@ export type EnvironmentConfig = {
             events: string;
             eventsGeoJSON: string;
             health: string;  // Health check endpoint
-            // Add more endpoints as needed
+            users: string;   // Users endpoint
         };
     };
     timeouts: {
@@ -34,7 +34,8 @@ const defaultConfig: EnvironmentConfig = {
             venues: '/api/v1/venues',
             events: '/api/v1/events',
             eventsGeoJSON: '/api/v1/events/geojson',
-            health: '/api/v1/health'
+            health: '/api/v1/health',
+            users: '/api/v1/users'
         }
     },
     timeouts: {
