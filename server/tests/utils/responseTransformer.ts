@@ -102,18 +102,17 @@ export function transformError(error: AxiosError<ServerResponse<unknown>>): Test
     const headers = error.response?.headers || {};
     const timestamp = errorResponse?.timestamp || new Date().toISOString();
 
-    // If we have a structured error response from the server
-    if (errorResponse?.error && typeof errorResponse.error === 'object') {
+    // For API validation errors and other structured errors
+    if (errorResponse?.status === 'error' && errorResponse?.error) {
         const apiError: ApiErrorResponse = {
             status: 'error',
             error: {
-                code: String(errorResponse.error.code || error.code || 'UNKNOWN_ERROR'),
-                message: String(errorResponse.error.message || error.message || 'An unknown error occurred'),
+                code: errorResponse.error.code || 'UNKNOWN_ERROR',
+                message: errorResponse.error.message || 'An unknown error occurred',
                 details: errorResponse.error.details
             },
             timestamp
         };
-
         return {
             status: httpStatus,
             data: apiError,
@@ -121,7 +120,7 @@ export function transformError(error: AxiosError<ServerResponse<unknown>>): Test
         };
     }
 
-    // For unstructured errors
+    // For unstructured errors (network errors, timeouts, etc.)
     return {
         status: httpStatus,
         data: {

@@ -2,6 +2,15 @@ import { PrismaClient, User, Venue } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+// Track created test data
+interface TestDataTracker {
+    users: { id: number; email: string; googleId: string }[];
+}
+
+const testData: TestDataTracker = {
+    users: []
+};
+
 /**
  * Test Data Helper Error class
  * Used to distinguish data-related test errors from other errors
@@ -85,10 +94,56 @@ export async function getTestVenue(): Promise<Venue> {
 }
 
 /**
+ * Track test data for cleanup
+ * @param type The type of data being tracked (e.g., 'users', 'venues')
+ * @param data The data to track
+ */
+export function trackTestData(type: keyof TestDataTracker, data: any): void {
+    if (type === 'users') {
+        // Handle both direct data and response data
+        const userData = data?.data?.data?.user || data;
+        if (!userData?.id) {
+            console.warn('Warning: Attempted to track user data without an ID');
+            return;
+        }
+        testData.users.push({
+            id: userData.id,
+            email: userData.email,
+            googleId: userData.googleId
+        });
+    }
+}
+
+/**
  * Clean up test data after tests
- * Useful for cleaning up data created during tests
+ * Only removes data that was created during tests
  */
 export async function cleanupTestData(): Promise<void> {
-    // Add cleanup logic as needed
-    await Promise.resolve();
+    // Clean up test users
+    if (testData.users.length > 0) {
+        const userIds = testData.users.map(u => u.id);
+        await prisma.user.deleteMany({
+            where: {
+                id: { in: userIds }
+            }
+        });
+        testData.users = [];
+    }
+}
+
+/**
+ * Generate unique test data
+ * @returns {string} A unique identifier for test data
+ */
+export function generateUniqueId(): string {
+    return `test_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+}
+
+/**
+ * Create unique test email
+ * @param prefix Optional prefix for the email
+ * @returns {string} A unique test email address
+ */
+export function generateTestEmail(prefix: string = 'test'): string {
+    return `${prefix}_${generateUniqueId()}@example.com`;
 }

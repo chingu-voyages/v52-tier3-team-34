@@ -3,6 +3,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 import { getCurrentEnvironment } from './utils/environment';
 import { config } from './config';
+import { cleanupTestData } from './utils/testData';
 
 // Increase timeout for all tests
 jest.setTimeout(30000); // Increased timeout to allow for server startup
@@ -16,4 +17,14 @@ expect.extend({
 beforeAll(async () => {
     console.log('Test Environment:', getCurrentEnvironment());
     console.log('API URL:', config.api.baseUrl);
+});
+
+// Clean up test data after each test
+afterEach(async () => {
+    await cleanupTestData();
+});
+
+// Clean up after all tests
+afterAll(async () => {
+    await cleanupTestData();
 });
