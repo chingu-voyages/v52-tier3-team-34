@@ -1,30 +1,47 @@
 import axios, { AxiosError } from 'axios';
 import { VenueResponse, VenueInput } from '../src/types/venue.types';
+import prisma from '../src/config/database';
 
 const API_URL = 'http://localhost:3000/api/v1';
 
+// Disconnect Prisma after all tests are done
+afterAll(async () => {
+  await prisma.$disconnect();
+}, 10000);  // 10 second timeout
+
 describe('Venues API', () => {
+  // Test data tracking
   let testVenueId: number;
-  let testUserId: number;  // We'll need a user to create venues
-  let otherUserId: number;  // We'll create another user for filtering tests
+  let testUserId: number;
+  let otherUserId: number;
+  let listTestVenueIds: number[] = []; // Specifically for GET /venues tests
+  let tempVenueIds: number[] = []; // For temporary venues in individual tests
 
-  // Create a test user and venue before running tests
+  // Create base test data
   beforeAll(async () => {
-    // First create a test user
+    // 1. Create test users first
     const timestamp = Date.now();
-    const userData = {
-      email: `test${timestamp}@example.com`,
-      name: 'Test User',
-      googleId: `test${timestamp}`,
-      profileImage: 'https://example.com/image.jpg'
-    };
+    const [mainUser, otherUser] = await Promise.all([
+      axios.post(`${API_URL}/users`, {
+        email: `test${timestamp}@example.com`,
+        name: 'Test User',
+        googleId: `test${timestamp}`,
+        profileImage: 'https://example.com/image.jpg'
+      }),
+      axios.post(`${API_URL}/users`, {
+        email: `other${timestamp}@test.com`,
+        name: 'Other User',
+        googleId: `other${timestamp}`,
+        profileImage: 'https://example.com/other-profile.jpg'
+      })
+    ]);
+    
+    testUserId = mainUser.data.data.id;
+    otherUserId = otherUser.data.data.id;
 
-    const userResponse = await axios.post(`${API_URL}/users`, userData);
-    testUserId = userResponse.data.data.id;
-
-    // Then create a test venue
+    // 2. Create main test venue
     const venueData: VenueInput = {
-      name: 'Test Venue',
+      name: 'Main Test Venue',
       description: 'A test venue for automated testing',
       address: '123 Test Street, Test City, TS 12345',
       contact: {
@@ -42,19 +59,100 @@ describe('Venues API', () => {
 
     const venueResponse = await axios.post(`${API_URL}/venues`, venueData);
     testVenueId = venueResponse.data.data.id;
+
+    // 3. Create venues for list testing
+    const listVenues = [
+      {
+        name: 'Alpha Venue',
+        description: 'First in alphabetical order',
+        address: '123 Alpha St',
+        contact: {},
+        images: ['https://example.com/image.jpg'],
+        coordinates: { lat: 40.7128, lng: -74.0060 },
+        userId: testUserId
+      },
+      {
+        name: 'Beta Venue',
+        description: 'Second in alphabetical order',
+        address: '456 Beta St',
+        contact: {},
+        images: ['https://example.com/image.jpg'],
+        coordinates: { lat: 40.7128, lng: -74.0060 },
+        userId: otherUserId
+      },
+      {
+        name: 'Gamma Venue',
+        description: 'Third in alphabetical order',
+        address: '789 Gamma St',
+        contact: {},
+        images: ['https://example.com/image.jpg'],
+        coordinates: { lat: 40.7128, lng: -74.0060 },
+        userId: otherUserId
+      }
+    ];
+
+    const responses = await Promise.all(
+      listVenues.map(venue => axios.post(`${API_URL}/venues`, venue))
+    );
+    listTestVenueIds = responses.map(response => response.data.data.id);
   });
 
-  // Clean up after all tests
+  // Clean up all test data
   afterAll(async () => {
-    try {
-      if (testVenueId) {
-        await axios.delete(`${API_URL}/venues/${testVenueId}`);
-      }
-      if (testUserId) {
-        await axios.delete(`${API_URL}/users/${testUserId}`);
-      }
-    } catch (error) {
-      console.error('Cleanup failed:', error);
+    // 1. Delete all temporary venues from individual tests
+    if (tempVenueIds.length > 0) {
+      await Promise.all(
+        tempVenueIds.map(id => 
+          axios.delete(`${API_URL}/venues/${id}`)
+            .catch(err => {
+              if (err?.response?.status !== 404) {
+                throw err; // Only ignore 404s, other errors should fail the test
+              }
+            })
+        )
+      );
+    }
+
+    // 2. Delete list test venues
+    if (listTestVenueIds.length > 0) {
+      await Promise.all(
+        listTestVenueIds.map(id => 
+          axios.delete(`${API_URL}/venues/${id}`)
+            .catch(err => {
+              if (err?.response?.status !== 404) {
+                throw err;
+              }
+            })
+        )
+      );
+    }
+
+    // 3. Delete main test venue
+    if (testVenueId) {
+      await axios.delete(`${API_URL}/venues/${testVenueId}`)
+        .catch(err => {
+          if (err?.response?.status !== 404) {
+            throw err;
+          }
+        });
+    }
+
+    // 4. Delete test users last (after all venues are deleted)
+    if (otherUserId) {
+      await axios.delete(`${API_URL}/users/${otherUserId}`)
+        .catch(err => {
+          if (err?.response?.status !== 404) {
+            throw err;
+          }
+        });
+    }
+    if (testUserId) {
+      await axios.delete(`${API_URL}/users/${testUserId}`)
+        .catch(err => {
+          if (err?.response?.status !== 404) {
+            throw err;
+          }
+        });
     }
   });
 
@@ -85,8 +183,8 @@ describe('Venues API', () => {
       expect(response.data.data.name).toBe(venueData.name);
       expect(response.data.data.coordinates).toEqual(venueData.coordinates);
 
-      // Clean up the created venue
-      await axios.delete(`${API_URL}/venues/${response.data.data.id}`);
+      // Track this venue for cleanup
+      tempVenueIds.push(response.data.data.id);
     });
 
     test('error: rejects missing required fields', async () => {
@@ -167,7 +265,7 @@ describe('Venues API', () => {
       
       expect(response.status).toBe(200);
       expect(response.data.data.id).toBe(testVenueId);
-      expect(response.data.data.name).toBe('Test Venue');
+      expect(response.data.data.name).toBe('Main Test Venue');
       expect(response.data.data.coordinates).toBeDefined();
       expect(response.data.data.coordinates.lat).toBeDefined();
       expect(response.data.data.coordinates.lng).toBeDefined();
@@ -212,73 +310,6 @@ describe('Venues API', () => {
   });
 
   describe('GET /venues', () => {
-    // Create additional test venues for list testing
-    let additionalVenueIds: number[] = [];
-
-    beforeAll(async () => {
-      // Create another user for testing filters
-      const otherUserResponse = await axios.post(`${API_URL}/users`, {
-        email: 'other.user@test.com',
-        name: 'Other User',
-        googleId: '987654321',
-        profileImage: 'https://example.com/other-profile.jpg'
-      });
-      otherUserId = otherUserResponse.data.data.id;
-
-      // Create venues with different users for testing pagination, sorting and filtering
-      const venues = [
-        {
-          name: 'Alpha Venue',
-          description: 'First in alphabetical order',
-          address: '123 Alpha St',
-          contact: {},
-          images: ['https://example.com/image.jpg'],
-          coordinates: { lat: 40.7128, lng: -74.0060 },
-          userId: testUserId  // First user's venue
-        },
-        {
-          name: 'Beta Venue',
-          description: 'Second in alphabetical order',
-          address: '456 Beta St',
-          contact: {},
-          images: ['https://example.com/image.jpg'],
-          coordinates: { lat: 40.7128, lng: -74.0060 },
-          userId: otherUserId  // Second user's venue
-        },
-        {
-          name: 'Gamma Venue',
-          description: 'Third in alphabetical order',
-          address: '789 Gamma St',
-          contact: {},
-          images: ['https://example.com/image.jpg'],
-          coordinates: { lat: 40.7128, lng: -74.0060 },
-          userId: otherUserId  // Second user's venue
-        }
-      ];
-
-      for (const venue of venues) {
-        const response = await axios.post(`${API_URL}/venues`, venue);
-        additionalVenueIds.push(response.data.data.id);
-      }
-    });
-
-    afterAll(async () => {
-      // Clean up additional test venues
-      for (const id of additionalVenueIds) {
-        try {
-          await axios.delete(`${API_URL}/venues/${id}`);
-        } catch (error) {
-          console.error(`Failed to delete test venue ${id}:`, error);
-        }
-      }
-      // Clean up other test user
-      try {
-        await axios.delete(`${API_URL}/users/${otherUserId}`);
-      } catch (error) {
-        console.error(`Failed to delete test user ${otherUserId}:`, error);
-      }
-    });
-
     test('success: returns list of venues', async () => {
       const response = await axios.get(`${API_URL}/venues`);
       
@@ -375,6 +406,7 @@ describe('Venues API', () => {
 
         const createResponse = await axios.post(`${API_URL}/venues`, venueData);
         const venueId = createResponse.data.data.id;
+        tempVenueIds.push(venueId);
 
         // Get GeoJSON representation
         const response = await axios.get(`${API_URL}/venues/${venueId}/geojson`);
@@ -433,6 +465,7 @@ describe('Venues API', () => {
 
       const createResponse = await axios.post(`${API_URL}/venues`, venueData);
       const venueId = createResponse.data.data.id;
+      tempVenueIds.push(venueId);
 
       try {
         // New data for complete replacement
@@ -465,8 +498,7 @@ describe('Venues API', () => {
         });
 
       } finally {
-        // Clean up test venue
-        await axios.delete(`${API_URL}/venues/${venueId}`);
+        // No need to clean up here, it's handled in afterAll
       }
     });
 
@@ -512,7 +544,7 @@ describe('Venues API', () => {
       // Create a venue to update
       const timestamp = Date.now();
       const venueData: VenueInput = {
-        name: 'Original Venue',
+        name: 'Original Venue for Patch',
         description: 'Original description',
         address: '123 Original St',
         contact: {
@@ -530,6 +562,7 @@ describe('Venues API', () => {
 
       const createResponse = await axios.post(`${API_URL}/venues`, venueData);
       const venueId = createResponse.data.data.id;
+      tempVenueIds.push(venueId);
 
       try {
         // Update only specific fields
@@ -559,8 +592,7 @@ describe('Venues API', () => {
         expect(response.data.data.images).toEqual(venueData.images);
 
       } finally {
-        // Clean up test venue
-        await axios.delete(`${API_URL}/venues/${venueId}`);
+        // No need to clean up here, it's handled in afterAll
       }
     });
 
@@ -568,15 +600,15 @@ describe('Venues API', () => {
       // Create a venue to update
       const timestamp = Date.now();
       const venueData: VenueInput = {
-        name: 'Original Venue',
-        description: 'Original description',
-        address: '123 Original St',
+        name: 'Venue for Invalid Update',
+        description: 'This venue will be updated with invalid data',
+        address: '123 Test St',
         contact: {
           phone: '+1234567890',
-          email: 'original@test.com',
-          website: 'https://original.com'
+          email: 'test@test.com',
+          website: 'https://test.com'
         },
-        images: ['https://example.com/original.jpg'],
+        images: ['https://example.com/test.jpg'],
         coordinates: {
           lat: 40.7128,
           lng: -74.0060
@@ -586,26 +618,24 @@ describe('Venues API', () => {
 
       const createResponse = await axios.post(`${API_URL}/venues`, venueData);
       const venueId = createResponse.data.data.id;
+      tempVenueIds.push(venueId);
 
       try {
         // Try to update with invalid coordinates
         const updateData = {
           coordinates: {
-            lat: 91, // Invalid latitude (> 90)
+            lat: 91,  // Invalid: latitude must be between -90 and 90
             lng: -74.0060
           }
         };
 
         await axios.patch(`${API_URL}/venues/${venueId}`, updateData);
-        fail('Expected error for invalid coordinates');
+        fail('Expected validation error');
       } catch (error) {
         if (error instanceof AxiosError) {
           expect(error.response?.status).toBe(400);
           expect(error.response?.data.error.message).toContain('Latitude must be between -90 and 90');
         }
-      } finally {
-        // Clean up test venue
-        await axios.delete(`${API_URL}/venues/${venueId}`);
       }
     });
 
@@ -644,6 +674,7 @@ describe('Venues API', () => {
 
       const createResponse = await axios.post(`${API_URL}/venues`, venueData);
       const venueId = createResponse.data.data.id;
+      tempVenueIds.push(venueId);
 
       const deleteResponse = await axios.delete(`${API_URL}/venues/${venueId}`);
       expect(deleteResponse.status).toBe(200);
