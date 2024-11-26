@@ -352,6 +352,64 @@ describe('Venues API', () => {
     });
   });
 
+  describe('GET /venues with geospatial features', () => {
+    describe('GET /venues/:id/geojson', () => {
+      test('success: returns venue location in GeoJSON format', async () => {
+        // Create a venue with known coordinates
+        const venueData: VenueInput = {
+          name: 'GeoJSON Test Venue',
+          description: 'A venue for testing GeoJSON',
+          address: 'Central Park, New York',
+          contact: {
+            phone: '+1234567890',
+            email: 'geo@test.com',
+            website: 'https://geo.test'
+          },
+          images: ['https://example.com/geo.jpg'],
+          coordinates: {
+            lat: 40.7829,
+            lng: -73.9654
+          },
+          userId: testUserId
+        };
+
+        const createResponse = await axios.post(`${API_URL}/venues`, venueData);
+        const venueId = createResponse.data.data.id;
+
+        // Get GeoJSON representation
+        const response = await axios.get(`${API_URL}/venues/${venueId}/geojson`);
+        
+        expect(response.status).toBe(200);
+        expect(response.data.status).toBe('success');
+        
+        const geoJson = response.data.data;
+        expect(geoJson.type).toBe('Feature');
+        expect(geoJson.geometry.type).toBe('Point');
+        expect(geoJson.geometry.coordinates).toEqual([
+          venueData.coordinates.lng,
+          venueData.coordinates.lat
+        ]);
+        expect(geoJson.properties).toMatchObject({
+          name: venueData.name,
+          description: venueData.description,
+          address: venueData.address
+        });
+      });
+
+      test('error: returns 404 for non-existent venue', async () => {
+        try {
+          await axios.get(`${API_URL}/venues/99999/geojson`);
+          fail('Expected error for non-existent venue');
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            expect(error.response?.status).toBe(404);
+            expect(error.response?.data.error.message).toContain('Venue not found');
+          }
+        }
+      });
+    });
+  });
+
   describe('PUT /venues/:id', () => {
     test('success: replaces entire venue', async () => {
       // Create a venue to update
