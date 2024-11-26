@@ -73,6 +73,7 @@ export class VenueService {
           address: true,
           contact: true,
           coordinates: true,
+          userId: true,
           createdAt: true,
           updatedAt: true,
         };

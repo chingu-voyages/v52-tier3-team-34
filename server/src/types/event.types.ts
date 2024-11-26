@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BaseQuerySchema } from "./base.types";
 
 // Enum for event status
 export const EventStatus = {
@@ -23,28 +24,18 @@ export const EventSchema = z.object({
 export const EventUpdateSchema = EventSchema.partial();
 
 // Schema for query parameters
-export const EventQuerySchema = z.object({
-  // Pagination (optional)
-  page: z.coerce.number().positive().optional(),
-  limit: z.coerce.number().min(1).max(100).optional(),
-  
-  // Sorting (optional) - format: field:direction (e.g., startDate:asc)
-  sort: z.string()
-    .regex(/^[\w]+:(asc|desc)$/, "Sort must be in format: field:direction")
-    .optional(),
-  
-  // Field selection (optional)
-  fields: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Fields must be comma-separated field names")
-    .optional(),
-  
-  // Includes/expansions (optional)
-  include: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Include must be comma-separated relation names")
-    .optional(),
-  
-  // Filtering (optional)
-  filter: z.record(z.string()).optional(),
+export const EventQuerySchema = BaseQuerySchema.extend({
+  filter: z.object({
+    id: z.coerce.number().int().positive().optional(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    status: z.enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED]).optional(),
+    venueId: z.coerce.number().int().positive().optional(),
+    startDate: z.coerce.date().optional(),
+    endDate: z.coerce.date().optional(),
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional()
+  }).optional()
 });
 
 // Schema for URL parameters

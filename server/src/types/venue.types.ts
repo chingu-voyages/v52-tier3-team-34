@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { BaseQuerySchema } from "./base.types";
 
 // Schema for coordinates
 const CoordinatesSchema = z.object({
@@ -32,28 +33,16 @@ export const VenueSchema = z.object({
 export const VenueUpdateSchema = VenueSchema.partial();
 
 // Schema for query parameters
-export const VenueQuerySchema = z.object({
-  // Pagination (optional)
-  page: z.coerce.number().positive().optional(),
-  limit: z.coerce.number().min(1).max(100).optional(),
-  
-  // Sorting (optional) - format: field:direction (e.g., name:asc)
-  sort: z.string()
-    .regex(/^[\w]+:(asc|desc)$/, "Sort must be in format: field:direction")
-    .optional(),
-  
-  // Field selection (optional)
-  fields: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Fields must be comma-separated field names")
-    .optional(),
-  
-  // Includes/expansions (optional)
-  include: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Include must be comma-separated relation names")
-    .optional(),
-  
-  // Filtering (optional)
-  filter: z.record(z.string()).optional()
+export const VenueQuerySchema = BaseQuerySchema.extend({
+  filter: z.object({
+    id: z.coerce.number().int().positive().optional(),
+    userId: z.coerce.number().int().positive().optional(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    address: z.string().optional(),
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional()
+  }).optional()
 });
 
 // Schema for URL parameters
