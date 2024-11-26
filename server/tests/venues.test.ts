@@ -567,4 +567,62 @@ describe('Venues API', () => {
       }
     });
   });
+
+  describe('DELETE /venues/:id', () => {
+    test('success: deletes venue', async () => {
+      const venueData: VenueInput = {
+        name: 'Venue to Delete',
+        description: 'This venue will be deleted',
+        address: '123 Delete St',
+        contact: {
+          phone: '+1234567890',
+          email: 'delete@test.com',
+          website: 'https://delete.com'
+        },
+        images: ['https://example.com/delete.jpg'],
+        coordinates: { lat: 40.7128, lng: -74.0060 },
+        userId: testUserId
+      };
+
+      const createResponse = await axios.post(`${API_URL}/venues`, venueData);
+      const venueId = createResponse.data.data.id;
+
+      const deleteResponse = await axios.delete(`${API_URL}/venues/${venueId}`);
+      expect(deleteResponse.status).toBe(200);
+      expect(deleteResponse.data.status).toBe('success');
+
+      try {
+        await axios.get(`${API_URL}/venues/${venueId}`);
+        fail('Expected venue to be deleted');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(404);
+        }
+      }
+    });
+
+    test('error: rejects invalid venue ID', async () => {
+      try {
+        await axios.delete(`${API_URL}/venues/invalid-id`);
+        fail('Expected error for invalid venue ID');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(400);
+          expect(error.response?.data.error.message).toBe('Invalid parameters');
+        }
+      }
+    });
+
+    test('error: rejects non-existent venue', async () => {
+      try {
+        await axios.delete(`${API_URL}/venues/99999`);
+        fail('Expected error for non-existent venue');
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          expect(error.response?.status).toBe(404);
+          expect(error.response?.data.error.message).toContain('Venue not found');
+        }
+      }
+    });
+  });
 });
