@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AnyZodObject, ZodError } from 'zod';
+import { ApiErrorResponse } from '../types/api.types';
 
 export const validateRequest = {
   params: (schema: AnyZodObject) => 
@@ -9,11 +10,16 @@ export const validateRequest = {
         next();
       } catch (error) {
         if (error instanceof ZodError) {
-          res.status(400).json({
+          const response: ApiErrorResponse = {
             status: 'error',
-            message: 'Invalid parameters',
-            errors: error.errors
-          });
+            error: {
+              code: 'USER_CREATE_ERROR',
+              message: 'Invalid parameters',
+              details: error.errors
+            },
+            timestamp: new Date().toISOString()
+          };
+          res.status(400).json(response);
         } else {
           next(error);
         }
@@ -27,11 +33,16 @@ export const validateRequest = {
         next();
       } catch (error) {
         if (error instanceof ZodError) {
-          res.status(400).json({
+          const response: ApiErrorResponse = {
             status: 'error',
-            message: 'Invalid query parameters',
-            errors: error.errors
-          });
+            error: {
+              code: 'USER_CREATE_ERROR',
+              message: 'Invalid query parameters',
+              details: error.errors
+            },
+            timestamp: new Date().toISOString()
+          };
+          res.status(400).json(response);
         } else {
           next(error);
         }
@@ -45,14 +56,19 @@ export const validateRequest = {
         next();
       } catch (error) {
         if (error instanceof ZodError) {
-          res.status(400).json({
+          const response: ApiErrorResponse = {
             status: 'error',
-            message: 'Invalid request body',
-            errors: error.errors
-          });
+            error: {
+              code: 'USER_CREATE_ERROR',
+              message: error.errors[0]?.message || 'Invalid request body',
+              details: error.errors
+            },
+            timestamp: new Date().toISOString()
+          };
+          res.status(400).json(response);
         } else {
           next(error);
         }
       }
     }
-}; 
+};

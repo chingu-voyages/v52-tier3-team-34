@@ -213,6 +213,233 @@
             },
             "description": "Get a user with specific fields and venue names"
           }
+        },
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"name\": \"John Doe\",\n  \"googleId\": \"123456789\",\n  \"profileImage\": \"https://example.com/profile.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users"]
+            },
+            "description": "Create a new user with Google authentication details"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.doe@example.com\",\n  \"name\": \"John Doe\",\n  \"googleId\": \"123456789\",\n  \"profileImage\": \"https://example.com/profile.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "email": "john.doe@example.com",
+                  "name": "John Doe",
+                  "profileImage": "https://example.com/profile.jpg",
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Full Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.updated@example.com\",\n  \"name\": \"John Updated\",\n  \"googleId\": \"987654321\",\n  \"profileImage\": \"https://example.com/updated-profile.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            },
+            "description": "Complete update of a user's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"email\": \"john.updated@example.com\",\n  \"name\": \"John Updated\",\n  \"googleId\": \"987654321\",\n  \"profileImage\": \"https://example.com/updated-profile.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "email": "john.updated@example.com",
+                  "name": "John Updated",
+                  "profileImage": "https://example.com/updated-profile.jpg",
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update User - Partial Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John Updated\",\n  \"profileImage\": \"https://example.com/new-profile.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            },
+            "description": "Partial update of a user's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"John Updated\",\n  \"profileImage\": \"https://example.com/new-profile.jpg\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "email": "john.doe@example.com",
+                  "name": "John Updated",
+                  "profileImage": "https://example.com/new-profile.jpg",
+                  "createdAt": "2024-03-11T10:30:00.000Z"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "users", "{{userId}}"]
+            },
+            "description": "Delete a user by ID"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/users/{{userId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": null,
+                "message": "User deleted successfully",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
         }
       ]
     },
@@ -301,6 +528,272 @@
             },
             "description": "Get venues with multiple query parameters"
           }
+        },
+        {
+          "name": "Create Venue",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Sample Venue\",\n  \"address\": \"123 Main St, Anytown\",\n  \"capacity\": 100,\n  \"description\": \"A great place for events.\",\n  \"contact\": {\n    \"phone\": \"123-456-7890\",\n    \"email\": \"contact@samplevenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/image1.jpg\",\n    \"https://example.com/image2.jpg\"\n  ],\n  \"coordinates\": {\n    \"lat\": 40.7128,\n    \"lng\": -74.0060\n  },\n  \"userId\": 1\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues"]
+            },
+            "description": "Create a new venue"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Sample Venue\",\n  \"address\": \"123 Main St, Anytown\",\n  \"capacity\": 100,\n  \"description\": \"A great place for events.\",\n  \"contact\": {\n    \"phone\": \"123-456-7890\",\n    \"email\": \"contact@samplevenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/image1.jpg\",\n    \"https://example.com/image2.jpg\"\n  ],\n  \"coordinates\": {\n    \"lat\": 40.7128,\n    \"lng\": -74.0060\n  },\n  \"userId\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "name": "Sample Venue",
+                  "address": "123 Main St, Anytown",
+                  "capacity": 100,
+                  "description": "A great place for events.",
+                  "contact": {
+                    "phone": "123-456-7890",
+                    "email": "contact@samplevenue.com"
+                  },
+                  "images": [
+                    "https://example.com/image1.jpg",
+                    "https://example.com/image2.jpg"
+                  ],
+                  "coordinates": {
+                    "lat": 40.7128,
+                    "lng": -74.0060
+                  },
+                  "userId": 1
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Venue - Full Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Venue\",\n  \"address\": \"456 Elm St, Othertown\",\n  \"capacity\": 150,\n  \"description\": \"An updated venue description.\",\n  \"contact\": {\n    \"phone\": \"987-654-3210\",\n    \"email\": \"update@samplevenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/image3.jpg\",\n    \"https://example.com/image4.jpg\"\n  ],\n  \"coordinates\": {\n    \"lat\": 34.0522,\n    \"lng\": -118.2437\n  },\n  \"userId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", "{{venueId}}"]
+            },
+            "description": "Complete update of a venue's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Updated Venue\",\n  \"address\": \"456 Elm St, Othertown\",\n  \"capacity\": 150,\n  \"description\": \"An updated venue description.\",\n  \"contact\": {\n    \"phone\": \"987-654-3210\",\n    \"email\": \"update@samplevenue.com\"\n  },\n  \"images\": [\n    \"https://example.com/image3.jpg\",\n    \"https://example.com/image4.jpg\"\n  ],\n  \"coordinates\": {\n    \"lat\": 34.0522,\n    \"lng\": -118.2437\n  },\n  \"userId\": 2\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "name": "Updated Venue",
+                  "address": "456 Elm St, Othertown",
+                  "capacity": 150,
+                  "description": "An updated venue description.",
+                  "contact": {
+                    "phone": "987-654-3210",
+                    "email": "update@samplevenue.com"
+                  },
+                  "images": [
+                    "https://example.com/image3.jpg",
+                    "https://example.com/image4.jpg"
+                  ],
+                  "coordinates": {
+                    "lat": 34.0522,
+                    "lng": -118.2437
+                  },
+                  "userId": 2
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Venue - Partial Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": 200\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", "{{venueId}}"]
+            },
+            "description": "Partial update of a venue's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"capacity\": 200\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "name": "Sample Venue",
+                  "address": "123 Main St, Anytown",
+                  "capacity": 200,
+                  "description": "A great place for events.",
+                  "contact": {
+                    "phone": "123-456-7890",
+                    "email": "contact@samplevenue.com"
+                  },
+                  "images": [
+                    "https://example.com/image1.jpg",
+                    "https://example.com/image2.jpg"
+                  ],
+                  "coordinates": {
+                    "lat": 40.7128,
+                    "lng": -74.0060
+                  },
+                  "userId": 1
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Venue",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", "{{venueId}}"]
+            },
+            "description": "Delete a venue by ID"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues/{{venueId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": null,
+                "message": "Venue deleted successfully",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
         }
       ]
     },
@@ -433,6 +926,251 @@
             },
             "description": "Get event with specific venue details"
           }
+        },
+        {
+          "name": "Create Event",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events"]
+            },
+            "description": "Create a new event with venue details"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/events"
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "title": "Sample Event",
+                  "description": "This is a sample event.",
+                  "startDate": "2024-03-11T10:30:00.000Z",
+                  "endDate": "2024-03-11T12:30:00.000Z",
+                  "venueId": 1,
+                  "tags": [
+                    "music",
+                    "live"
+                  ],
+                  "organizer": "Event Organizer"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Event - Full Update",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "{{eventId}}"]
+            },
+            "description": "Complete update of an event's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/events/{{eventId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "title": "Updated Event",
+                  "description": "This is an updated event.",
+                  "startDate": "2024-03-11T11:00:00.000Z",
+                  "endDate": "2024-03-11T13:00:00.000Z",
+                  "venueId": 2,
+                  "tags": [
+                    "conference",
+                    "tech"
+                  ],
+                  "organizer": "Updated Organizer"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update Event - Partial Update",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"This is a partially updated event.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "{{eventId}}"]
+            },
+            "description": "Partial update of an event's information"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"description\": \"This is a partially updated event.\"\n}"
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/events/{{eventId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": {
+                  "id": 1,
+                  "title": "Sample Event",
+                  "description": "This is a partially updated event.",
+                  "startDate": "2024-03-11T10:30:00.000Z",
+                  "endDate": "2024-03-11T12:30:00.000Z",
+                  "venueId": 1,
+                  "tags": [
+                    "music",
+                    "live"
+                  ],
+                  "organizer": "Event Organizer"
+                },
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Event",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "{{eventId}}"]
+            },
+            "description": "Delete an event by ID"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "DELETE",
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/events/{{eventId}}"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "status": "success",
+                "data": null,
+                "message": "Event deleted successfully",
+                "timestamp": "2024-03-11T10:30:00.000Z"
+              }
+            }
+          ]
         }
       ]
     }
