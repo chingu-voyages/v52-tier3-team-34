@@ -229,6 +229,104 @@ describe('Users API', () => {
       expect(descEmails).toEqual(sortedDescEmails);
     });
 
+    test('success: supports filtering by email', async () => {
+      // Create two test users with different emails
+      const timestamp = Date.now();
+      const testUsers = [
+        {
+          email: `test1.${timestamp}@example.com`,
+          name: 'Test User 1',
+          googleId: `test1${timestamp}`,
+          profileImage: 'https://example.com/image1.jpg'
+        },
+        {
+          email: `test2.${timestamp}@example.com`,
+          name: 'Test User 2',
+          googleId: `test2${timestamp}`,
+          profileImage: 'https://example.com/image2.jpg'
+        }
+      ];
+
+      const createdUserIds = [];
+      for (const userData of testUsers) {
+        const response = await axios.post(`${API_URL}/users`, userData);
+        createdUserIds.push(response.data.data.id);
+      }
+
+      try {
+        // Get all users first to verify filter reduces results
+        const allUsersResponse = await axios.get(`${API_URL}/users`);
+        
+        // Filter by exact email of first test user
+        const response = await axios.get(`${API_URL}/users?filter[email]=${encodeURIComponent(testUsers[0].email)}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.data.status).toBe('success');
+        expect(Array.isArray(response.data.data)).toBe(true);
+        
+        // Should return fewer results than total users
+        expect(response.data.data.length).toBeLessThan(allUsersResponse.data.data.length);
+        // Should return exactly one user
+        expect(response.data.data.length).toBe(1);
+        // Should be the user with the exact email
+        expect(response.data.data[0].email).toBe(testUsers[0].email);
+      } finally {
+        // Clean up test users
+        for (const id of createdUserIds) {
+          await axios.delete(`${API_URL}/users/${id}`);
+        }
+      }
+    });
+
+    test('success: supports filtering by name', async () => {
+      // Create two test users with different names
+      const timestamp = Date.now();
+      const testUsers = [
+        {
+          email: `test1.${timestamp}@example.com`,
+          name: 'Unique Test Name One',
+          googleId: `test1${timestamp}`,
+          profileImage: 'https://example.com/image1.jpg'
+        },
+        {
+          email: `test2.${timestamp}@example.com`,
+          name: 'Unique Test Name Two',
+          googleId: `test2${timestamp}`,
+          profileImage: 'https://example.com/image2.jpg'
+        }
+      ];
+
+      const createdUserIds = [];
+      for (const userData of testUsers) {
+        const response = await axios.post(`${API_URL}/users`, userData);
+        createdUserIds.push(response.data.data.id);
+      }
+
+      try {
+        // Get all users first to verify filter reduces results
+        const allUsersResponse = await axios.get(`${API_URL}/users`);
+        
+        // Filter by exact name of first test user
+        const response = await axios.get(`${API_URL}/users?filter[name]=${encodeURIComponent(testUsers[0].name)}`);
+        
+        expect(response.status).toBe(200);
+        expect(response.data.status).toBe('success');
+        expect(Array.isArray(response.data.data)).toBe(true);
+        
+        // Should return fewer results than total users
+        expect(response.data.data.length).toBeLessThan(allUsersResponse.data.data.length);
+        // Should return exactly one user
+        expect(response.data.data.length).toBe(1);
+        // Should be the user with the exact name
+        expect(response.data.data[0].name).toBe(testUsers[0].name);
+      } finally {
+        // Clean up test users
+        for (const id of createdUserIds) {
+          await axios.delete(`${API_URL}/users/${id}`);
+        }
+      }
+    });
+
     test('error: rejects invalid sort parameters', async () => {
       // Test invalid sort field
       try {
