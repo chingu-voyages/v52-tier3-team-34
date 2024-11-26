@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { BaseQuerySchema } from './base.types';
 
 export const GoogleUserSchema = z.object({
   email: z.string().email(),
@@ -13,28 +14,15 @@ export const UserParamsSchema = z.object({
     .refine((val) => parseInt(val) > 0, "ID must be positive")
 });
 
-export const UserQuerySchema = z.object({
-  // Pagination
-  page: z.coerce.number().positive().optional(),
-  limit: z.coerce.number().min(1).max(100).optional(),
-  
-  // Sorting - format: field:direction (e.g., name:asc)
-  sort: z.string()
-    .regex(/^[\w]+:(asc|desc)$/, "Sort must be in format: field:direction")
-    .optional(),
-  
-  // Field selection - comma-separated fields
-  fields: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Fields must be comma-separated field names")
-    .optional(),
-  
-  // Includes/expansions - comma-separated relations
-  include: z.string()
-    .regex(/^[\w]+(,[\w]+)*$/, "Include must be comma-separated relation names")
-    .optional(),
-  
-  // Filtering - object with field:value pairs
-  filter: z.record(z.string()).optional()
+export const UserQuerySchema = BaseQuerySchema.extend({
+  filter: z.object({
+    id: z.coerce.number().int().positive().optional(),
+    email: z.string().email().optional(),
+    name: z.string().optional(),
+    googleId: z.string().optional(),
+    createdAt: z.coerce.date().optional(),
+    updatedAt: z.coerce.date().optional()
+  }).optional()
 });
 
 // Schema for PATCH operations - all fields are optional
@@ -51,4 +39,4 @@ export type UserResponse = {
 export type GoogleUserInput = z.infer<typeof GoogleUserSchema>;
 export type GoogleUserUpdateInput = z.infer<typeof GoogleUserUpdateSchema>;
 export type UserParams = z.infer<typeof UserParamsSchema>;
-export type UserQuery = z.infer<typeof UserQuerySchema>; 
+export type UserQuery = z.infer<typeof UserQuerySchema>;
