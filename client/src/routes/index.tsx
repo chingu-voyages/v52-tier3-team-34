@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useVenues } from '../../hooks/useVenues';
-import { Venue } from '../../types/venues';
+import { Venue } from '../types/venues';
 import { useState } from 'react';
 import { ArrowRight, ArrowLeft, MapPin, Phone } from 'lucide-react';
 
@@ -11,7 +11,6 @@ export const Route = createFileRoute('/')({
 function HomeComponent() {
   // Set the initial page to 1
   const [currentPage, setCurrentPage] = useState(1);
-
   const { data, isLoading, error, isError } = useVenues({
     page: currentPage,
     limit: 5,

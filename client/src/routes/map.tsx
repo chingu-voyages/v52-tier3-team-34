@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useZones } from '../../hooks/useZones';
-import { ZoneResponse, ZoneFeature, Event, Venue } from '../../types/zones';
+import { ZoneResponse, ZoneFeature, Event, Venue } from '../types/zones';
 import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
 import { useState, useRef } from 'react';
 import type { ViewState } from '@vis.gl/react-maplibre';
