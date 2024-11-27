@@ -872,7 +872,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/events?status=published&sort=startDate:asc&fields=id,title,startDate,venue.name&include=venue&page=1&limit=20",
+              "raw": "{{baseUrl}}/api/v1/events?status=published&sort=startDate:asc&fields=id,title,startDate,duration,artist,genre,price,venueId,venue.name&include=venue&page=1&limit=20",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "events"],
               "query": [
@@ -886,7 +886,7 @@
                 },
                 {
                   "key": "fields",
-                  "value": "id,title,startDate,venue.name"
+                  "value": "id,title,startDate,duration,artist,genre,price,venueId,venue.name"
                 },
                 {
                   "key": "include",
@@ -910,7 +910,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}?include=venue&fields=id,title,description,startDate,venue.name,venue.address",
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}?include=venue&fields=id,title,description,startDate,duration,artist,genre,price,venueId,venue.name,venue.address",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "events", "{{eventId}}"],
               "query": [
@@ -920,7 +920,7 @@
                 },
                 {
                   "key": "fields",
-                  "value": "id,title,description,startDate,venue.name,venue.address"
+                  "value": "id,title,description,startDate,duration,artist,genre,price,venueId,venue.name,venue.address"
                 }
               ]
             },
@@ -939,7 +939,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"duration\": 120,\n  \"artist\": \"Famous Artist\",\n  \"genre\": [\"rock\", \"alternative\"],\n  \"price\": 49.99,\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/events",
@@ -961,7 +961,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+                  "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"duration\": 120,\n  \"artist\": \"Famous Artist\",\n  \"genre\": [\"rock\", \"alternative\"],\n  \"price\": 49.99,\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/events"
@@ -983,7 +983,13 @@
                   "title": "Sample Event",
                   "description": "This is a sample event.",
                   "startDate": "2024-03-11T10:30:00.000Z",
-                  "endDate": "2024-03-11T12:30:00.000Z",
+                  "duration": 120,
+                  "artist": "Famous Artist",
+                  "genre": [
+                    "rock",
+                    "alternative"
+                  ],
+                  "price": 49.99,
                   "venueId": 1,
                   "tags": [
                     "music",
@@ -1008,7 +1014,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"duration\": 180,\n  \"artist\": \"Updated Artist\",\n  \"genre\": [\"pop\", \"electronic\"],\n  \"price\": 59.99,\n  \"venueId\": 2,\n  \"tags\": [\"concert\", \"live\"],\n  \"organizer\": \"Updated Organizer\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
@@ -1030,7 +1036,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+                  "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"duration\": 180,\n  \"artist\": \"Updated Artist\",\n  \"genre\": [\"pop\", \"electronic\"],\n  \"price\": 59.99,\n  \"venueId\": 2,\n  \"tags\": [\"concert\", \"live\"],\n  \"organizer\": \"Updated Organizer\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/events/{{eventId}}"
@@ -1052,11 +1058,17 @@
                   "title": "Updated Event",
                   "description": "This is an updated event.",
                   "startDate": "2024-03-11T11:00:00.000Z",
-                  "endDate": "2024-03-11T13:00:00.000Z",
+                  "duration": 180,
+                  "artist": "Updated Artist",
+                  "genre": [
+                    "pop",
+                    "electronic"
+                  ],
+                  "price": 59.99,
                   "venueId": 2,
                   "tags": [
-                    "conference",
-                    "tech"
+                    "concert",
+                    "live"
                   ],
                   "organizer": "Updated Organizer"
                 },
@@ -1121,7 +1133,13 @@
                   "title": "Sample Event",
                   "description": "This is a partially updated event.",
                   "startDate": "2024-03-11T10:30:00.000Z",
-                  "endDate": "2024-03-11T12:30:00.000Z",
+                  "duration": 120,
+                  "artist": "Famous Artist",
+                  "genre": [
+                    "rock",
+                    "alternative"
+                  ],
+                  "price": 49.99,
                   "venueId": 1,
                   "tags": [
                     "music",
