@@ -1,4 +1,4 @@
-import { faker } from "@faker-js/faker";
+import { faker } from '@faker-js/faker';
 
 export async function sleep(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -36,8 +36,7 @@ export function generateExampleVenue() {
       faker.location.zipCode(),
     contact: {
       email: faker.internet.email().toLowerCase(),
-      phone: formattedPhone,
-      website: `https://www.${faker.internet.domainWord()}.com`
+      phone: formattedPhone
     },
     coordinates: {
       lat: faker.location.latitude({ min: 25, max: 49 }),

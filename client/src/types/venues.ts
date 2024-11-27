@@ -98,8 +98,7 @@ export const venueSchema = z.object({
   address: z.string().min(5, 'Please enter a valid address'),
   contact: z.object({
     email: z.string().email('Please enter a valid email'),
-    phone: z.string().regex(/^\+?[\d\s-]+$/, 'Please enter a valid phone number'),
-    website: z.string().url('Please enter a valid URL')
+    phone: z.string().regex(/^\+?[\d\s-]+$/, 'Please enter a valid phone number')
   }),
   coordinates: z.object({
     lat: z.number().min(-90).max(90),

@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { FetchVenuesOptions, Venue } from '../types/venues';
+import { FetchVenuesOptions } from '../src/types/venues';
 import { fetchVenues } from '../api/venues';
 
 export const useVenues = (options: FetchVenuesOptions = {}) => {
