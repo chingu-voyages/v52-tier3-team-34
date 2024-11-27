@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -6,7 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Mail, Phone, Globe, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
 import { generateExampleVenue } from '../../../utils';
 import { createVenue } from '../../../../api/venues';
-import { VenueFormData, venueSchema } from '../../../../types/venues';
+import { VenueFormData, venueSchema } from '../../../types/venues';
+import { useUsers } from '../../../../hooks/useUsers';
+import { User, UsersResponse } from '../../../types/user';
+import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/_protect/dashboard/register-venue')({
   component: RegisterVenueForm
@@ -22,11 +24,22 @@ function RegisterVenueForm() {
   } = useForm<VenueFormData>({
     resolver: zodResolver(venueSchema),
     defaultValues: {
-      contact: { email: '', phone: '', website: '' },
+      contact: { email: '', phone: '' },
       coordinates: { lat: 0, lng: 0 },
       images: ['']
     }
   });
+
+  const [firstUserId, setFirstUserId] = useState<String>('1');
+  const { data } = useUsers();
+  const users = data?.data;
+
+  useEffect(() => {
+    if (users) {
+      const fisrtUserId = users[0].id.toString();
+      setFirstUserId(fisrtUserId);
+    }
+  }, [data]);
 
   const handleFillExample = () => {
     const exampleData = generateExampleVenue();
@@ -38,14 +51,18 @@ function RegisterVenueForm() {
   const mutation = useMutation({
     mutationFn: createVenue,
     onSuccess: () => {
+      console.log('Success');
+
       queryClient.invalidateQueries({ queryKey: ['venues'] });
       navigate({ to: '/' });
     }
   });
 
   const onSubmit = (data: VenueFormData) => {
-    const userId = 1;
+    const userId = Number(firstUserId);
     const venueData = { ...data, userId };
+    console.log('Venue data submitted: ', venueData);
+
     mutation.mutate(venueData);
   };
 
@@ -55,7 +72,12 @@ function RegisterVenueForm() {
         <div className="p-2 rounded-lg bg-blue-50 text-blue-600">
           <Building2 size={24} />
         </div>
-        <h1 className="text-2xl font-bold">Register New Venue</h1>
+        <div className="flex flex-col">
+          <h1 className="text-2xl font-bold">Register New Venue</h1>
+          <h2 className="bg-yellow-300 text-red-600 w-fit px-2">
+            Active userId: <span className="font-bold">{firstUserId}</span>
+          </h2>
+        </div>
       </div>
 
       <button
@@ -136,7 +158,7 @@ function RegisterVenueForm() {
             {errors.contact?.phone && <p className="mt-1 text-sm text-red-600">{errors.contact.phone.message}</p>}
           </div>
 
-          <div>
+          {/* <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Website</label>
             <div className="relative">
               <Globe className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
@@ -147,7 +169,7 @@ function RegisterVenueForm() {
               />
             </div>
             {errors.contact?.website && <p className="mt-1 text-sm text-red-600">{errors.contact.website.message}</p>}
-          </div>
+          </div> */}
         </div>
 
         {/* Coordinates */}
