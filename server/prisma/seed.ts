@@ -283,22 +283,23 @@ async function main() {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() + dayOffset);
     startDate.setHours(20, 0, 0, 0);
-    return startDate;
+    const endDate = new Date(startDate.getTime() + 180 * 60 * 1000);
+    return { startDate, endDate };
   };
 
   // Events for New York venues
   for (const venue of nyVenues) {
     // 2-3 events per venue on different days
-    const dates1 = getEventDates(1);
-    const dates2 = getEventDates(3);
+    const { startDate, endDate } = getEventDates(1);
+    const { startDate: startDate2, endDate: endDate2 } = getEventDates(3);
     
     events.push(
       prisma.event.create({
         data: {
           title: `Jazz Night at ${venue.name}`,
           description: "Live jazz quartet performing classic standards and original compositions",
-          startDate: dates1,
-          duration: 180, // 3 hours
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
           status: "published",
           artist: "The Jazz Quartet",
           genre: ["Jazz", "Blues"],
@@ -310,8 +311,8 @@ async function main() {
         data: {
           title: `Blues Evening at ${venue.name}`,
           description: "Soulful blues performance featuring local and guest artists",
-          startDate: dates2,
-          duration: 240, // 4 hours
+          startDate: startDate2.toISOString(),
+          endDate: endDate2.toISOString(),
           status: "published",
           artist: "Blues Brothers Tribute",
           genre: ["Blues", "Soul"],
@@ -324,16 +325,16 @@ async function main() {
 
   // Events for Paris venues
   for (const venue of parisVenues) {
-    const dates1 = getEventDates(2);
-    const dates2 = getEventDates(4);
+    const { startDate, endDate } = getEventDates(2);
+    const { startDate: startDate2, endDate: endDate2 } = getEventDates(4);
     
     events.push(
       prisma.event.create({
         data: {
           title: `Soirée Jazz at ${venue.name}`,
           description: "Une soirée exceptionnelle de jazz contemporain",
-          startDate: dates1,
-          duration: 180, // 3 hours
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
           status: "published",
           artist: "Le Quartet Parisien",
           genre: ["Jazz", "Contemporary"],
@@ -345,8 +346,8 @@ async function main() {
         data: {
           title: `Classical Night at ${venue.name}`,
           description: "Classical music performance featuring chamber orchestra",
-          startDate: dates2,
-          duration: 150, // 2.5 hours
+          startDate: startDate2.toISOString(),
+          endDate: endDate2.toISOString(),
           status: "published",
           artist: "Paris Chamber Orchestra",
           genre: ["Classical", "Chamber Music"],
@@ -359,17 +360,17 @@ async function main() {
 
   // Events for Berlin venues
   for (const venue of berlinVenues) {
-    const dates1 = getEventDates(1);
-    const dates2 = getEventDates(3);
-    const dates3 = getEventDates(5);
+    const { startDate, endDate } = getEventDates(1);
+    const { startDate: startDate2, endDate: endDate2 } = getEventDates(3);
+    const { startDate: startDate3, endDate: endDate3 } = getEventDates(5);
     
     events.push(
       prisma.event.create({
         data: {
           title: `Electronic Night at ${venue.name}`,
           description: "Progressive electronic music featuring international DJs",
-          startDate: dates1,
-          duration: 360, // 6 hours
+          startDate: startDate.toISOString(),
+          endDate: endDate.toISOString(),
           status: "published",
           artist: "DJ TechMeister",
           genre: ["Electronic", "Techno", "House"],
@@ -381,8 +382,8 @@ async function main() {
         data: {
           title: `Indie Rock at ${venue.name}`,
           description: "Alternative and indie rock bands showcase",
-          startDate: dates2,
-          duration: 240, // 4 hours
+          startDate: startDate2.toISOString(),
+          endDate: endDate2.toISOString(),
           status: "published",
           artist: "The Berlin Rockers",
           genre: ["Rock", "Indie", "Alternative"],
@@ -394,8 +395,8 @@ async function main() {
         data: {
           title: `Experimental Music at ${venue.name}`,
           description: "Avant-garde and experimental music performance",
-          startDate: dates3,
-          duration: 120, // 2 hours
+          startDate: startDate3.toISOString(),
+          endDate: endDate3.toISOString(),
           status: "draft",
           artist: "Sound Explorers Collective",
           genre: ["Experimental", "Avant-garde"],

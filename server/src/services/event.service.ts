@@ -70,7 +70,7 @@ export class EventService {
           title: true,
           description: true,
           startDate: true,
-          duration: true,
+          endDate: true,
           status: true,
           artist: true,
           genre: true,

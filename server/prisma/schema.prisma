@@ -26,7 +26,7 @@ model Event {
   title       String
   description String
   startDate   DateTime
-  duration    Int      @default(0) // Duration in minutes
+  endDate     DateTime
   status      String   @default("draft") // draft, published, cancelled
   artist      String?
   genre       String[]

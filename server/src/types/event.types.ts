@@ -13,7 +13,7 @@ export const EventSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
   description: z.string().min(1, "Description is required").max(1000),
   startDate: z.string().datetime(), // ISO 8601 format
-  duration: z.number().int().nonnegative().default(0),
+  endDate: z.string().datetime(),
   status: z
     .enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
     .default(EventStatus.DRAFT),
@@ -35,7 +35,7 @@ export const EventQuerySchema = BaseQuerySchema.extend({
     status: z.enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED]).optional(),
     venueId: z.coerce.number().int().positive().optional(),
     startDate: z.coerce.date().optional(),
-    duration: z.coerce.number().int().nonnegative().optional(),
+    endDate: z.coerce.date().optional(),
     artist: z.string().optional(),
     genre: z.string().optional(),
     price: z.coerce.number().nonnegative().optional(),
@@ -68,6 +68,7 @@ export const EventZoneQuerySchema = z.object({
     .max(50, "Radius cannot exceed 50 kilometers"),
   // Optional filters
   startDate: z.string().datetime().optional(), // Filter events starting after this time
+  endDate: z.string().datetime().optional(), // Filter events ending before this time
   status: z
     .enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
     .optional(),
@@ -86,7 +87,7 @@ export type EventResponse = {
   title: string;
   description: string;
   startDate: string;
-  duration: number;
+  endDate: string;
   status: keyof typeof EventStatus;
   artist?: string;
   genre: string[];
@@ -128,7 +129,7 @@ export type EventGeoJSONFeature = {
     title: string;
     description: string;
     startDate: string;
-    duration: number;
+    endDate: string;
     status: keyof typeof EventStatus;
     artist?: string;
     genre: string[];
@@ -149,5 +150,6 @@ export type EventZoneQueryCoerced = {
   lng: string;
   radius: string;
   startDate?: string;
+  endDate?: string;
   status?: keyof typeof EventStatus;
 };
