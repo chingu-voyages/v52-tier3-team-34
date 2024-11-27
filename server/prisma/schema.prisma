@@ -11,14 +11,14 @@ datasource db {
 }
 
 model User {
-  id            Int      @id @default(autoincrement())
-  email         String   @unique
-  name          String
-  googleId      String   @unique
-  profileImage  String?
-  venues        Venue[]
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  email        String   @unique
+  name         String
+  googleId     String   @unique
+  profileImage String?
+  venues       Venue[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Event {
@@ -26,8 +26,11 @@ model Event {
   title       String
   description String
   startDate   DateTime
-  endDate     DateTime
+  duration    Int      @default(0) // Duration in minutes
   status      String   @default("draft") // draft, published, cancelled
+  artist      String?
+  genre       String[]
+  price       Float    @default(0)
   venue       Venue    @relation(fields: [venueId], references: [id])
   venueId     Int
   createdAt   DateTime @default(now())
@@ -39,9 +42,9 @@ model Venue {
   name        String
   description String
   address     String
-  contact     Json     // {phone, email, website}
+  contact     Json // {phone, email, website}
   images      String[] // Array of image URLs
-  coordinates Json     // {lat: number, lng: number}
+  coordinates Json // {lat: number, lng: number}
   events      Event[]
   user        User     @relation(fields: [userId], references: [id])
   userId      Int
