@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+// API options for fetching venues with pagination
 export interface FetchVenuesOptions {
   page?: number;
   limit?: number;
@@ -7,50 +8,87 @@ export interface FetchVenuesOptions {
   order?: 'asc' | 'desc';
 }
 
-export interface VenuesResponse {
-  data: Venue[];
-  total?: number;
-  page?: number;
+interface PaginationMeta {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
+// The response from fetching venues
+export interface VenuesResponse {
+  status: string;
+  data: Venue[];
+  meta: {
+    pagination: PaginationMeta;
+    filters: Record<string, unknown>;
+    includes: unknown[];
+  };
+  timestamp: string;
+}
+
+// Contact information for the venue
 export interface Contact {
   email: string;
   phone: string;
   website: string;
 }
 
+// Coordinates (latitude, longitude) for the venue
 export interface Coordinates {
   lat: number;
   lng: number;
 }
 
+interface VenueContact {
+  email: string;
+  phone: string;
+  website: string;
+}
+
+interface VenueCoordinates {
+  lat: number;
+  lng: number;
+}
+
+// Venue object structure
 export interface Venue {
   id: number;
   name: string;
   description: string;
   address: string;
-  contact: Contact;
-  coordinates: Coordinates;
-  images: string[];
+  contact: VenueContact;
+  coordinates: VenueCoordinates;
+  userId: number;
   createdAt: string;
   updatedAt: string;
-  userId: number;
 }
 
+// Pagination details
 export interface Pagination {
-  currentPage: number;
+  page: number;
+  limit: number;
+  total: number;
   totalPages: number;
-  totalItems: number;
-  itemsPerPage: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+  hasNext: boolean;
+  hasPrevious: boolean;
 }
 
-export interface VenueResponse {
-  status: string;
-  data: Venue[];
+// Metadata for the response, including pagination and filters
+export interface Meta {
   pagination: Pagination;
-  timestamp: string;
+  filters: Record<string, any>; // Filters can be more specific if the structure is known
+  includes: any[]; // Include can be more specific if needed
+}
+
+// Complete response structure for venue data
+export interface VenueResponse {
+  status: 'success';
+  data: Venue[];
+  meta: Meta;
+  timestamp: string; // ISO 8601 string
 }
 
 // Zod schema for form validation
