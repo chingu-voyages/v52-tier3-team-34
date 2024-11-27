@@ -59,10 +59,42 @@ async function main() {
         googleId: "g_ldn_123",
         profileImage: "https://example.com/profiles/london_manager.jpg"
       }
+    }),
+    prisma.user.create({
+      data: {
+        email: "porto.manager@example.com",
+        name: "Porto Venue Manager",
+        googleId: "g_porto_123",
+        profileImage: "https://example.com/profiles/porto_manager.jpg"
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: "toulouse.manager@example.com",
+        name: "Toulouse Venue Manager",
+        googleId: "g_tls_123",
+        profileImage: "https://example.com/profiles/toulouse_manager.jpg"
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: "lagos.manager@example.com",
+        name: "Lagos Venue Manager",
+        googleId: "g_lag_123",
+        profileImage: "https://example.com/profiles/lagos_manager.jpg"
+      }
+    }),
+    prisma.user.create({
+      data: {
+        email: "amsterdam.manager@example.com",
+        name: "Amsterdam Venue Manager",
+        googleId: "g_ams_123",
+        profileImage: "https://example.com/profiles/amsterdam_manager.jpg"
+      }
     })
   ]);
 
-  const [nyManager, parisManager, berlinManager, barcelonaManager, londonManager] = users;
+  const [nyManager, parisManager, berlinManager, barcelonaManager, londonManager, portoManager, toulouseManager, lagosManager, amsterdamManager] = users;
 
   // New York Venues (Times Square as center: 40.7580, -73.9855)
   const nyVenues = await Promise.all([
@@ -714,6 +746,742 @@ async function main() {
     })
   ]);
 
+  // Porto Venues (Avenida dos Aliados as center: 41.1495° N, 8.6108° W)
+  const portoVenues = await Promise.all([
+    prisma.venue.create({
+      data: {
+        name: "Casa da Música",
+        description: "Iconic contemporary concert hall designed by Rem Koolhaas, hosting classical, jazz, and world music",
+        address: "Av. da Boavista 604-610, 4149-071 Porto",
+        contact: {
+          phone: "+351-220-120-220",
+          email: "info@casadamusica.com",
+          website: "https://www.casadamusica.com"
+        },
+        coordinates: { lat: 41.1589, lng: -8.6305 },
+        images: [
+          "https://www.casadamusica.com/images/spaces/sala-suggia/sala-suggia-1.jpg",
+          "https://www.casadamusica.com/images/spaces/sala-suggia/sala-suggia-2.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Coliseu Porto Ageas",
+        description: "Historic concert hall and cultural venue hosting diverse performances since 1941",
+        address: "R. de Passos Manuel 137, 4000-385 Porto",
+        contact: {
+          phone: "+351-223-394-940",
+          email: "geral@coliseu.pt",
+          website: "https://www.coliseu.pt"
+        },
+        coordinates: { lat: 41.1467, lng: -8.6066 },
+        images: [
+          "https://www.coliseu.pt/wp-content/uploads/2022/01/coliseu-exterior.jpg",
+          "https://www.coliseu.pt/wp-content/uploads/2022/01/coliseu-sala.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Hard Club",
+        description: "Alternative music venue in a restored market building, featuring rock and electronic music",
+        address: "Mercado Ferreira Borges, R. da Bolsa, 4050-146 Porto",
+        contact: {
+          phone: "+351-222-087-268",
+          email: "geral@hardclub.pt",
+          website: "https://www.hardclub.pt"
+        },
+        coordinates: { lat: 41.1414, lng: -8.6156 },
+        images: [
+          "https://www.hardclub.pt/wp-content/uploads/2022/01/hard-club-exterior.jpg",
+          "https://www.hardclub.pt/wp-content/uploads/2022/01/hard-club-main-room.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Teatro Rivoli",
+        description: "Municipal theater hosting music, dance, and theatrical performances",
+        address: "Praça D. João I, 4000-295 Porto",
+        contact: {
+          phone: "+351-223-392-200",
+          email: "teatrorivoli@cm-porto.pt",
+          website: "https://www.teatromunicipaldoporto.pt"
+        },
+        coordinates: { lat: 41.1477, lng: -8.6114 },
+        images: [
+          "https://www.teatromunicipaldoporto.pt/wp-content/uploads/2022/01/rivoli-exterior.jpg",
+          "https://www.teatromunicipaldoporto.pt/wp-content/uploads/2022/01/rivoli-main-hall.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Maus Hábitos",
+        description: "Cultural center and music venue known for alternative and electronic music",
+        address: "R. de Passos Manuel 178, 4º, 4000-382 Porto",
+        contact: {
+          phone: "+351-222-087-268",
+          email: "geral@maushabitos.pt",
+          website: "https://www.maushabitos.pt"
+        },
+        coordinates: { lat: 41.1466, lng: -8.6070 },
+        images: [
+          "https://www.maushabitos.pt/wp-content/uploads/2022/01/maus-habitos-terrace.jpg",
+          "https://www.maushabitos.pt/wp-content/uploads/2022/01/maus-habitos-interior.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Hot Five Jazz & Blues Club",
+        description: "Intimate jazz club featuring local and international artists",
+        address: "Largo Actor Dias 51, 4430-257 Porto",
+        contact: {
+          phone: "+351-934-418-184",
+          email: "info@hotfive.pt",
+          website: "https://www.hotfive.pt"
+        },
+        coordinates: { lat: 41.1439, lng: -8.6167 },
+        images: [
+          "https://www.hotfive.pt/wp-content/uploads/2022/01/hot-five-entrance.jpg",
+          "https://www.hotfive.pt/wp-content/uploads/2022/01/hot-five-stage.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Plano B",
+        description: "Multi-room venue featuring live music, DJ sets, and cultural events",
+        address: "R. da Bolsa, 30, 4050-151 Porto",
+        contact: {
+          phone: "+351-222-012-500",
+          email: "info@planobporto.net",
+          website: "https://www.planobporto.net"
+        },
+        coordinates: { lat: 41.1456, lng: -8.6151 },
+        images: [
+          "https://www.planobporto.net/wp-content/uploads/2022/01/plano-b-entrance.jpg",
+          "https://www.planobporto.net/wp-content/uploads/2022/01/plano-b-dance-floor.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Cave 45",
+        description: "Underground venue known for metal and rock concerts",
+        address: "R. das Oliveiras 45, 4050-449 Porto",
+        contact: {
+          phone: "+351-222-017-045",
+          email: "geral@cave45.pt",
+          website: "https://www.cave45.pt"
+        },
+        coordinates: { lat: 41.1464, lng: -8.6176 },
+        images: [
+          "https://www.cave45.pt/wp-content/uploads/2022/01/cave-45-entrance.jpg",
+          "https://www.cave45.pt/wp-content/uploads/2022/01/cave-45-stage.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "M.Ou.Co.",
+        description: "Modern music venue and hotel complex with recording studios",
+        address: "R. do Heroísmo 329, 4300-096 Porto",
+        contact: {
+          phone: "+351-220-114-800",
+          email: "geral@mouco.pt",
+          website: "https://www.mouco.pt"
+        },
+        coordinates: { lat: 41.1483, lng: -8.5933 },
+        images: [
+          "https://www.mouco.pt/wp-content/uploads/2022/01/mouco-exterior.jpg",
+          "https://www.mouco.pt/wp-content/uploads/2022/01/mouco-concert-hall.jpg"
+        ],
+        userId: portoManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Super Bock Arena - Pavilhão Rosa Mota",
+        description: "Large multi-purpose arena hosting major concerts and events",
+        address: "R. Dom Manuel II, 4050-346 Porto",
+        contact: {
+          phone: "+351-226-151-000",
+          email: "info@superbockarena.pt",
+          website: "https://www.superbockarena.pt"
+        },
+        coordinates: { lat: 41.1469, lng: -8.6236 },
+        images: [
+          "https://www.superbockarena.pt/wp-content/uploads/2022/01/super-bock-arena-exterior.jpg",
+          "https://www.superbockarena.pt/wp-content/uploads/2022/01/super-bock-arena-interior.jpg"
+        ],
+        userId: portoManager.id
+      }
+    })
+  ]);
+
+  // Toulouse Venues (Place du Capitole as center: 43.6045° N, 1.4442° E)
+  const toulouseVenues = await Promise.all([
+    prisma.venue.create({
+      data: {
+        name: "Le Bikini",
+        description: "Iconic concert venue known for electronic music and rock concerts",
+        address: "Rue Théodore Monod, 31520 Ramonville-Saint-Agne",
+        contact: {
+          phone: "+33-5-62-24-09-50",
+          email: "contact@lebikini.com",
+          website: "https://www.lebikini.com"
+        },
+        coordinates: { lat: 43.5478, lng: 1.4728 },
+        images: [
+          "https://www.lebikini.com/wp-content/uploads/2022/01/le-bikini-exterior.jpg",
+          "https://www.lebikini.com/wp-content/uploads/2022/01/le-bikini-main-room.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Le Zénith Toulouse Métropole",
+        description: "Large arena hosting major concerts and events",
+        address: "11 Avenue Raymond Badiou, 31300 Toulouse",
+        contact: {
+          phone: "+33-5-62-74-49-49",
+          email: "contact@zenith-toulouse.fr",
+          website: "https://www.zenith-toulouse-metropole.com"
+        },
+        coordinates: { lat: 43.5989, lng: 1.4086 },
+        images: [
+          "https://www.zenith-toulouse-metropole.com/wp-content/uploads/2022/01/zenith-exterior.jpg",
+          "https://www.zenith-toulouse-metropole.com/wp-content/uploads/2022/01/zenith-arena.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Le Connexion Live",
+        description: "Modern venue featuring indie bands and electronic music",
+        address: "8 Rue Gabriel Péri, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-34-41-62-88",
+          email: "contact@connexion-live.com",
+          website: "https://www.connexion-live.com"
+        },
+        coordinates: { lat: 43.6052, lng: 1.4498 },
+        images: [
+          "https://www.connexion-live.com/wp-content/uploads/2022/01/connexion-entrance.jpg",
+          "https://www.connexion-live.com/wp-content/uploads/2022/01/connexion-stage.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Le Rex",
+        description: "Historic theater turned nightclub hosting live performances",
+        address: "15 Avenue Honoré Serres, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-61-38-57-71",
+          email: "contact@lerextoulouse.com",
+          website: "https://www.lerextoulouse.com"
+        },
+        coordinates: { lat: 43.6112, lng: 1.4428 },
+        images: [
+          "https://www.lerextoulouse.com/wp-content/uploads/2022/01/rex-facade.jpg",
+          "https://www.lerextoulouse.com/wp-content/uploads/2022/01/rex-interior.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Théâtre du Capitole",
+        description: "Historic opera house and classical music venue",
+        address: "Place du Capitole, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-61-63-13-13",
+          email: "contact@theatreducapitole.fr",
+          website: "https://www.theatreducapitole.fr"
+        },
+        coordinates: { lat: 43.6044, lng: 1.4442 },
+        images: [
+          "https://www.theatreducapitole.fr/wp-content/uploads/2022/01/capitole-exterior.jpg",
+          "https://www.theatreducapitole.fr/wp-content/uploads/2022/01/capitole-hall.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "La Dynamo",
+        description: "Alternative music venue focusing on rock and punk",
+        address: "6 Rue Amélie, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-62-73-08-51",
+          email: "contact@ladynamo.fr",
+          website: "https://www.ladynamo.fr"
+        },
+        coordinates: { lat: 43.6027, lng: 1.4505 },
+        images: [
+          "https://www.ladynamo.fr/wp-content/uploads/2022/01/dynamo-entrance.jpg",
+          "https://www.ladynamo.fr/wp-content/uploads/2022/01/dynamo-stage.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Le Métronum",
+        description: "Modern cultural space dedicated to contemporary music",
+        address: "2 Rond-Point Madame de Mondonville, 31200 Toulouse",
+        contact: {
+          phone: "+33-5-31-22-94-10",
+          email: "contact@metronum.fr",
+          website: "https://www.metronum.fr"
+        },
+        coordinates: { lat: 43.6397, lng: 1.4547 },
+        images: [
+          "https://www.metronum.fr/wp-content/uploads/2022/01/metronum-exterior.jpg",
+          "https://www.metronum.fr/wp-content/uploads/2022/01/metronum-hall.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Le Taquin",
+        description: "Intimate jazz club and cultural café",
+        address: "23 Rue des Amidonniers, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-61-21-98-18",
+          email: "contact@le-taquin.fr",
+          website: "https://www.le-taquin.fr"
+        },
+        coordinates: { lat: 43.6066, lng: 1.4338 },
+        images: [
+          "https://www.le-taquin.fr/wp-content/uploads/2022/01/taquin-entrance.jpg",
+          "https://www.le-taquin.fr/wp-content/uploads/2022/01/taquin-interior.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "La Cave Poésie",
+        description: "Historic venue for intimate concerts and poetry readings",
+        address: "71 Rue du Taur, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-61-23-62-00",
+          email: "contact@cave-poesie.com",
+          website: "https://www.cave-poesie.com"
+        },
+        coordinates: { lat: 43.6067, lng: 1.4414 },
+        images: [
+          "https://www.cave-poesie.com/wp-content/uploads/2022/01/cave-entrance.jpg",
+          "https://www.cave-poesie.com/wp-content/uploads/2022/01/cave-stage.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Halle aux Grains",
+        description: "Former grain market converted into a symphony hall",
+        address: "1 Place Dupuy, 31000 Toulouse",
+        contact: {
+          phone: "+33-5-61-63-13-13",
+          email: "contact@halleauxgrains.fr",
+          website: "https://www.halleauxgrains-toulouse.fr"
+        },
+        coordinates: { lat: 43.6001, lng: 1.4533 },
+        images: [
+          "https://www.halleauxgrains-toulouse.fr/wp-content/uploads/2022/01/halle-exterior.jpg",
+          "https://www.halleauxgrains-toulouse.fr/wp-content/uploads/2022/01/halle-concert.jpg"
+        ],
+        userId: toulouseManager.id
+      }
+    })
+  ]);
+
+  // Lagos Venues (Victoria Island as center: 6.4281° N, 3.4219° E)
+  const lagosVenues = await Promise.all([
+    prisma.venue.create({
+      data: {
+        name: "Eko Hotel Convention Centre",
+        description: "Premier event venue hosting major concerts and entertainment shows",
+        address: "Plot 1415 Adetokunbo Ademola Street, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-270-2220",
+          email: "events@ekohotels.com",
+          website: "https://www.ekohotels.com"
+        },
+        coordinates: { lat: 6.4281, lng: 3.4219 },
+        images: [
+          "https://www.ekohotels.com/wp-content/uploads/2022/01/eko-convention-exterior.jpg",
+          "https://www.ekohotels.com/wp-content/uploads/2022/01/eko-convention-hall.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Landmark Event Centre",
+        description: "Modern multipurpose venue for concerts and cultural events",
+        address: "Plot 2 & 3, Water Corporation Road, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-448-2812",
+          email: "info@landmarkeventcentre.com",
+          website: "https://www.landmarkeventcentre.com"
+        },
+        coordinates: { lat: 6.4258, lng: 3.4341 },
+        images: [
+          "https://www.landmarkeventcentre.com/wp-content/uploads/2022/01/landmark-exterior.jpg",
+          "https://www.landmarkeventcentre.com/wp-content/uploads/2022/01/landmark-hall.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Terra Kulture Arena",
+        description: "Cultural center showcasing Nigerian arts, music, and theater",
+        address: "Plot 1376 Tiamiyu Savage Street, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-270-0588",
+          email: "info@terrakulture.com",
+          website: "https://www.terrakulture.com"
+        },
+        coordinates: { lat: 6.4312, lng: 3.4284 },
+        images: [
+          "https://www.terrakulture.com/wp-content/uploads/2022/01/terra-kulture-exterior.jpg",
+          "https://www.terrakulture.com/wp-content/uploads/2022/01/terra-kulture-theater.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "The New Afrika Shrine",
+        description: "Historic venue celebrating Afrobeat music and Fela Kuti's legacy",
+        address: "1 NERDC Road, Agindigbi, Ikeja, Lagos",
+        contact: {
+          phone: "+234-802-828-4499",
+          email: "info@newafrikashrine.com",
+          website: "https://www.newafrikashrine.com"
+        },
+        coordinates: { lat: 6.6096, lng: 3.3406 },
+        images: [
+          "https://www.newafrikashrine.com/wp-content/uploads/2022/01/shrine-exterior.jpg",
+          "https://www.newafrikashrine.com/wp-content/uploads/2022/01/shrine-stage.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Freedom Park",
+        description: "Former colonial prison transformed into a cultural venue",
+        address: "Broad Street, Lagos Island, Lagos",
+        contact: {
+          phone: "+234-802-828-4499",
+          email: "info@freedomparklagos.com",
+          website: "https://www.freedomparklagos.com"
+        },
+        coordinates: { lat: 6.4478, lng: 3.3947 },
+        images: [
+          "https://www.freedomparklagos.com/wp-content/uploads/2022/01/freedom-park-amphitheater.jpg",
+          "https://www.freedomparklagos.com/wp-content/uploads/2022/01/freedom-park-stage.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Muri Okunola Park",
+        description: "Open-air venue for concerts and cultural festivals",
+        address: "Muri Okunola Street, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-802-828-4499",
+          email: "info@muriokunola.com",
+          website: "https://www.muriokunola.com"
+        },
+        coordinates: { lat: 6.4279, lng: 3.4245 },
+        images: [
+          "https://www.muriokunola.com/wp-content/uploads/2022/01/muri-okunola-park.jpg",
+          "https://www.muriokunola.com/wp-content/uploads/2022/01/muri-okunola-stage.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Hard Rock Cafe Lagos",
+        description: "International music venue featuring live bands and DJ nights",
+        address: "Landmark Village, Water Corporation Road, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-448-2812",
+          email: "info@hardrockcafelagos.com",
+          website: "https://www.hardrockcafe.com/location/lagos"
+        },
+        coordinates: { lat: 6.4258, lng: 3.4341 },
+        images: [
+          "https://www.hardrockcafe.com/location/lagos/wp-content/uploads/2022/01/hrc-lagos-exterior.jpg",
+          "https://www.hardrockcafe.com/location/lagos/wp-content/uploads/2022/01/hrc-lagos-stage.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Oriental Hotel Conference Centre",
+        description: "Luxury hotel venue hosting high-profile music events",
+        address: "3 Lekki Road, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-280-6600",
+          email: "events@oriental-hotels.com",
+          website: "https://www.oriental-hotels.com"
+        },
+        coordinates: { lat: 6.4312, lng: 3.4284 },
+        images: [
+          "https://www.oriental-hotels.com/wp-content/uploads/2022/01/oriental-exterior.jpg",
+          "https://www.oriental-hotels.com/wp-content/uploads/2022/01/oriental-hall.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "The Jazz Hole",
+        description: "Intimate jazz club featuring local and international artists",
+        address: "168 Awolowo Road, Ikoyi, Lagos",
+        contact: {
+          phone: "+234-803-403-0266",
+          email: "info@thejazzhole.com",
+          website: "https://www.thejazzhole.com"
+        },
+        coordinates: { lat: 6.4478, lng: 3.4341 },
+        images: [
+          "https://www.thejazzhole.com/wp-content/uploads/2022/01/jazzhole-entrance.jpg",
+          "https://www.thejazzhole.com/wp-content/uploads/2022/01/jazzhole-interior.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Federal Palace Hotel",
+        description: "Historic hotel venue with modern concert facilities",
+        address: "6-8 Ahmadu Bello Way, Victoria Island, Lagos",
+        contact: {
+          phone: "+234-1-277-7777",
+          email: "events@federalpalacehotel.com",
+          website: "https://www.federalpalacehotel.com"
+        },
+        coordinates: { lat: 6.4219, lng: 3.4147 },
+        images: [
+          "https://www.federalpalacehotel.com/wp-content/uploads/2022/01/federal-palace-exterior.jpg",
+          "https://www.federalpalacehotel.com/wp-content/uploads/2022/01/federal-palace-hall.jpg"
+        ],
+        userId: lagosManager.id
+      }
+    })
+  ]);
+
+  // Amsterdam Venues (Dam Square as center: 52.3731° N, 4.8926° E)
+  const amsterdamVenues = await Promise.all([
+    prisma.venue.create({
+      data: {
+        name: "Royal Concertgebouw",
+        description: "World-renowned concert hall known for exceptional acoustics",
+        address: "Concertgebouwplein 10, 1071 LN Amsterdam",
+        contact: {
+          phone: "+31-20-671-8345",
+          email: "info@concertgebouw.nl",
+          website: "https://www.concertgebouw.nl"
+        },
+        coordinates: { lat: 52.3564, lng: 4.8790 },
+        images: [
+          "https://www.concertgebouw.nl/wp-content/uploads/2022/01/concertgebouw-exterior.jpg",
+          "https://www.concertgebouw.nl/wp-content/uploads/2022/01/concertgebouw-main-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Paradiso",
+        description: "Former church turned iconic rock venue and cultural center",
+        address: "Weteringschans 6-8, 1017 SG Amsterdam",
+        contact: {
+          phone: "+31-20-626-4521",
+          email: "info@paradiso.nl",
+          website: "https://www.paradiso.nl"
+        },
+        coordinates: { lat: 52.3622, lng: 4.8834 },
+        images: [
+          "https://www.paradiso.nl/wp-content/uploads/2022/01/paradiso-exterior.jpg",
+          "https://www.paradiso.nl/wp-content/uploads/2022/01/paradiso-main-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Melkweg",
+        description: "Multi-room venue in former milk factory hosting diverse music events",
+        address: "Lijnbaansgracht 234A, 1017 PH Amsterdam",
+        contact: {
+          phone: "+31-20-531-8181",
+          email: "info@melkweg.nl",
+          website: "https://www.melkweg.nl"
+        },
+        coordinates: { lat: 52.3650, lng: 4.8815 },
+        images: [
+          "https://www.melkweg.nl/wp-content/uploads/2022/01/melkweg-exterior.jpg",
+          "https://www.melkweg.nl/wp-content/uploads/2022/01/melkweg-max.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "AFAS Live",
+        description: "Modern arena for large-scale concerts and events",
+        address: "ArenA Boulevard 590, 1101 DS Amsterdam",
+        contact: {
+          phone: "+31-20-207-5000",
+          email: "info@afaslive.nl",
+          website: "https://www.afaslive.nl"
+        },
+        coordinates: { lat: 52.3134, lng: 4.9407 },
+        images: [
+          "https://www.afaslive.nl/wp-content/uploads/2022/01/afas-live-exterior.jpg",
+          "https://www.afaslive.nl/wp-content/uploads/2022/01/afas-live-main-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Bimhuis",
+        description: "Premier jazz venue with stunning waterfront location",
+        address: "Piet Heinkade 3, 1019 BR Amsterdam",
+        contact: {
+          phone: "+31-20-788-2150",
+          email: "info@bimhuis.nl",
+          website: "https://www.bimhuis.nl"
+        },
+        coordinates: { lat: 52.3766, lng: 4.9123 },
+        images: [
+          "https://www.bimhuis.nl/wp-content/uploads/2022/01/bimhuis-exterior.jpg",
+          "https://www.bimhuis.nl/wp-content/uploads/2022/01/bimhuis-concert-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "De School",
+        description: "Former technical school converted into electronic music venue",
+        address: "Doctor Jan van Breemenstraat 1, 1056 AB Amsterdam",
+        contact: {
+          phone: "+31-20-737-3255",
+          email: "info@deschoolamsterdam.nl",
+          website: "https://www.deschoolamsterdam.nl"
+        },
+        coordinates: { lat: 52.3669, lng: 4.8539 },
+        images: [
+          "https://www.deschoolamsterdam.nl/wp-content/uploads/2022/01/de-school-exterior.jpg",
+          "https://www.deschoolamsterdam.nl/wp-content/uploads/2022/01/de-school-club.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Muziekgebouw aan 't IJ",
+        description: "Contemporary classical music venue with innovative programming",
+        address: "Piet Heinkade 1, 1019 BR Amsterdam",
+        contact: {
+          phone: "+31-20-788-2000",
+          email: "info@muziekgebouw.nl",
+          website: "https://www.muziekgebouw.nl"
+        },
+        coordinates: { lat: 52.3776, lng: 4.9122 },
+        images: [
+          "https://www.muziekgebouw.nl/wp-content/uploads/2022/01/muziekgebouw-exterior.jpg",
+          "https://www.muziekgebouw.nl/wp-content/uploads/2022/01/muziekgebouw-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Ziggo Dome",
+        description: "State-of-the-art arena hosting major international concerts",
+        address: "De Passage 100, 1101 AX Amsterdam",
+        contact: {
+          phone: "+31-20-207-5000",
+          email: "info@ziggodome.nl",
+          website: "https://www.ziggodome.nl"
+        },
+        coordinates: { lat: 52.3134, lng: 4.9378 },
+        images: [
+          "https://www.ziggodome.nl/wp-content/uploads/2022/01/ziggo-dome-exterior.jpg",
+          "https://www.ziggodome.nl/wp-content/uploads/2022/01/ziggo-dome-arena.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Q-Factory",
+        description: "Music venue and cultural center with recording studios",
+        address: "Atlantisplein 1, 1093 NE Amsterdam",
+        contact: {
+          phone: "+31-20-409-7979",
+          email: "info@q-factory-amsterdam.nl",
+          website: "https://www.q-factory-amsterdam.nl"
+        },
+        coordinates: { lat: 52.3599, lng: 4.9346 },
+        images: [
+          "https://www.q-factory-amsterdam.nl/wp-content/uploads/2022/01/q-factory-exterior.jpg",
+          "https://www.q-factory-amsterdam.nl/wp-content/uploads/2022/01/q-factory-hall.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "North Sea Jazz Club",
+        description: "Intimate jazz venue with restaurant and bar",
+        address: "Pazzanistraat 1, 1014 DB Amsterdam",
+        contact: {
+          phone: "+31-20-722-0980",
+          email: "info@northseajazzclub.nl",
+          website: "https://www.northseajazzclub.nl"
+        },
+        coordinates: { lat: 52.3853, lng: 4.8789 },
+        images: [
+          "https://www.northseajazzclub.nl/wp-content/uploads/2022/01/north-sea-jazz-club-exterior.jpg",
+          "https://www.northseajazzclub.nl/wp-content/uploads/2022/01/north-sea-jazz-club-interior.jpg"
+        ],
+        userId: amsterdamManager.id
+      }
+    })
+  ]);
+
   // Create events for each venue
   const events = [];
 
@@ -896,6 +1664,64 @@ async function main() {
     });
   }
 
+  // Events for Porto venues
+  for (const venue of portoVenues) {
+    // Generate 7 events throughout 2024 for each venue
+    const eventDates = [
+      get2024EventDates(2, 10),  // February
+      get2024EventDates(4, 15),  // April
+      get2024EventDates(6, 20),  // June
+      get2024EventDates(8, 25),  // August
+      get2024EventDates(10, 5),  // October
+      get2024EventDates(11, 30), // November
+      get2024EventDates(12, 20)  // December
+    ];
+
+    // Event templates based on venue type
+    const portoEventTypes: VenueEventTypes = {
+      "Casa da Música": [
+        { title: "Classical Orchestra", description: "Porto Symphony Orchestra performs masterpieces" },
+        { title: "World Music Festival", description: "Celebrating global music traditions" },
+        { title: "Contemporary Music", description: "Modern classical and experimental performances" }
+      ],
+      "Coliseu Porto Ageas": [
+        { title: "Portuguese Fado Night", description: "Traditional fado performances by renowned artists" },
+        { title: "International Artist Concert", description: "World-famous performers live on stage" },
+        { title: "Music Festival", description: "Multi-artist music festival" }
+      ],
+      "Hard Club": [
+        { title: "Rock Night", description: "Heavy rock and metal bands live" },
+        { title: "Electronic Music Party", description: "DJ sets and electronic music performances" },
+        { title: "Alternative Music Showcase", description: "Independent and alternative bands" }
+      ],
+      "default": [
+        { title: "Live Music Night", description: "Evening of live music performances" },
+        { title: "Local Artists Showcase", description: "Featuring Porto's best musical talent" },
+        { title: "Cultural Performance", description: "Unique cultural and musical experience" }
+      ]
+    };
+
+    // Get appropriate event types for this venue
+    const venueEventTypes = portoEventTypes[venue.name] || portoEventTypes.default;
+
+    // Create events for each date
+    eventDates.forEach((dates, index) => {
+      const eventType = venueEventTypes[index % venueEventTypes.length];
+      events.push(
+        prisma.event.create({
+          data: {
+            title: `${eventType.title} at ${venue.name}`,
+            description: eventType.description,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            status: "published",
+            venueId: venue.id
+          }
+        })
+      );
+    });
+  }
+
   // Events for Barcelona venues
   for (const venue of barcelonaVenues) {
     // Generate 7 events throughout 2024 for each venue
@@ -927,7 +1753,7 @@ async function main() {
         { title: "Pop Music Showcase", description: "Contemporary pop music performances" }
       ],
       "default": [
-        { title: "Live Music Night", description: "An evening of live music performances" },
+        { title: "Live Music Night", description: "Evening of live music performances" },
         { title: "Local Artists Showcase", description: "Featuring the best local talent" },
         { title: "International Artist Performance", description: "Special performance by international artists" }
       ]
@@ -935,6 +1761,195 @@ async function main() {
 
     // Get appropriate event types for this venue
     const venueEventTypes = eventTypes[venue.name] || eventTypes.default;
+
+    // Create events for each date
+    eventDates.forEach((dates, index) => {
+      const eventType = venueEventTypes[index % venueEventTypes.length];
+      events.push(
+        prisma.event.create({
+          data: {
+            title: `${eventType.title} at ${venue.name}`,
+            description: eventType.description,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            status: "published",
+            venueId: venue.id
+          }
+        })
+      );
+    });
+  }
+
+  // Events for Toulouse venues
+  for (const venue of toulouseVenues) {
+    // Generate 7 events throughout 2024 for each venue
+    const eventDates = [
+      get2024EventDates(1, 20),  // January
+      get2024EventDates(3, 15),  // March
+      get2024EventDates(5, 10),  // May
+      get2024EventDates(7, 5),   // July
+      get2024EventDates(9, 25),  // September
+      get2024EventDates(11, 10), // November
+      get2024EventDates(12, 15)  // December
+    ];
+
+    // Event templates based on venue type
+    const toulouseEventTypes: VenueEventTypes = {
+      "Le Bikini": [
+        { title: "Electronic Music Night", description: "Top DJs and electronic music producers" },
+        { title: "Rock Concert", description: "Live rock band performance" },
+        { title: "Alternative Music Festival", description: "Showcase of alternative music talents" }
+      ],
+      "Le Zénith Toulouse Métropole": [
+        { title: "International Artist Tour", description: "World-famous artist live in concert" },
+        { title: "French Pop Concert", description: "Popular French artists perform live" },
+        { title: "Music Festival", description: "Multi-artist music festival" }
+      ],
+      "Théâtre du Capitole": [
+        { title: "Opera Night", description: "Classical opera performance" },
+        { title: "Symphony Orchestra", description: "Orchestral masterpieces" },
+        { title: "Classical Concert", description: "Chamber music performance" }
+      ],
+      "Le Taquin": [
+        { title: "Jazz Night", description: "Evening of jazz music" },
+        { title: "Blues Session", description: "Live blues performance" },
+        { title: "World Music", description: "International music showcase" }
+      ],
+      "default": [
+        { title: "Live Music Evening", description: "Evening of live performances" },
+        { title: "Local Artist Showcase", description: "Featuring Toulouse's musical talent" },
+        { title: "Cultural Performance", description: "Unique artistic experience" }
+      ]
+    };
+
+    // Get appropriate event types for this venue
+    const venueEventTypes = toulouseEventTypes[venue.name] || toulouseEventTypes.default;
+
+    // Create events for each date
+    eventDates.forEach((dates, index) => {
+      const eventType = venueEventTypes[index % venueEventTypes.length];
+      events.push(
+        prisma.event.create({
+          data: {
+            title: `${eventType.title} at ${venue.name}`,
+            description: eventType.description,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            status: "published",
+            venueId: venue.id
+          }
+        })
+      );
+    });
+  }
+
+  // Events for Lagos venues
+  for (const venue of lagosVenues) {
+    // Generate 7 events throughout 2024 for each venue
+    const eventDates = [
+      get2024EventDates(2, 15),  // February
+      get2024EventDates(4, 20),  // April
+      get2024EventDates(6, 25),  // June
+      get2024EventDates(8, 30),  // August
+      get2024EventDates(10, 15), // October
+      get2024EventDates(11, 20), // November
+      get2024EventDates(12, 25)  // December
+    ];
+
+    // Event templates based on venue type
+    const lagosEventTypes: VenueEventTypes = {
+      "Eko Hotel Convention Centre": [
+        { title: "Afrobeats Mega Concert", description: "Nigeria's biggest Afrobeats stars live in concert" },
+        { title: "International Music Festival", description: "Global music stars perform live" },
+        { title: "African Music Awards", description: "Celebrating excellence in African music" }
+      ],
+      "The New Afrika Shrine": [
+        { title: "Afrobeat Legacy Night", description: "Celebrating the spirit of Fela Kuti" },
+        { title: "African Fusion Concert", description: "Blend of traditional and modern African music" },
+        { title: "Cultural Music Festival", description: "Showcase of Nigerian musical heritage" }
+      ],
+      "Terra Kulture Arena": [
+        { title: "Nigerian Classical Concert", description: "Traditional Nigerian music performance" },
+        { title: "Contemporary African Music", description: "Modern interpretations of African sounds" },
+        { title: "Cultural Fusion Night", description: "Blend of traditional and contemporary performances" }
+      ],
+      "The Jazz Hole": [
+        { title: "Jazz & Blues Night", description: "Evening of smooth jazz and blues" },
+        { title: "African Jazz Fusion", description: "Blend of African rhythms and jazz" },
+        { title: "World Music Showcase", description: "International jazz artists perform" }
+      ],
+      "default": [
+        { title: "Live Music Night", description: "Evening of live performances" },
+        { title: "Local Artist Showcase", description: "Featuring Lagos's best musical talent" },
+        { title: "Cultural Performance", description: "Celebration of Nigerian music and culture" }
+      ]
+    };
+
+    // Get appropriate event types for this venue
+    const venueEventTypes = lagosEventTypes[venue.name] || lagosEventTypes.default;
+
+    // Create events for each date
+    eventDates.forEach((dates, index) => {
+      const eventType = venueEventTypes[index % venueEventTypes.length];
+      events.push(
+        prisma.event.create({
+          data: {
+            title: `${eventType.title} at ${venue.name}`,
+            description: eventType.description,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            status: "published",
+            venueId: venue.id
+          }
+        })
+      );
+    });
+  }
+
+  // Events for Amsterdam venues
+  for (const venue of amsterdamVenues) {
+    // Generate 7 events throughout 2024 for each venue
+    const eventDates = [
+      get2024EventDates(1, 25),  // January
+      get2024EventDates(3, 20),  // March
+      get2024EventDates(5, 15),  // May
+      get2024EventDates(7, 10),  // July
+      get2024EventDates(9, 5),   // September
+      get2024EventDates(10, 30), // October
+      get2024EventDates(12, 15)  // December
+    ];
+
+    // Event templates based on venue type
+    const amsterdamEventTypes: VenueEventTypes = {
+      "Royal Concertgebouw": [
+        { title: "Symphony Orchestra", description: "World-class orchestral performance" },
+        { title: "Chamber Music Evening", description: "Intimate performance of chamber music classics" },
+        { title: "Classical Masterworks", description: "Celebrating classical music excellence" }
+      ],
+      "Paradiso": [
+        { title: "Rock Legends", description: "International rock bands live" },
+        { title: "Indie Music Night", description: "Showcase of independent artists" },
+        { title: "Alternative Music Festival", description: "Diverse alternative music lineup" }
+      ],
+      "Melkweg": [
+        { title: "Electronic Music Night", description: "Top DJs and electronic music producers" },
+        { title: "World Music Festival", description: "Global music celebration" },
+        { title: "Urban Music Showcase", description: "Hip-hop and R&B performances" }
+      ],
+      "Bimhuis": [
+        { title: "Jazz Masters", description: "Renowned jazz artists perform" },
+        { title: "Contemporary Jazz", description: "Modern jazz interpretations" },
+        { title: "Dutch Jazz Scene", description: "Celebrating local jazz talent" }
+      ],
+      "default": [
+        { title: "Live Music Evening", description: "Evening of live performances" },
+        { title: "Local Artist Showcase", description: "Featuring Amsterdam's musical talent" },
+        { title: "Cultural Performance", description: "Unique Dutch cultural experience" }
+      ]
+    };
+
+    // Get appropriate event types for this venue
+    const venueEventTypes = amsterdamEventTypes[venue.name] || amsterdamEventTypes.default;
 
     // Create events for each date
     eventDates.forEach((dates, index) => {
@@ -962,6 +1977,10 @@ async function main() {
   console.log(`- ${berlinVenues.length} Berlin venues`);
   console.log(`- ${barcelonaVenues.length} Barcelona venues`);
   console.log(`- ${londonVenues.length} London venues`);
+  console.log(`- ${portoVenues.length} Porto venues`);
+  console.log(`- ${toulouseVenues.length} Toulouse venues`);
+  console.log(`- ${lagosVenues.length} Lagos venues`);
+  console.log(`- ${amsterdamVenues.length} Amsterdam venues`);
   console.log(`- ${createdEvents.length} events`);
 }
 
