@@ -1,5 +1,15 @@
 import { PrismaClient } from "@prisma/client";
 
+// Define types for event templates
+type EventTemplate = {
+  title: string;
+  description: string;
+};
+
+type VenueEventTypes = {
+  [key: string]: EventTemplate[];
+};
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -41,10 +51,18 @@ async function main() {
         googleId: "g_bcn_123",
         profileImage: "https://example.com/profiles/bcn_manager.jpg"
       }
+    }),
+    prisma.user.create({
+      data: {
+        email: "london.manager@example.com",
+        name: "London Venue Manager",
+        googleId: "g_ldn_123",
+        profileImage: "https://example.com/profiles/london_manager.jpg"
+      }
     })
   ]);
 
-  const [nyManager, parisManager, berlinManager, barcelonaManager] = users;
+  const [nyManager, parisManager, berlinManager, barcelonaManager, londonManager] = users;
 
   // New York Venues (Times Square as center: 40.7580, -73.9855)
   const nyVenues = await Promise.all([
@@ -324,6 +342,190 @@ async function main() {
           "https://media.timeout.com/images/105935920/750/422/image.jpg"
         ],
         userId: berlinManager.id
+      }
+    })
+  ]);
+
+  // London Venues (Trafalgar Square as center: 51.5080° N, 0.1281° W)
+  const londonVenues = await Promise.all([
+    prisma.venue.create({
+      data: {
+        name: "Royal Albert Hall",
+        description: "Iconic concert hall hosting diverse performances from classical to rock, opened in 1871",
+        address: "Kensington Gore, South Kensington, London SW7 2AP",
+        contact: {
+          phone: "+44-20-7589-8212",
+          email: "boxoffice@royalalberthall.com",
+          website: "https://www.royalalberthall.com"
+        },
+        coordinates: { lat: 51.5009, lng: -0.1774 },
+        images: [
+          "https://www.royalalberthall.com/media/zovfsi0w/rah-exterior-south-steps.jpg",
+          "https://www.royalalberthall.com/media/kyihxgwe/auditorium-from-circle.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "O2 Academy Brixton",
+        description: "Historic Art Deco venue hosting major contemporary music acts",
+        address: "211 Stockwell Rd, London SW9 9SL",
+        contact: {
+          phone: "+44-20-7771-3000",
+          email: "info@o2academybrixton.co.uk",
+          website: "https://www.academymusicgroup.com/o2academybrixton"
+        },
+        coordinates: { lat: 51.4652, lng: -0.1150 },
+        images: [
+          "https://www.academymusicgroup.com/sites/default/files/styles/venue_hero/public/venues/brixton/o2-academy-brixton-exterior.jpg",
+          "https://www.academymusicgroup.com/sites/default/files/styles/venue_gallery/public/venues/brixton/o2-academy-brixton-main-room.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Roundhouse",
+        description: "Iconic circular venue in Camden, converted from a railway engine shed",
+        address: "Chalk Farm Rd, London NW1 8EH",
+        contact: {
+          phone: "+44-20-7424-9991",
+          email: "info@roundhouse.org.uk",
+          website: "https://www.roundhouse.org.uk"
+        },
+        coordinates: { lat: 51.5429, lng: -0.1503 },
+        images: [
+          "https://www.roundhouse.org.uk/assets/uploads/images/_1200x630_crop_center-center_82_none/roundhouse-exterior-night.jpg",
+          "https://www.roundhouse.org.uk/assets/uploads/images/_1200x630_crop_center-center_82_none/main-space-concert.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Jazz Cafe",
+        description: "Intimate venue specializing in jazz, soul, and world music",
+        address: "5 Parkway, London NW1 7PG",
+        contact: {
+          phone: "+44-20-7485-6834",
+          email: "info@thejazzcafelondon.com",
+          website: "https://thejazzcafelondon.com"
+        },
+        coordinates: { lat: 51.5386, lng: -0.1425 },
+        images: [
+          "https://thejazzcafelondon.com/wp-content/uploads/2023/01/jazz-cafe-exterior.jpg",
+          "https://thejazzcafelondon.com/wp-content/uploads/2023/01/jazz-cafe-stage.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "KOKO",
+        description: "Recently restored Victorian theatre turned contemporary music venue",
+        address: "1A Camden High St, London NW1 7JE",
+        contact: {
+          phone: "+44-20-7388-3222",
+          email: "info@koko.uk.com",
+          website: "https://www.koko.co.uk"
+        },
+        coordinates: { lat: 51.5347, lng: -0.1385 },
+        images: [
+          "https://www.koko.co.uk/assets/images/venue/koko-exterior-night.jpg",
+          "https://www.koko.co.uk/assets/images/venue/main-room.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Barbican Centre",
+        description: "Europe's largest multi-arts venue, featuring classical and contemporary music",
+        address: "Silk St, Barbican, London EC2Y 8DS",
+        contact: {
+          phone: "+44-20-7638-8891",
+          email: "info@barbican.org.uk",
+          website: "https://www.barbican.org.uk"
+        },
+        coordinates: { lat: 51.5200, lng: -0.0927 },
+        images: [
+          "https://www.barbican.org.uk/sites/default/files/styles/image_landscape_xl/public/images/2019-09/Barbican_External_Day_MaxColson.jpg",
+          "https://www.barbican.org.uk/sites/default/files/styles/image_landscape_xl/public/images/2019-09/Barbican_Hall_MaxColson.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Shepherd's Bush Empire",
+        description: "Grade II listed building hosting rock, pop, and alternative music",
+        address: "Shepherd's Bush Green, London W12 8TT",
+        contact: {
+          phone: "+44-20-8354-3300",
+          email: "info@o2shepherdsbushempire.co.uk",
+          website: "https://www.academymusicgroup.com/o2shepherdsbushempire"
+        },
+        coordinates: { lat: 51.5049, lng: -0.2247 },
+        images: [
+          "https://www.academymusicgroup.com/sites/default/files/styles/venue_hero/public/venues/shepherds-bush/o2-shepherds-bush-empire-exterior.jpg",
+          "https://www.academymusicgroup.com/sites/default/files/styles/venue_gallery/public/venues/shepherds-bush/o2-shepherds-bush-empire-circle-view.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Union Chapel",
+        description: "Grade I listed church and award-winning music venue",
+        address: "Compton Terrace, London N1 2UN",
+        contact: {
+          phone: "+44-20-7226-1686",
+          email: "info@unionchapel.org.uk",
+          website: "https://unionchapel.org.uk"
+        },
+        coordinates: { lat: 51.5439, lng: -0.1027 },
+        images: [
+          "https://unionchapel.org.uk/assets/images/venue/union-chapel-exterior.jpg",
+          "https://unionchapel.org.uk/assets/images/venue/union-chapel-interior.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Alexandra Palace",
+        description: "Historic entertainment venue with panoramic views of London",
+        address: "Alexandra Palace Way, London N22 7AY",
+        contact: {
+          phone: "+44-20-8365-2121",
+          email: "enquiries@alexandrapalace.com",
+          website: "https://www.alexandrapalace.com"
+        },
+        coordinates: { lat: 51.5941, lng: -0.1300 },
+        images: [
+          "https://www.alexandrapalace.com/wp-content/uploads/2023/01/ally-pally-exterior.jpg",
+          "https://www.alexandrapalace.com/wp-content/uploads/2023/01/great-hall-concert.jpg"
+        ],
+        userId: londonManager.id
+      }
+    }),
+    prisma.venue.create({
+      data: {
+        name: "Royal Festival Hall",
+        description: "World-class venue on the South Bank, home to classical and contemporary performances",
+        address: "Southbank Centre, Belvedere Rd, London SE1 8XX",
+        contact: {
+          phone: "+44-20-3879-9555",
+          email: "customer@southbankcentre.co.uk",
+          website: "https://www.southbankcentre.co.uk"
+        },
+        coordinates: { lat: 51.5055, lng: -0.1156 },
+        images: [
+          "https://www.southbankcentre.co.uk/sites/default/files/styles/hero_thin_16_9/public/images/royal_festival_hall_exterior.jpg",
+          "https://www.southbankcentre.co.uk/sites/default/files/styles/hero_thin_16_9/public/images/rfh_auditorium.jpg"
+        ],
+        userId: londonManager.id
       }
     })
   ]);
@@ -631,6 +833,69 @@ async function main() {
     );
   }
 
+  // Events for London venues
+  for (const venue of londonVenues) {
+    // Generate 7 events throughout 2024 for each venue
+    const eventDates = [
+      get2024EventDates(1, 20),  // January
+      get2024EventDates(3, 15),  // March
+      get2024EventDates(5, 25),  // May
+      get2024EventDates(7, 10),  // July
+      get2024EventDates(9, 30),  // September
+      get2024EventDates(11, 20), // November
+      get2024EventDates(12, 15)  // December
+    ];
+
+    // Event templates based on venue type
+    const londonEventTypes: VenueEventTypes = {
+      "Royal Albert Hall": [
+        { title: "Classical Proms", description: "Experience the magic of the Proms with world-class orchestras" },
+        { title: "Opera Gala", description: "A spectacular evening of operatic masterpieces" },
+        { title: "Film Score Night", description: "Live orchestra performing iconic film scores" }
+      ],
+      "O2 Academy Brixton": [
+        { title: "Rock Legends", description: "Epic night of classic and modern rock" },
+        { title: "Indie Festival", description: "Showcase of the best indie bands" },
+        { title: "Electronic Beats", description: "Night of electronic music and live performances" }
+      ],
+      "Jazz Cafe": [
+        { title: "Jazz Legends", description: "Evening of classic jazz standards" },
+        { title: "Soul Night", description: "Soulful performances from top artists" },
+        { title: "World Music Fusion", description: "Blend of jazz with world music influences" }
+      ],
+      "Barbican Centre": [
+        { title: "Contemporary Classical", description: "Modern classical music performances" },
+        { title: "Experimental Music", description: "Cutting-edge experimental compositions" },
+        { title: "World Orchestra", description: "International orchestra performances" }
+      ],
+      "default": [
+        { title: "Live Music Showcase", description: "An evening of outstanding live music" },
+        { title: "Artist Spotlight", description: "Featured performance by renowned artists" },
+        { title: "Music Festival", description: "Multi-artist festival experience" }
+      ]
+    };
+
+    // Get appropriate event types for this venue
+    const venueEventTypes = londonEventTypes[venue.name] || londonEventTypes.default;
+
+    // Create events for each date
+    eventDates.forEach((dates, index) => {
+      const eventType = venueEventTypes[index % venueEventTypes.length];
+      events.push(
+        prisma.event.create({
+          data: {
+            title: `${eventType.title} at ${venue.name}`,
+            description: eventType.description,
+            startDate: dates.startDate,
+            endDate: dates.endDate,
+            status: "published",
+            venueId: venue.id
+          }
+        })
+      );
+    });
+  }
+
   // Events for Barcelona venues
   for (const venue of barcelonaVenues) {
     // Generate 7 events throughout 2024 for each venue
@@ -643,16 +908,6 @@ async function main() {
       get2024EventDates(11, 15), // November
       get2024EventDates(12, 30)  // December
     ];
-
-    // Define types for event templates
-    type EventTemplate = {
-      title: string;
-      description: string;
-    };
-
-    type VenueEventTypes = {
-      [key: string]: EventTemplate[];
-    };
 
     // Event templates based on venue type
     const eventTypes: VenueEventTypes = {
@@ -706,6 +961,7 @@ async function main() {
   console.log(`- ${parisVenues.length} Paris venues`);
   console.log(`- ${berlinVenues.length} Berlin venues`);
   console.log(`- ${barcelonaVenues.length} Barcelona venues`);
+  console.log(`- ${londonVenues.length} London venues`);
   console.log(`- ${createdEvents.length} events`);
 }
 
