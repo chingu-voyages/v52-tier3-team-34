@@ -283,9 +283,7 @@ async function main() {
     const startDate = new Date();
     startDate.setDate(startDate.getDate() + dayOffset);
     startDate.setHours(20, 0, 0, 0);
-    const endDate = new Date(startDate);
-    endDate.setHours(23, 0, 0, 0);
-    return { startDate, endDate };
+    return startDate;
   };
 
   // Events for New York venues
@@ -299,9 +297,12 @@ async function main() {
         data: {
           title: `Jazz Night at ${venue.name}`,
           description: "Live jazz quartet performing classic standards and original compositions",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1,
+          duration: 180, // 3 hours
           status: "published",
+          artist: "The Jazz Quartet",
+          genre: ["Jazz", "Blues"],
+          price: 25.00,
           venueId: venue.id
         }
       }),
@@ -309,9 +310,12 @@ async function main() {
         data: {
           title: `Blues Evening at ${venue.name}`,
           description: "Soulful blues performance featuring local and guest artists",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2,
+          duration: 240, // 4 hours
           status: "published",
+          artist: "Blues Brothers Tribute",
+          genre: ["Blues", "Soul"],
+          price: 30.00,
           venueId: venue.id
         }
       })
@@ -328,9 +332,12 @@ async function main() {
         data: {
           title: `Soirée Jazz at ${venue.name}`,
           description: "Une soirée exceptionnelle de jazz contemporain",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1,
+          duration: 180, // 3 hours
           status: "published",
+          artist: "Le Quartet Parisien",
+          genre: ["Jazz", "Contemporary"],
+          price: 35.00,
           venueId: venue.id
         }
       }),
@@ -338,9 +345,12 @@ async function main() {
         data: {
           title: `Classical Night at ${venue.name}`,
           description: "Classical music performance featuring chamber orchestra",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2,
+          duration: 150, // 2.5 hours
           status: "published",
+          artist: "Paris Chamber Orchestra",
+          genre: ["Classical", "Chamber Music"],
+          price: 45.00,
           venueId: venue.id
         }
       })
@@ -358,9 +368,12 @@ async function main() {
         data: {
           title: `Electronic Night at ${venue.name}`,
           description: "Progressive electronic music featuring international DJs",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1,
+          duration: 360, // 6 hours
           status: "published",
+          artist: "DJ TechMeister",
+          genre: ["Electronic", "Techno", "House"],
+          price: 40.00,
           venueId: venue.id
         }
       }),
@@ -368,9 +381,12 @@ async function main() {
         data: {
           title: `Indie Rock at ${venue.name}`,
           description: "Alternative and indie rock bands showcase",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2,
+          duration: 240, // 4 hours
           status: "published",
+          artist: "The Berlin Rockers",
+          genre: ["Rock", "Indie", "Alternative"],
+          price: 28.50,
           venueId: venue.id
         }
       }),
@@ -378,9 +394,12 @@ async function main() {
         data: {
           title: `Experimental Music at ${venue.name}`,
           description: "Avant-garde and experimental music performance",
-          startDate: dates3.startDate,
-          endDate: dates3.endDate,
+          startDate: dates3,
+          duration: 120, // 2 hours
           status: "draft",
+          artist: "Sound Explorers Collective",
+          genre: ["Experimental", "Avant-garde"],
+          price: 22.00,
           venueId: venue.id
         }
       })
