@@ -13,10 +13,13 @@ export const EventSchema = z.object({
   title: z.string().min(1, "Title is required").max(100),
   description: z.string().min(1, "Description is required").max(1000),
   startDate: z.string().datetime(), // ISO 8601 format
-  endDate: z.string().datetime(), // ISO 8601 format
+  duration: z.number().int().nonnegative().default(0),
   status: z
     .enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
     .default(EventStatus.DRAFT),
+  artist: z.string().optional(),
+  genre: z.array(z.string()).default([]),
+  price: z.number().nonnegative().default(0),
   venueId: z.number().positive("Venue ID is required"),
 });
 
@@ -32,7 +35,10 @@ export const EventQuerySchema = BaseQuerySchema.extend({
     status: z.enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED]).optional(),
     venueId: z.coerce.number().int().positive().optional(),
     startDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
+    duration: z.coerce.number().int().nonnegative().optional(),
+    artist: z.string().optional(),
+    genre: z.string().optional(),
+    price: z.coerce.number().nonnegative().optional(),
     createdAt: z.coerce.date().optional(),
     updatedAt: z.coerce.date().optional()
   }).optional()
@@ -80,8 +86,11 @@ export type EventResponse = {
   title: string;
   description: string;
   startDate: string;
-  endDate: string;
+  duration: number;
   status: keyof typeof EventStatus;
+  artist?: string;
+  genre: string[];
+  price: number;
   venueId: number;
   venue?: {
     id: number;
@@ -119,8 +128,11 @@ export type EventGeoJSONFeature = {
     title: string;
     description: string;
     startDate: string;
-    endDate: string;
+    duration: number;
     status: keyof typeof EventStatus;
+    artist?: string;
+    genre: string[];
+    price: number;
     venue: {
       id: number;
       name: string;
