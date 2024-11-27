@@ -1,4 +1,4 @@
-import { ZoneResponse } from '../types/zones';
+import { ZoneResponse } from '../src/types/zones';
 import axios, { AxiosError } from 'axios';
 import { QueryFunctionContext } from '@tanstack/react-query';
 
