@@ -18,11 +18,12 @@ export const fetchVenues = async ({
   });
 
   const response = await fetch(`${serverBaseUrl}/venues?${params.toString()}`);
+
   if (!response.ok) {
     throw new Error('Error fetching venues');
   }
-
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 
 // POST
