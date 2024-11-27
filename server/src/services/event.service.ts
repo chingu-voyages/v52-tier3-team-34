@@ -70,8 +70,11 @@ export class EventService {
           title: true,
           description: true,
           startDate: true,
-          endDate: true,
+          duration: true,
           status: true,
+          artist: true,
+          genre: true,
+          price: true,
           createdAt: true,
           updatedAt: true,
         };
@@ -124,7 +127,6 @@ export class EventService {
         data: {
           ...data,
           startDate: new Date(data.startDate),
-          endDate: new Date(data.endDate),
         },
         include: {
           venue: true
@@ -153,7 +155,6 @@ export class EventService {
         data: {
           ...data,
           startDate: data.startDate ? new Date(data.startDate) : undefined,
-          endDate: data.endDate ? new Date(data.endDate) : undefined,
         },
         include: {
           venue: true
@@ -185,7 +186,6 @@ export class EventService {
         data: {
           ...data,
           startDate: new Date(data.startDate),
-          endDate: new Date(data.endDate),
         },
         include: {
           venue: true
