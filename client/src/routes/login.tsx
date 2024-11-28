@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { createFileRoute, redirect, useRouter, useRouterState } from '@tanstack/react-router';
 
-import { useAuth } from '../auth';
-import { sleep } from '../utils';
+import { useAuth } from '@/auth';
+import { sleep } from '@/utils';
 import { z } from 'zod';
 
 // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion

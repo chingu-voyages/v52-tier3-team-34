@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { sleep } from './utils';
+import { sleep } from '@/utils';
 
 export interface AuthContext {
   isAuthenticated: boolean;

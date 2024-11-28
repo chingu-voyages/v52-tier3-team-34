@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useVenues } from '../../hooks/useVenues';
-import { Venue } from '../types/venues';
+import { useVenues } from '@/hooks/useVenues';
+import { Venue } from '@/types/venues';
 import { useState } from 'react';
 import { ArrowRight, ArrowLeft, MapPin, Phone } from 'lucide-react';
 
