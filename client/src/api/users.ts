@@ -1,5 +1,5 @@
-import { serverBaseUrl } from '../config';
-import { UsersResponse } from '../src/types/user';
+import { serverBaseUrl } from '@/config';
+import { UsersResponse } from '@/types/user';
 
 export const fetchUsers = async (): Promise<UsersResponse> => {
   const response = await fetch(`${serverBaseUrl}/users`);

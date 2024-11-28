@@ -1,5 +1,5 @@
-import { serverBaseUrl } from '../config';
-import { EventSubmissionData } from '../src/validations/eventValidation';
+import { serverBaseUrl } from '@/config';
+import { EventSubmissionData } from '@/validations/eventValidation';
 
 // POST
 export const createEvent = async (data: EventSubmissionData) => {
