@@ -1,0 +1,49 @@
+{
+  "cities": [
+    {
+      "name": "New York",
+      "latitude": "40.7580",
+      "longitude": "-73.9855"
+    },
+    {
+      "name": "Amsterdam",
+      "latitude": "52.3731",
+      "longitude": "4.8926"
+    },
+    {
+      "name": "Paris",
+      "latitude": "48.8606",
+      "longitude": "2.3376"
+    },
+    {
+      "name": "Berlin",
+      "latitude": "52.5200",
+      "longitude": "13.4050"
+    },
+    {
+      "name": "Barcelona",
+      "latitude": "41.3851",
+      "longitude": "2.1734"
+    },
+    {
+      "name": "London",
+      "latitude": "51.5074",
+      "longitude": "-0.1278"
+    },
+    {
+      "name": "Porto",
+      "latitude": "41.1579",
+      "longitude": "-8.6291"
+    },
+    {
+      "name": "Toulouse",
+      "latitude": "43.6047",
+      "longitude": "1.4442"
+    },
+    {
+      "name": "Lagos",
+      "latitude": "6.5244",
+      "longitude": "3.3792"
+    }
+  ]
+}
