@@ -111,3 +111,28 @@ export interface VenueResponse {
   createdAt: string;
   updatedAt: string;
 };
+
+// Zone query schema for venues
+export const VenueZoneQuerySchema = z.object({
+  lat: z.string(),
+  lng: z.string(),
+  radius: z.string()
+});
+
+// Type for coerced zone query parameters
+export type VenueZoneQueryCoerced = {
+  lat: string;
+  lng: string;
+  radius: string;
+};
+
+// Type for zone search response
+export type VenueZoneResponse = {
+  type: "FeatureCollection";
+  features: GeoJSONFeature[];
+  center: {
+    type: "Point";
+    coordinates: [number, number]; // [longitude, latitude]
+  };
+  radius: number;
+};
