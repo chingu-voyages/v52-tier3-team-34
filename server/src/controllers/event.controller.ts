@@ -234,6 +234,9 @@ export class EventController {
             startDate: event.startDate.toISOString(),
             endDate: event.endDate.toISOString(),
             status: event.status.toUpperCase() as "DRAFT" | "PUBLISHED" | "CANCELLED",
+            artist: event.artist || undefined,
+            genre: event.genre,
+            price: event.price,
             venue: {
               id: event.venue.id,
               name: event.venue.name,

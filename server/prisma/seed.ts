@@ -6,6 +6,12 @@ type EventTemplate = {
   description: string;
 };
 
+type EventType = {
+  artist: (city: string) => string;
+  genre: string[];
+  price: number;
+};
+
 type VenueEventTypes = {
   [key: string]: EventTemplate[];
 };
@@ -95,6 +101,35 @@ async function main() {
   ]);
 
   const [nyManager, parisManager, berlinManager, barcelonaManager, londonManager, portoManager, toulouseManager, lagosManager, amsterdamManager] = users;
+
+  // Event patterns for consistent data generation
+  const eventTypes: Record<string, EventType> = {
+    jazz: {
+      artist: (city: string) => `${city} Jazz Quartet`,
+      genre: ["Jazz", "Blues"],
+      price: 35.00
+    },
+    classical: {
+      artist: (city: string) => `${city} Symphony Orchestra`,
+      genre: ["Classical", "Chamber Music"],
+      price: 65.00
+    },
+    electronic: {
+      artist: (city: string) => `DJ ${city}Beat`,
+      genre: ["Electronic", "Techno", "House"],
+      price: 30.00
+    },
+    rock: {
+      artist: (city: string) => `${city} Rock Collective`,
+      genre: ["Rock", "Alternative"],
+      price: 28.00
+    },
+    world: {
+      artist: (city: string) => `${city} World Ensemble`,
+      genre: ["World", "Folk"],
+      price: 40.00
+    }
+  };
 
   // New York Venues (Times Square as center: 40.7580, -73.9855)
   const nyVenues = await Promise.all([
@@ -1155,7 +1190,7 @@ async function main() {
     prisma.venue.create({
       data: {
         name: "Terra Kulture Arena",
-        description: "Cultural center showcasing Nigerian arts, music, and theater",
+        description: "Cultural center and music venue showcasing Nigerian arts, music, and theater",
         address: "Plot 1376 Tiamiyu Savage Street, Victoria Island, Lagos",
         contact: {
           phone: "+234-1-270-0588",
@@ -1465,7 +1500,7 @@ async function main() {
     prisma.venue.create({
       data: {
         name: "North Sea Jazz Club",
-        description: "Intimate jazz venue with restaurant and bar",
+        description: "Intimate jazz club with restaurant and bar",
         address: "Pazzanistraat 1, 1014 DB Amsterdam",
         contact: {
           phone: "+31-20-722-0980",
@@ -1511,21 +1546,27 @@ async function main() {
     events.push(
       prisma.event.create({
         data: {
-          title: `Jazz Night at ${venue.name}`,
+          title: "Jazz Night at Blue Note",
           description: "Live jazz quartet performing classic standards and original compositions",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1.startDate.toISOString(),
+          endDate: dates1.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.jazz.artist("NYC"),
+          genre: eventTypes.jazz.genre,
+          price: eventTypes.jazz.price,
           venueId: venue.id
         }
       }),
       prisma.event.create({
         data: {
-          title: `Blues Evening at ${venue.name}`,
+          title: "Blues Evening at Blue Note",
           description: "Soulful blues performance featuring local and guest artists",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2.startDate.toISOString(),
+          endDate: dates2.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.rock.artist("NYC"),
+          genre: eventTypes.rock.genre,
+          price: eventTypes.rock.price,
           venueId: venue.id
         }
       })
@@ -1540,21 +1581,27 @@ async function main() {
     events.push(
       prisma.event.create({
         data: {
-          title: `Soirée Jazz at ${venue.name}`,
+          title: "Soirée Jazz at L'Olympia",
           description: "Une soirée exceptionnelle de jazz contemporain",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1.startDate.toISOString(),
+          endDate: dates1.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.jazz.artist("Paris"),
+          genre: eventTypes.jazz.genre,
+          price: eventTypes.jazz.price,
           venueId: venue.id
         }
       }),
       prisma.event.create({
         data: {
-          title: `Classical Night at ${venue.name}`,
+          title: "Classical Night at L'Olympia",
           description: "Classical music performance featuring chamber orchestra",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2.startDate.toISOString(),
+          endDate: dates2.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.classical.artist("Paris"),
+          genre: eventTypes.classical.genre,
+          price: eventTypes.classical.price,
           venueId: venue.id
         }
       })
@@ -1570,31 +1617,40 @@ async function main() {
     events.push(
       prisma.event.create({
         data: {
-          title: `Electronic Night at ${venue.name}`,
+          title: "Electronic Night at Berghain",
           description: "Progressive electronic music featuring international DJs",
-          startDate: dates1.startDate,
-          endDate: dates1.endDate,
+          startDate: dates1.startDate.toISOString(),
+          endDate: dates1.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.electronic.artist("Berlin"),
+          genre: eventTypes.electronic.genre,
+          price: eventTypes.electronic.price,
           venueId: venue.id
         }
       }),
       prisma.event.create({
         data: {
-          title: `Indie Rock at ${venue.name}`,
+          title: "Indie Rock at Berghain",
           description: "Alternative and indie rock bands showcase",
-          startDate: dates2.startDate,
-          endDate: dates2.endDate,
+          startDate: dates2.startDate.toISOString(),
+          endDate: dates2.endDate.toISOString(),
           status: "published",
+          artist: eventTypes.rock.artist("Berlin"),
+          genre: eventTypes.rock.genre,
+          price: eventTypes.rock.price,
           venueId: venue.id
         }
       }),
       prisma.event.create({
         data: {
-          title: `Experimental Music at ${venue.name}`,
+          title: "Experimental Music at Berghain",
           description: "Avant-garde and experimental music performance",
-          startDate: dates3.startDate,
-          endDate: dates3.endDate,
+          startDate: dates3.startDate.toISOString(),
+          endDate: dates3.endDate.toISOString(),
           status: "draft",
+          artist: eventTypes.world.artist("Berlin"),
+          genre: eventTypes.world.genre,
+          price: eventTypes.world.price,
           venueId: venue.id
         }
       })
@@ -1649,14 +1705,21 @@ async function main() {
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("London"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })
@@ -1707,14 +1770,21 @@ async function main() {
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("Porto"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })
@@ -1736,7 +1806,7 @@ async function main() {
     ];
 
     // Event templates based on venue type
-    const eventTypes: VenueEventTypes = {
+    const barcelonaEventTypes: VenueEventTypes = {
       "Palau de la Música Catalana": [
         { title: "Classical Symphony Orchestra", description: "Experience the majesty of classical masterpieces" },
         { title: "Chamber Music Evening", description: "Intimate performance of chamber music classics" },
@@ -1760,19 +1830,26 @@ async function main() {
     };
 
     // Get appropriate event types for this venue
-    const venueEventTypes = eventTypes[venue.name] || eventTypes.default;
+    const venueEventTypes = barcelonaEventTypes[venue.name] || barcelonaEventTypes.default;
 
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("Barcelona"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })
@@ -1798,7 +1875,7 @@ async function main() {
       "Le Bikini": [
         { title: "Electronic Music Night", description: "Top DJs and electronic music producers" },
         { title: "Rock Concert", description: "Live rock band performance" },
-        { title: "Alternative Music Festival", description: "Showcase of alternative music talents" }
+        { title: "Alternative Music Festival", description: "Diverse alternative music lineup" }
       ],
       "Le Zénith Toulouse Métropole": [
         { title: "International Artist Tour", description: "World-famous artist live in concert" },
@@ -1813,7 +1890,7 @@ async function main() {
       "Le Taquin": [
         { title: "Jazz Night", description: "Evening of jazz music" },
         { title: "Blues Session", description: "Live blues performance" },
-        { title: "World Music", description: "International music showcase" }
+        { title: "World Music", description: "International jazz artists perform" }
       ],
       "default": [
         { title: "Live Music Evening", description: "Evening of live performances" },
@@ -1828,14 +1905,21 @@ async function main() {
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("Toulouse"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })
@@ -1880,7 +1964,7 @@ async function main() {
       ],
       "default": [
         { title: "Live Music Night", description: "Evening of live performances" },
-        { title: "Local Artist Showcase", description: "Featuring Lagos's best musical talent" },
+        { title: "Local Artist Showcase", description: "Featuring Lagos's musical talent" },
         { title: "Cultural Performance", description: "Celebration of Nigerian music and culture" }
       ]
     };
@@ -1891,14 +1975,21 @@ async function main() {
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("Lagos"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })
@@ -1954,14 +2045,21 @@ async function main() {
     // Create events for each date
     eventDates.forEach((dates, index) => {
       const eventType = venueEventTypes[index % venueEventTypes.length];
+      const eventPattern = eventTypes[eventType.title.toLowerCase().includes('classical') ? 'classical' :
+                                    eventType.title.toLowerCase().includes('jazz') ? 'jazz' :
+                                    eventType.title.toLowerCase().includes('electronic') ? 'electronic' :
+                                    eventType.title.toLowerCase().includes('rock') ? 'rock' : 'world'];
       events.push(
         prisma.event.create({
           data: {
             title: `${eventType.title} at ${venue.name}`,
             description: eventType.description,
-            startDate: dates.startDate,
-            endDate: dates.endDate,
+            startDate: dates.startDate.toISOString(),
+            endDate: dates.endDate.toISOString(),
             status: "published",
+            artist: eventPattern.artist("Amsterdam"),
+            genre: eventPattern.genre,
+            price: eventPattern.price,
             venueId: venue.id
           }
         })

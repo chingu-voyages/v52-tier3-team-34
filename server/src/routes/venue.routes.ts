@@ -1,17 +1,25 @@
-import { Router } from "express";
+import { Router, RequestHandler } from "express";
 import { VenueController } from "../controllers/venue.controller";
 import { validateRequest } from "../middleware/validateRequest";
 import { 
   VenueParamsSchema, 
   VenueQuerySchema, 
   VenueSchema,
-  VenueUpdateSchema 
+  VenueUpdateSchema,
+  VenueZoneQuerySchema 
 } from "../types/venue.types";
 
 const router = Router();
 
 // List venues (with query validation)
 router.get("/", validateRequest.query(VenueQuerySchema), VenueController.list);
+
+// Get venues in zone (with query validation)
+router.get(
+  "/zone", 
+  validateRequest.query(VenueZoneQuerySchema), 
+  VenueController.findInZone
+);
 
 // Get venue by ID
 router.get("/:id", validateRequest.params(VenueParamsSchema), VenueController.getById);

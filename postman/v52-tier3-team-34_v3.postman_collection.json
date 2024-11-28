@@ -794,6 +794,111 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Venue GeoJSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/:id/geojson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", ":id", "geojson"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "ID of the venue"
+                }
+              ]
+            },
+            "description": "Get venue details in GeoJSON format for mapping purposes"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Venues in Zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7580&lng=-73.9855&radius=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", "zone"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "40.7580",
+                  "description": "Latitude (-90 to 90)"
+                },
+                {
+                  "key": "lng",
+                  "value": "-73.9855",
+                  "description": "Longitude (-180 to 180)"
+                },
+                {
+                  "key": "radius",
+                  "value": "20",
+                  "description": "Radius in km (max 50)"
+                }
+              ]
+            },
+            "description": "Find venues within a 20km radius of Times Square, New York"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7580&lng=-73.9855&radius=20"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "type": "FeatureCollection",
+                "features": [
+                  {
+                    "type": "Feature",
+                    "geometry": {
+                      "type": "Point",
+                      "coordinates": [-73.9855, 40.7580]
+                    },
+                    "properties": {
+                      "id": 1,
+                      "name": "Sample Venue",
+                      "description": "A sample venue in New York",
+                      "address": "123 Broadway, New York, NY 10001",
+                      "contact": {
+                        "phone": "+1-555-123-4567",
+                        "email": "info@samplevenue.com",
+                        "website": "https://samplevenue.com"
+                      },
+                      "images": [
+                        "https://example.com/venue1.jpg"
+                      ],
+                      "createdAt": "2024-03-11T10:30:00.000Z",
+                      "updatedAt": "2024-03-11T10:30:00.000Z"
+                    }
+                  }
+                ],
+                "center": {
+                  "type": "Point",
+                  "coordinates": [-73.9855, 40.7580]
+                },
+                "radius": 20
+              }
+            }
+          ]
         }
       ]
     },
@@ -872,7 +977,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/events?status=published&sort=startDate:asc&fields=id,title,startDate,venue.name&include=venue&page=1&limit=20",
+              "raw": "{{baseUrl}}/api/v1/events?status=published&sort=startDate:asc&fields=id,title,startDate,endDate,artist,genre,price,venueId,venue.name&include=venue&page=1&limit=20",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "events"],
               "query": [
@@ -886,7 +991,7 @@
                 },
                 {
                   "key": "fields",
-                  "value": "id,title,startDate,venue.name"
+                  "value": "id,title,startDate,endDate,artist,genre,price,venueId,venue.name"
                 },
                 {
                   "key": "include",
@@ -910,7 +1015,7 @@
           "request": {
             "method": "GET",
             "url": {
-              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}?include=venue&fields=id,title,description,startDate,venue.name,venue.address",
+              "raw": "{{baseUrl}}/api/v1/events/{{eventId}}?include=venue&fields=id,title,description,startDate,endDate,artist,genre,price,venueId,venue.name,venue.address",
               "host": ["{{baseUrl}}"],
               "path": ["api", "v1", "events", "{{eventId}}"],
               "query": [
@@ -920,7 +1025,7 @@
                 },
                 {
                   "key": "fields",
-                  "value": "id,title,description,startDate,venue.name,venue.address"
+                  "value": "id,title,description,startDate,endDate,artist,genre,price,venueId,venue.name,venue.address"
                 }
               ]
             },
@@ -939,7 +1044,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+              "raw": "{\n  \"title\": \"Jazz Night at Blue Note\",\n  \"description\": \"Live jazz quartet performing classic standards and original compositions\",\n  \"startDate\": \"2024-01-20T20:00:00.000Z\",\n  \"endDate\": \"2024-01-20T23:00:00.000Z\",\n  \"artist\": \"New York Jazz Quartet\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 35.00,\n  \"venueId\": 1,\n  \"status\": \"published\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/events",
@@ -961,7 +1066,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+                  "raw": "{\n  \"title\": \"Jazz Night at Blue Note\",\n  \"description\": \"Live jazz quartet performing classic standards and original compositions\",\n  \"startDate\": \"2024-01-20T20:00:00.000Z\",\n  \"endDate\": \"2024-01-20T23:00:00.000Z\",\n  \"artist\": \"New York Jazz Quartet\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 35.00,\n  \"venueId\": 1,\n  \"status\": \"published\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/events"
@@ -980,16 +1085,17 @@
                 "status": "success",
                 "data": {
                   "id": 1,
-                  "title": "Sample Event",
-                  "description": "This is a sample event.",
-                  "startDate": "2024-03-11T10:30:00.000Z",
-                  "endDate": "2024-03-11T12:30:00.000Z",
+                  "title": "Jazz Night at Blue Note",
+                  "description": "Live jazz quartet performing classic standards and original compositions",
+                  "startDate": "2024-01-20T20:00:00.000Z",
+                  "endDate": "2024-01-20T23:00:00.000Z",
+                  "artist": "New York Jazz Quartet",
+                  "genre": ["Jazz", "Blues"],
+                  "price": 35.00,
                   "venueId": 1,
-                  "tags": [
-                    "music",
-                    "live"
-                  ],
-                  "organizer": "Event Organizer"
+                  "status": "published",
+                  "createdAt": "2024-03-11T10:30:00.000Z",
+                  "updatedAt": "2024-03-11T10:30:00.000Z"
                 },
                 "timestamp": "2024-03-11T10:30:00.000Z"
               }
@@ -1008,7 +1114,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+              "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"artist\": \"Updated Artist\",\n  \"genre\": [\"pop\", \"electronic\"],\n  \"price\": 59.99,\n  \"venueId\": 2,\n  \"tags\": [\"concert\", \"live\"],\n  \"organizer\": \"Updated Organizer\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/events/{{eventId}}",
@@ -1030,7 +1136,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"venueId\": 2,\n  \"tags\": [\"conference\", \"tech\"],\n  \"organizer\": \"Updated Organizer\"\n}"
+                  "raw": "{\n  \"title\": \"Updated Event\",\n  \"description\": \"This is an updated event.\",\n  \"startDate\": \"2024-03-11T11:00:00.000Z\",\n  \"endDate\": \"2024-03-11T13:00:00.000Z\",\n  \"artist\": \"Updated Artist\",\n  \"genre\": [\"pop\", \"electronic\"],\n  \"price\": 59.99,\n  \"venueId\": 2,\n  \"tags\": [\"concert\", \"live\"],\n  \"organizer\": \"Updated Organizer\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/events/{{eventId}}"
@@ -1053,10 +1159,16 @@
                   "description": "This is an updated event.",
                   "startDate": "2024-03-11T11:00:00.000Z",
                   "endDate": "2024-03-11T13:00:00.000Z",
+                  "artist": "Updated Artist",
+                  "genre": [
+                    "pop",
+                    "electronic"
+                  ],
+                  "price": 59.99,
                   "venueId": 2,
                   "tags": [
-                    "conference",
-                    "tech"
+                    "concert",
+                    "live"
                   ],
                   "organizer": "Updated Organizer"
                 },
@@ -1122,6 +1234,12 @@
                   "description": "This is a partially updated event.",
                   "startDate": "2024-03-11T10:30:00.000Z",
                   "endDate": "2024-03-11T12:30:00.000Z",
+                  "artist": "Famous Artist",
+                  "genre": [
+                    "rock",
+                    "alternative"
+                  ],
+                  "price": 49.99,
                   "venueId": 1,
                   "tags": [
                     "music",
@@ -1171,6 +1289,76 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Event GeoJSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/:id/geojson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", ":id", "geojson"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "ID of the event"
+                }
+              ]
+            },
+            "description": "Get event details in GeoJSON format for mapping purposes"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Events in Zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/zone?lat=51.5074&lng=-0.1278&radius=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "zone"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "51.5074",
+                  "description": "Latitude of the center point"
+                },
+                {
+                  "key": "lng",
+                  "value": "-0.1278",
+                  "description": "Longitude of the center point"
+                },
+                {
+                  "key": "radius",
+                  "value": "10",
+                  "description": "Search radius in kilometers"
+                },
+                {
+                  "key": "startDate",
+                  "value": "",
+                  "description": "Optional start date filter (ISO format)",
+                  "disabled": true
+                },
+                {
+                  "key": "endDate",
+                  "value": "",
+                  "description": "Optional end date filter (ISO format)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional status filter (DRAFT, PUBLISHED, CANCELLED)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Find events within a specified geographical zone"
+          },
+          "response": []
         }
       ]
     }
