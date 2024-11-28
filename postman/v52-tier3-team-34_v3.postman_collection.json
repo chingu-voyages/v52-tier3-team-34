@@ -939,7 +939,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"artist\": \"Famous Artist\",\n  \"genre\": [\"rock\", \"alternative\"],\n  \"price\": 49.99,\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+              "raw": "{\n  \"title\": \"Jazz Night at Blue Note\",\n  \"description\": \"Live jazz quartet performing classic standards and original compositions\",\n  \"startDate\": \"2024-01-20T20:00:00.000Z\",\n  \"endDate\": \"2024-01-20T23:00:00.000Z\",\n  \"artist\": \"New York Jazz Quartet\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 35.00,\n  \"venueId\": 1,\n  \"status\": \"published\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/api/v1/events",
@@ -961,7 +961,7 @@
                 ],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n  \"title\": \"Sample Event\",\n  \"description\": \"This is a sample event.\",\n  \"startDate\": \"2024-03-11T10:30:00.000Z\",\n  \"endDate\": \"2024-03-11T12:30:00.000Z\",\n  \"artist\": \"Famous Artist\",\n  \"genre\": [\"rock\", \"alternative\"],\n  \"price\": 49.99,\n  \"venueId\": 1,\n  \"tags\": [\"music\", \"live\"],\n  \"organizer\": \"Event Organizer\"\n}"
+                  "raw": "{\n  \"title\": \"Jazz Night at Blue Note\",\n  \"description\": \"Live jazz quartet performing classic standards and original compositions\",\n  \"startDate\": \"2024-01-20T20:00:00.000Z\",\n  \"endDate\": \"2024-01-20T23:00:00.000Z\",\n  \"artist\": \"New York Jazz Quartet\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 35.00,\n  \"venueId\": 1,\n  \"status\": \"published\"\n}"
                 },
                 "url": {
                   "raw": "{{baseUrl}}/api/v1/events"
@@ -980,22 +980,17 @@
                 "status": "success",
                 "data": {
                   "id": 1,
-                  "title": "Sample Event",
-                  "description": "This is a sample event.",
-                  "startDate": "2024-03-11T10:30:00.000Z",
-                  "endDate": "2024-03-11T12:30:00.000Z",
-                  "artist": "Famous Artist",
-                  "genre": [
-                    "rock",
-                    "alternative"
-                  ],
-                  "price": 49.99,
+                  "title": "Jazz Night at Blue Note",
+                  "description": "Live jazz quartet performing classic standards and original compositions",
+                  "startDate": "2024-01-20T20:00:00.000Z",
+                  "endDate": "2024-01-20T23:00:00.000Z",
+                  "artist": "New York Jazz Quartet",
+                  "genre": ["Jazz", "Blues"],
+                  "price": 35.00,
                   "venueId": 1,
-                  "tags": [
-                    "music",
-                    "live"
-                  ],
-                  "organizer": "Event Organizer"
+                  "status": "published",
+                  "createdAt": "2024-03-11T10:30:00.000Z",
+                  "updatedAt": "2024-03-11T10:30:00.000Z"
                 },
                 "timestamp": "2024-03-11T10:30:00.000Z"
               }
