@@ -1,5 +1,5 @@
 import { serverBaseUrl } from '../config';
-import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '../types/venues';
+import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '../src/types/venues';
 
 // GET ALL
 export const fetchVenues = async ({
@@ -18,11 +18,12 @@ export const fetchVenues = async ({
   });
 
   const response = await fetch(`${serverBaseUrl}/venues?${params.toString()}`);
+
   if (!response.ok) {
     throw new Error('Error fetching venues');
   }
-
-  return response.json();
+  const data = await response.json();
+  return data;
 };
 
 // POST

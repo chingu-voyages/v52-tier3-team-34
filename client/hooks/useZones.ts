@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchZones } from '../api/zones';
-import { ZoneResponse } from '../types/zones';
+import { ZoneResponse } from '../src/types/zones';
 
 export const useZones = (lat: number, lng: number, radius: number) => {
   return useQuery<ZoneResponse, Error>({
