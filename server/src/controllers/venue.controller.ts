@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { VenueService } from "../services/venue.service";
 import {
   VenueQuery,
@@ -6,7 +6,9 @@ import {
   VenueUpdateInput,
   VenueParams,
   GeoJSONFeature,
-  VenueProperties
+  VenueProperties,
+  VenueZoneQueryCoerced,
+  VenueZoneResponse
 } from "../types/venue.types";
 import { ApiResponse, ApiErrorResponse } from "../types/api.types";
 import { Venue, User } from "@prisma/client";
@@ -255,6 +257,56 @@ export class VenueController {
         ? 404
         : 400;
       res.status(statusCode).json(response);
+    }
+  }
+
+  static async findInZone(
+    req: Request<{}, {}, {}, VenueZoneQueryCoerced>,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { lat, lng, radius } = req.query;
+
+      const venues = await VenueService.findInZone(
+        Number(lat),
+        Number(lng),
+        Number(radius)
+      );
+
+      const response: VenueZoneResponse = {
+        type: "FeatureCollection",
+        features: venues.map((venue) => ({
+          type: "Feature",
+          geometry: {
+            type: "Point",
+            coordinates: [venue.coordinates.lng, venue.coordinates.lat]
+          },
+          properties: {
+            id: venue.id,
+            name: venue.name,
+            description: venue.description,
+            address: venue.address,
+            contact: venue.contact as {
+              phone?: string;
+              email?: string;
+              website?: string;
+            },
+            images: venue.images,
+            createdAt: venue.createdAt.toISOString(),
+            updatedAt: venue.updatedAt.toISOString()
+          }
+        })),
+        center: {
+          type: "Point",
+          coordinates: [Number(lng), Number(lat)]
+        },
+        radius: Number(radius)
+      };
+
+      res.json(response);
+    } catch (error) {
+      next(error);
     }
   }
 }

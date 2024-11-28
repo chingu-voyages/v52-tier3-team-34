@@ -794,6 +794,111 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Venue GeoJSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/:id/geojson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", ":id", "geojson"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "ID of the venue"
+                }
+              ]
+            },
+            "description": "Get venue details in GeoJSON format for mapping purposes"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Venues in Zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7580&lng=-73.9855&radius=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "venues", "zone"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "40.7580",
+                  "description": "Latitude (-90 to 90)"
+                },
+                {
+                  "key": "lng",
+                  "value": "-73.9855",
+                  "description": "Longitude (-180 to 180)"
+                },
+                {
+                  "key": "radius",
+                  "value": "20",
+                  "description": "Radius in km (max 50)"
+                }
+              ]
+            },
+            "description": "Find venues within a 20km radius of Times Square, New York"
+          },
+          "response": [
+            {
+              "name": "Success Response",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7580&lng=-73.9855&radius=20"
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": {
+                "type": "FeatureCollection",
+                "features": [
+                  {
+                    "type": "Feature",
+                    "geometry": {
+                      "type": "Point",
+                      "coordinates": [-73.9855, 40.7580]
+                    },
+                    "properties": {
+                      "id": 1,
+                      "name": "Sample Venue",
+                      "description": "A sample venue in New York",
+                      "address": "123 Broadway, New York, NY 10001",
+                      "contact": {
+                        "phone": "+1-555-123-4567",
+                        "email": "info@samplevenue.com",
+                        "website": "https://samplevenue.com"
+                      },
+                      "images": [
+                        "https://example.com/venue1.jpg"
+                      ],
+                      "createdAt": "2024-03-11T10:30:00.000Z",
+                      "updatedAt": "2024-03-11T10:30:00.000Z"
+                    }
+                  }
+                ],
+                "center": {
+                  "type": "Point",
+                  "coordinates": [-73.9855, 40.7580]
+                },
+                "radius": 20
+              }
+            }
+          ]
         }
       ]
     },
@@ -1184,6 +1289,76 @@
               }
             }
           ]
+        },
+        {
+          "name": "Get Event GeoJSON",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/:id/geojson",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", ":id", "geojson"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "",
+                  "description": "ID of the event"
+                }
+              ]
+            },
+            "description": "Get event details in GeoJSON format for mapping purposes"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Events in Zone",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/events/zone?lat=51.5074&lng=-0.1278&radius=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "events", "zone"],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "51.5074",
+                  "description": "Latitude of the center point"
+                },
+                {
+                  "key": "lng",
+                  "value": "-0.1278",
+                  "description": "Longitude of the center point"
+                },
+                {
+                  "key": "radius",
+                  "value": "10",
+                  "description": "Search radius in kilometers"
+                },
+                {
+                  "key": "startDate",
+                  "value": "",
+                  "description": "Optional start date filter (ISO format)",
+                  "disabled": true
+                },
+                {
+                  "key": "endDate",
+                  "value": "",
+                  "description": "Optional end date filter (ISO format)",
+                  "disabled": true
+                },
+                {
+                  "key": "status",
+                  "value": "",
+                  "description": "Optional status filter (DRAFT, PUBLISHED, CANCELLED)",
+                  "disabled": true
+                }
+              ]
+            },
+            "description": "Find events within a specified geographical zone"
+          },
+          "response": []
         }
       ]
     }
