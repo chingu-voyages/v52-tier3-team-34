@@ -2,10 +2,11 @@ import { z } from 'zod';
 
 // API options for fetching venues with pagination
 export interface FetchVenuesOptions {
-  page?: number;
-  limit?: number;
-  orderBy?: string;
-  order?: 'asc' | 'desc';
+  page?: number; // Page number for pagination
+  limit?: number; // Number of items per page
+  sort?: string; // Sorting options in the format "field:direction" (e.g., "createdAt:desc")
+  include?: string; // Related data to include (e.g., "events")
+  filter?: Record<string, string | number>; // Filters in the format { field: value } (e.g., { userId: 1 })
 }
 
 interface PaginationMeta {
