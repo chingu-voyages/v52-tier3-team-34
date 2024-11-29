@@ -26,9 +26,13 @@ const GEOFENCE = turf.circle([-74.0122106, 40.7467898], 5, { units: 'miles' });
 
 function MapComponent() {
   const searchParams = Route.useSearch();
+  const shouldFetchZones =
+    searchParams.lat !== undefined && searchParams.lng !== undefined && searchParams.radius !== undefined;
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data, isLoading, error, isError } = useZones(searchParams.lat, searchParams.lng, searchParams.radius);
+  const { data, isLoading, error, isError } = shouldFetchZones
+    ? useZones(searchParams.lat, searchParams.lng, searchParams.radius)
+    : { data: null, isLoading: false, error: null, isError: false };
 
   const [viewState, setViewState] = useState<ViewState>({
     longitude: 0,
@@ -41,7 +45,7 @@ function MapComponent() {
 
   const [hasLocation, setHasLocation] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
-  const [activeEvent, setActiveEvent] = useState<ZoneFeature | null>(null);
+  const [activeFeature, setActiveFeature] = useState<ZoneFeature | null>(null);
 
   const navigate = useNavigate();
 
@@ -102,11 +106,12 @@ function MapComponent() {
     }
   };
 
-  // if (isLoading) return <div>Loading map...</div>;
-  // if (isError) return <div>Error loading zones: {error?.message}</div>;
+  if (isLoading) return <div>Loading map...</div>;
+  if (isError) return <div>Error loading zones: {error?.message}</div>;
 
-  // const ZoneResponse = data as ZoneResponse;
-  // const features: ZoneFeature[] = ZoneResponse?.data?.features || [];
+  const ZoneResponse = data as ZoneResponse;
+  console.log('Raw data from API:', data);
+  const features: ZoneFeature[] = data?.data || [];
 
   return (
     <div className="p-2 min-h-screen">
@@ -126,45 +131,48 @@ function MapComponent() {
         </div> */}
         <NavigationControl />
         <GeolocateControl />
-        {/* {features.map((feature) => {
+        {features.map((feature) => {
+          const { event, distance } = feature;
+          const { venue } = event;
+
+          if (!venue || !venue.coordinates) {
+            console.warn('feature skipped', feature);
+          }
           return (
-            <div key={`marker-wrapper-${feature.properties.id}`}>
+            <div key={`marker-wrapper-${event.id}`}>
               <Marker
-                key={feature.properties.id}
-                longitude={feature.geometry.coordinates[0]}
-                latitude={feature.geometry.coordinates[1]}
+                key={event.id}
+                longitude={venue.coordinates.lng}
+                latitude={venue.coordinates.lat}
                 onClick={() => {
-                  console.log('Marker clicked:', feature); // Logs the feature data
-                  setActiveEvent(feature);
+                  setActiveFeature(feature);
                 }}
-                // anchor="bottom"
                 style={{ cursor: 'pointer' }}
               ></Marker>
-              {activeEvent ? (
+              {activeFeature ? (
                 <Popup
-                  key={activeEvent.properties.id}
-                  longitude={activeEvent.geometry.coordinates[0]}
-                  latitude={activeEvent.geometry.coordinates[1]}
+                  key={event.id}
+                  longitude={venue.coordinates.lng}
+                  latitude={venue.coordinates.lat}
                   anchor="bottom"
-                  offset={[0, 1]}
+                  offset={[0, 5]}
                   onClose={() => {
-                    console.log('Popup closed for:', activeEvent); // Logs when the popup is closed
-                    setActiveEvent(null);
+                    setActiveFeature(null);
                   }}
                   closeOnClick={false}
                   closeButton={false}
                 >
                   <ClickAwayListener
                     onClickAway={() => {
-                      setActiveEvent(null);
+                      setActiveFeature(null);
                     }}
                   >
                     <div className="bg-white p-4 max-w-xs">
-                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{activeEvent.properties.title}</h3>
-                      <p className="text-sm text-gray-700 mb-4">{activeEvent.properties.description}</p>
+                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{event.title}</h3>
+                      <p className="text-sm text-gray-700 mb-4">{event.description}</p>
                       <div className="text-sm text-gray-500">
-                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
-                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
+                        <p>Starts: {new Date(event.startDate).toLocaleString()}</p>
+                        <p>Ends: {new Date(event.endDate).toLocaleString()}</p>
                       </div>
                     </div>
                   </ClickAwayListener>
@@ -172,7 +180,7 @@ function MapComponent() {
               ) : null}
             </div>
           );
-        })} */}
+        })}
       </Map>
     </div>
   );

@@ -12,8 +12,7 @@ export interface ZoneResponse {
 }
 
 export interface ZoneFeature {
-  event: Event; // Event details
-  venue: Venue; // Venue details
+  event: Event & { venue: Venue }; // Event details
   distance: number; // Distance from the center
 }
 
@@ -30,6 +29,7 @@ export interface Event {
   venueId: number;
   createdAt: string;
   updatedAt: string;
+  venue: Venue; // Venue details
 }
 
 export interface Venue {
