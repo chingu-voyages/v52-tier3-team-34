@@ -1,5 +1,5 @@
-import { serverBaseUrl } from '../config';
-import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '../src/types/venues';
+import { serverBaseUrl } from '@/config';
+import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '@/types/venues';
 
 // GET ALL
 export const fetchVenues = async ({

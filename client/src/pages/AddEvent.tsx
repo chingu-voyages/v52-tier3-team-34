@@ -4,9 +4,9 @@ import { faker } from '@faker-js/faker';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
-import { convertToISO8601 } from '../utils';
+import { convertToISO8601 } from '@/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createEvent } from '../../api/events';
+import { createEvent } from '@/api/events';
 import { Navigate } from '@tanstack/react-router';
 
 const AddEvent: React.FC = () => {
@@ -77,7 +77,7 @@ const AddEvent: React.FC = () => {
       // Invalidate and refetch the events query
       queryClient.invalidateQueries({ queryKey: ['events'] });
       return <Navigate to="/" />;
-    },
+    }
   });
 
   const autofillExampleData = () => {

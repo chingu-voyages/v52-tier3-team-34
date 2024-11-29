@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
-import { routeTree } from './routeTree.gen';
-import './index.css';
+import { routeTree } from '@/routeTree.gen';
+import '@/index.css';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider, useAuth } from './auth';
+import { AuthProvider, useAuth } from '@/auth';
 
 // Create a client
 const queryClient = new QueryClient();

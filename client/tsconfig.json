@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
+    "baseUrl": "./",
     "strict": true,
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "types": ["vite/client"]
+    "types": ["vite/client"],
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }
