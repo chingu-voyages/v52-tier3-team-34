@@ -8,6 +8,7 @@ const apiClient = axios.create({
 
 export const fetchZones = ({ queryKey }: QueryFunctionContext): Promise<ZoneResponse> => {
   const [, { lat, lng, radius }] = queryKey as [string, { lat: number; lng: number; radius: number }];
+  console.log('Params in fetchZones:', lat, lng, radius);
 
   const params = new URLSearchParams({
     lat: lat.toString(),

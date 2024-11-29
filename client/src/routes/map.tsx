@@ -142,20 +142,36 @@ function MapComponent() {
           if (!venue || !venue.coordinates) {
             console.warn('feature skipped', feature);
           }
+
+          if (activeFeature && activeFeature.event.id === event.id) {
+            console.log('Rendering Popup:', {
+              eventId: event.id,
+              venueId: venue.id,
+              eventTitle: event.title,
+              coordinates: venue.coordinates
+            });
+          }
+
           return (
-            <div key={`marker-wrapper-${event.id}`}>
+            <div key={`marker-${event.id}-${venue.id}`}>
               <Marker
                 key={event.id}
                 longitude={venue.coordinates.lng}
                 latitude={venue.coordinates.lat}
                 onClick={() => {
                   setActiveFeature(feature);
+                  console.log('Clicked Marker:', {
+                    eventId: event.id,
+                    venueId: venue.id,
+                    eventTitle: event.title,
+                    coordinates: venue.coordinates
+                  });
                 }}
                 style={{ cursor: 'pointer' }}
               ></Marker>
-              {activeFeature ? (
+              {activeFeature && activeFeature.event.id === event.id ? (
                 <Popup
-                  key={event.id}
+                  key={`popup-${event.id}-${venue.id}`}
                   longitude={venue.coordinates.lng}
                   latitude={venue.coordinates.lat}
                   anchor="bottom"
