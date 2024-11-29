@@ -12,10 +12,9 @@ function HomeComponent() {
   // Set the initial page to 1
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading, error, isError } = useVenues({
-    page: currentPage,
-    limit: 5,
-    orderBy: 'createdAt',
-    order: 'desc'
+    sort: 'createdAt:desc',
+    limit: 3,
+    page: currentPage
   });
 
   const totalPages: number = data?.meta.pagination.totalPages ?? 0;
