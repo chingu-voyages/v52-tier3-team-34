@@ -36,60 +36,34 @@ function MapComponent() {
     const geolocationAllowed = localStorage.getItem('geolocationAllowed');
     const geolocationDeclineSession = sessionStorage.getItem('geolocationDeclined');
 
-    if (geolocationAllowed === 'true') {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
+    const handleGeolocationSuccess = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
 
-          setViewState({
-            ...viewState,
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            zoom: 12
-          });
-          navigate({
-            to: `map/events/zone`,
-            search: {
-              lat: latitude.toFixed(6),
-              lng: longitude.toFixed(6),
-              radius: 20
-            }
-          });
-        },
-        (error) => {
-          console.error('geolocation error', error);
+      setViewState({
+        ...viewState,
+        latitude,
+        longitude,
+        zoom: 12
+      });
+      navigate({
+        to: `/events/zone`,
+        search: {
+          lat: latitude.toFixed(6),
+          lng: longitude.toFixed(6),
+          radius: 20
         }
-      );
-    } else if (!geolocationDeclineSession) {
-      const userConsent = window.confirm('Would you like to share your location?');
+      });
+    };
+    const handleGeolocationError = (error: GeolocationPositionError) => {
+      console.error('error: ', error);
+      sessionStorage.setItem('geolocationDeclined', 'true');
+      window.alert('Please select a city from the dropdown.');
+    };
 
-      if (userConsent) {
-        localStorage.setItem('geolocationAllowed', 'true');
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            setViewState({
-              ...viewState,
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-              zoom: 12
-            });
-            navigate({
-              to: `map/events/zone`,
-              search: {
-                lat: latitude.toFixed(6),
-                lng: longitude.toFixed(6),
-                radius: 20
-              }
-            });
-          },
-          (error) => {
-            console.error('Geolocation error:', error);
-          }
-        );
-      } else {
-        sessionStorage.setItem('geolocationDeclined', 'true');
-      }
+    if (geolocationAllowed === 'true') {
+      navigator.geolocation.getCurrentPosition(handleGeolocationSuccess, handleGeolocationError);
+    } else {
+      sessionStorage.setItem('geolocationDeclined', 'true');
     }
   }, [navigate]);
 
