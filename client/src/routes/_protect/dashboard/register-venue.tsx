@@ -53,7 +53,7 @@ function RegisterVenueForm() {
       console.log('Success');
 
       queryClient.invalidateQueries({ queryKey: ['venues'] });
-      navigate({ to: '/' });
+      navigate({ to: '/dashboard' });
     }
   });
 
