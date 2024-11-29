@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Link } from '@tanstack/react-router';
 import { useState, useRef, useEffect } from 'react';
 import { z } from 'zod';
@@ -28,22 +28,70 @@ function MapComponent() {
   const [geolocationDenied, setGeolocationDenied] = useState(false);
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const mapRef = useRef<MapRef | null>(null);
+  const navigate = useNavigate();
+
+  const radius = 20;
 
   useEffect(() => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setViewState({
-          ...viewState,
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          zoom: 13
-        });
-      },
-      () => {
-        console.log('User denied geolocation.');
+    const geolocationAllowed = localStorage.getItem('geolocationAllowed');
+    const geolocationDeclineSession = sessionStorage.getItem('geolocationDeclined');
+
+    if (geolocationAllowed === 'true') {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+
+          setViewState({
+            ...viewState,
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            zoom: 12
+          });
+          navigate({
+            to: `map/events/zone`,
+            search: {
+              lat: latitude.toFixed(6),
+              lng: longitude.toFixed(6),
+              radius: 20
+            }
+          });
+        },
+        (error) => {
+          console.error('geolocation error', error);
+        }
+      );
+    } else if (!geolocationDeclineSession) {
+      const userConsent = window.confirm('Would you like to share your location?');
+
+      if (userConsent) {
+        localStorage.setItem('geolocationAllowed', 'true');
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            setViewState({
+              ...viewState,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              zoom: 12
+            });
+            navigate({
+              to: `map/events/zone`,
+              search: {
+                lat: latitude.toFixed(6),
+                lng: longitude.toFixed(6),
+                radius: 20
+              }
+            });
+          },
+          (error) => {
+            console.error('Geolocation error:', error);
+          }
+        );
+      } else {
+        sessionStorage.setItem('geolocationDeclined', 'true');
       }
-    );
-  }, []);
+    }
+  }, [navigate]);
 
   const handleCitySelection = (cityName: string) => {
     const city = citiesData.cities.find((c) => c.name === cityName);
