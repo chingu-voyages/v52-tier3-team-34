@@ -17,7 +17,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (users) {
-      const firstUserId = users[3].id.toString();
+      const firstUserId = users[0].id.toString();
       setFirstUserId(firstUserId);
     }
   }, [data]);
