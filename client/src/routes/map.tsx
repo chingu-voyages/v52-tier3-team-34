@@ -10,7 +10,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import ClickAwayListener from 'react-click-away-listener';
 import citiesData from '../../test-data/cities.json';
 import { useZones } from '../../hooks/useZones';
-import { ZoneResponse, ZoneFeature, Event, Venue, Zone } from '../types/zones';
+import { ZoneResponse, ZoneFeature } from '../types/zones';
 import Dropdown from '../components/Dropdown';
 
 export const Route = createFileRoute('/map')({
@@ -110,7 +110,6 @@ function MapComponent() {
   if (isError) return <div>Error loading zones: {error?.message}</div>;
 
   const ZoneResponse = data as ZoneResponse;
-  console.log('Raw data from API:', data);
   const features: ZoneFeature[] = data?.data || [];
 
   return (
@@ -131,6 +130,11 @@ function MapComponent() {
         </div> */}
         <NavigationControl />
         <GeolocateControl />
+        {features.length === 0 && shouldFetchZones && (
+          <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-white p-4 rounded shadow-lg">
+            <p className="text-gray-700">No events found nearby. Please select a city from the dropdown.</p>
+          </div>
+        )}
         {features.map((feature) => {
           const { event, distance } = feature;
           const { venue } = event;
