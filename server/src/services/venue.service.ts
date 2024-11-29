@@ -238,4 +238,46 @@ export class VenueService {
       throw error;
     }
   }
+
+  static async findInZone(lat: number, lng: number, radius: number) {
+    // Convert radius from kilometers to degrees (approximate)
+    const radiusInDegrees = radius / 111.32;
+
+    const venues = await prisma.venue.findMany({
+      where: {
+        AND: [
+          {
+            coordinates: {
+              path: ['lat'],
+              gte: lat - radiusInDegrees,
+              lte: lat + radiusInDegrees,
+            },
+          },
+          {
+            coordinates: {
+              path: ['lng'],
+              gte: lng - radiusInDegrees,
+              lte: lng + radiusInDegrees,
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        address: true,
+        contact: true,
+        coordinates: true,
+        images: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    });
+
+    return venues.map(venue => ({
+      ...venue,
+      coordinates: venue.coordinates as { lat: number; lng: number }
+    }));
+  }
 }
