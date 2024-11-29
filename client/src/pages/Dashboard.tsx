@@ -24,7 +24,7 @@ const Dashboard = () => {
 
   const venuesData = useVenues({
     sort: 'createdAt:desc',
-    limit: 20,
+    limit: 100,
     filter: { userId: firstUserId }
   });
 
@@ -57,7 +57,7 @@ const Dashboard = () => {
       <div className="flex border-t-[1px]">
         <div className="w-1/2 lg:w-1/3 min-h-screen border-r-[1px] p-3">
           <div className="flex gap-3 items-end mb-3">
-            <h2 className="text-2xl font-bold">Venues</h2>
+            <h2 className="text-2xl font-bold">Venues ({venues.length})</h2>
             <Link to="/dashboard/register-venue">
               <button className="h-full flex">
                 <CirclePlus />
@@ -78,7 +78,14 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="w-1/2 lg:w-1/3 p-3">
-          <h2 className="text-2xl font-bold mb-3">Upcoming events ({filteredEvents.length})</h2>
+          <div className="flex gap-3 items-end mb-3">
+            <h2 className="text-2xl font-bold">Upcoming events ({filteredEvents.length})</h2>
+            <Link to="/dashboard/add-event">
+              <button className="flex">
+                <CirclePlus />
+              </button>
+            </Link>
+          </div>
           {eventsData.isLoading && <p>Loading events... </p>}
           {eventsData.error && <p className="text-red-600">Error loading venue data: {eventsData.error.message}</p>}
           <div className="flex flex-col gap-3">
