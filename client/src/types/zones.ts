@@ -1,11 +1,20 @@
-// each zone feature in the array is composed of:
-export interface ZoneFeature {
-  type: string;
-  geometry: {
-    type: string;
-    coordinates: [number, number]; // [longitude, latitude]
+export interface ZoneResponse {
+  status: string; // success or error
+  data: ZoneFeature[]; // Array of features containing event and venue data
+  meta: {
+    filters: {
+      lat: number;
+      lng: number;
+      radius: number;
+    };
   };
-  properties: Event;
+  timestamp: string;
+}
+
+export interface ZoneFeature {
+  event: Event; // Event details
+  venue: Venue; // Venue details
+  distance: number; // Distance from the center
 }
 
 export interface Event {
@@ -15,42 +24,46 @@ export interface Event {
   startDate: string;
   endDate: string;
   status: string;
-  distance: number;
-  venue: Venue;
+  artist: string;
+  genre: string[];
+  price: number;
+  venueId: number;
   createdAt: string;
   updatedAt: string;
 }
 
-// venue displays:
 export interface Venue {
   id: number;
   name: string;
+  description: string;
   address: string;
-}
-
-// zone center coordinates
-export interface Center {
-  type: string;
-  coordinates: [number, number];
-}
-
-//  zone contains an array of features (events), a center and a radius that defines how big this zone is
-export interface Zone {
-  type: string;
-  features: ZoneFeature[];
-  center: Center;
-  radius: number; //in kilometres
+  contact: {
+    email: string;
+    phone: string;
+    website: string;
+  };
+  images: string[];
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+  userId: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 // response from database
-export interface ZoneResponse {
-  status: string; // success or error
 
-  data: {
-    type: string;
-    features: ZoneFeature[];
-    center: Center;
-    radius: number;
-  };
-  timestamp: string;
-}
+// zone center coordinates
+// export interface Center {
+//   type: string;
+//   coordinates: [number, number];
+// }
+
+//  zone contains an array of features (events), a center and a radius that defines how big this zone is
+// export interface Zone {
+//   type: string;
+//   features: ZoneFeature[];
+//   center: Center;
+//   radius: number; //in kilometres
+// }
