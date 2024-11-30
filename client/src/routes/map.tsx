@@ -26,10 +26,10 @@ const GEOFENCE = turf.circle([-74.0122106, 40.7467898], 5, { units: 'miles' });
 
 function MapComponent() {
   const searchParams = Route.useSearch();
-  const shouldFetchZones =
-    searchParams.lat !== undefined && searchParams.lng !== undefined && searchParams.radius !== undefined;
   const mapRef = useRef<MapRef | null>(null);
 
+  const shouldFetchZones =
+    searchParams.lat !== undefined && searchParams.lng !== undefined && searchParams.radius !== undefined;
   const { data, isLoading, error, isError } = shouldFetchZones
     ? useZones(searchParams.lat, searchParams.lng, searchParams.radius)
     : { data: null, isLoading: false, error: null, isError: false };
