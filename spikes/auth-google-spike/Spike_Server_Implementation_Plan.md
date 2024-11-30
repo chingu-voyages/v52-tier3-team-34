@@ -3,91 +3,124 @@
 ## Project Scope
 All development confined to: `spikes/auth-google-spike/server/`
 
+## Authentication Flow Overview
+1. Client obtains Google ID Token (via Google Identity Services)
+2. Client sends token to our API
+3. Server verifies token with Google
+4. Server creates/updates user and returns JWT
+5. Client uses JWT for subsequent requests
+
 ## Phase 1: TypeScript & Basic Setup
 1. Initialize project
    - Create package.json
-   - Install dependencies (express, typescript, etc.)
-   - Setup tsconfig.json (strict mode)
-   - Configure environment variables
+   - Install dependencies (google-auth-library, jsonwebtoken)
+   - Setup tsconfig.json
+   - Configure environment variables (GOOGLE_CLIENT_ID, JWT_SECRET)
 
 2. Setup project structure
    ```
    server/
    ├── src/
-   │   ├── types/      # TypeScript definitions
-   │   ├── config/     # Environment config
-   │   └── server.ts   # Entry point
+   │   ├── types/         # TypeScript definitions
+   │   ├── services/      # Auth & User services
+   │   ├── middleware/    # JWT middleware
+   │   ├── config/        # Environment config
+   │   └── server.ts      # Entry point
    ├── prisma/
    └── tests/
    ```
 
-3. Create basic Express server
-   - Define app types
-   - Setup error handling
-   - Test server running
-
- Commit: "Setup: Basic TypeScript Express server"
-
 ## Phase 2: Database & User Model
 1. Setup Prisma with SQLite
    - Initialize Prisma
-   - Create User model
+   - Create User model with Google fields
    - Generate client & types
-   - Test database connection
 
 2. Create user service
    - Define User interfaces
    - Implement CRUD operations
    - Add type safety
 
- Commit: "Add: Database and User model"
+## Phase 3: Authentication Implementation
+1. Google Token Verification
+   - Setup google-auth-library
+   - Create verification service
+   - Handle token validation errors
 
-## Phase 3: Authentication Setup
-1. Setup Google OAuth
-   - Configure Google Cloud credentials
-   - Add auth types and interfaces
-   - Setup token verification
-
-2. Implement JWT handling
-   - Create JWT service with types
-   - Type-safe token generation
-   - Token validation
-
- Commit: "Add: Authentication setup"
+2. JWT Implementation
+   - Create JWT service
+   - Token generation
+   - Token validation middleware
 
 ## Phase 4: API Implementation
-1. Create auth endpoints
-   - POST /auth/login
-   - POST /auth/logout
-   - Add request/response types
+1. Auth Endpoints
+   ```typescript
+   // Main authentication endpoint
+   POST /auth/login
+   Body: { 
+     googleIdToken: string  // From Google Identity Services
+   }
+   Response: {
+     token: string,        // Our JWT for future requests
+     user: {
+       id: number,
+       email: string,
+       name: string,
+       profileImage: string
+     }
+   }
 
-2. Create test endpoints
-   - GET /api/public/one
-   - GET /api/public/two
-   - GET /api/protected/one
-   - GET /api/protected/two
+   // Optional endpoints
+   POST /auth/logout      // Clear client-side token
+   GET /auth/profile     // Get current user data
+   ```
 
-3. Implement middleware
-   - Type-safe auth middleware
-   - Error handling middleware
-   - Request validation
+2. Test Endpoints
+   ```typescript
+   // Public routes (no auth)
+   GET /api/public/test
+   
+   // Protected routes (require JWT)
+   GET /api/protected/test
+   Headers: { 
+     Authorization: "Bearer {jwt}" 
+   }
+   ```
 
- Commit: "Add: API endpoints and middleware"
+## Phase 5: Testing with Postman
+1. Setup Collection
+   ```
+   Collection: Google Auth Spike
+   Environment Variables:
+   - BASE_URL: http://localhost:3000
+   - JWT: <dynamic>
+   ```
 
-## Phase 5: Testing
-1. Setup Postman collection
-   - Environment variables
-   - Google OAuth configuration
-   - Request templates
+2. Test Flow
+   A. Get Google ID Token
+   - Use Postman's OAuth 2.0
+   - Configure Google OAuth settings
+   - Get ID token
 
-2. Test flows
-   - Public endpoints
-   - Protected endpoints (unauthorized)
-   - Login flow
-   - Protected endpoints (authorized)
-   - Logout
+   B. Login Flow
+   - Send token to /auth/login
+   - Store returned JWT
 
- Commit: "Add: Testing setup and documentation"
+   C. Test Protected Routes
+   - Use JWT in Authorization header
+   - Verify protection works
+
+3. Success Criteria
+   - Google token verification works
+   - JWT auth flow works
+   - Protected routes secured
+   - User data stored correctly
+
+## Notes for React Implementation
+- Use @react-oauth/google package
+- Implement GoogleLogin component
+- Store JWT in secure storage
+- Add auth headers to API calls
 
 ## Final Steps
 - Review all type definitions
