@@ -6,12 +6,12 @@ import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from 
 import type { ViewState } from '@vis.gl/react-maplibre';
 import type maplibregl from 'maplibre-gl';
 import * as turf from '@turf/turf';
-import 'maplibre-gl/dist/maplibre-gl.css';
 import ClickAwayListener from 'react-click-away-listener';
 import citiesData from '../../test-data/cities.json';
-import { useZones } from '../../hooks/useZones';
-import { ZoneResponse, ZoneFeature } from '../types/zones';
-import Dropdown from '../components/Dropdown';
+import { useZones } from '@/hooks/useZones';
+import { ZoneResponse, ZoneFeature } from '@/types/zones';
+import Dropdown from '@/components/Dropdown';
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export const Route = createFileRoute('/map')({
   validateSearch: z.object({

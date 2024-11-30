@@ -1,6 +1,6 @@
-import { useAuth } from '../auth';
+import { useAuth } from '@/auth';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Route } from '../routes';
+import { Route } from '@/routes';
 
 const UnauthenticatedMenu = () => {
   return (

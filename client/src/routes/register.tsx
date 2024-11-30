@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Eye, EyeClosed } from 'lucide-react';
-import GoogleLogo from '../assets/google-icon.svg';
+import GoogleLogo from '@/assets/google-icon.svg';
 
 // Define the type for the user data
 interface NewUserData {

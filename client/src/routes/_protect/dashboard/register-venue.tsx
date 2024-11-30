@@ -3,11 +3,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Building2, Mail, Phone, Globe, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
-import { generateExampleVenue } from '../../../utils';
-import { createVenue } from '../../../../api/venues';
-import { VenueFormData, venueSchema } from '../../../types/venues';
-import { useUsers } from '../../../../hooks/useUsers';
-import { User, UsersResponse } from '../../../types/user';
+import { generateExampleVenue } from '@/utils';
+import { createVenue } from '@/api/venues';
+import { VenueFormData, venueSchema } from '@/types/venues';
+import { useUsers } from '@/hooks/useUsers';
 import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/_protect/dashboard/register-venue')({
