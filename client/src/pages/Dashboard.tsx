@@ -48,9 +48,6 @@ const Dashboard = () => {
     setSelectedVenueIds((prev) => (prev.includes(venueId) ? prev.filter((id) => id !== venueId) : [...prev, venueId]));
   }
 
-  // console.log('Events data: ', eventsData.data?.data);
-  //  console.log('Venue data: ', venuesData.data?.data);
-
   return (
     <>
       <h1 className="text-2xl font-bold p-3">Dashboard | Active userId: {firstUserId}</h1>
