@@ -1,19 +1,39 @@
-import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
+import express from 'express';
+import { config } from './config/env';
+import authRoutes from './routes/auth.routes';
+import healthRoutes from './routes/health.routes';
 
-dotenv.config();
-
-const app: Express = express();
-const port = process.env.PORT || 3000;
+const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Basic route to test server
-app.get('/', (req: Request, res: Response) => {
-  res.json({ message: 'Auth spike API is running' });
+// API Routes (v1)
+app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/health', healthRoutes);
+
+// Basic error handling
+app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Something broke!' });
 });
 
+// Start server
+const port = config.PORT;
 app.listen(port, () => {
-  console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+  console.log(`
+Server running on port ${port}
+
+Available endpoints:
+ Public:
+   GET http://localhost:${port}/api/v1/health
+
+ Protected:
+   GET http://localhost:${port}/api/v1/health/auth
+   
+ Auth:
+   POST http://localhost:${port}/api/v1/auth/login
+   GET  http://localhost:${port}/api/v1/auth/profile
+   POST http://localhost:${port}/api/v1/auth/logout
+`);
 });
