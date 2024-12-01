@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { JWTService } from '../services/jwt.service';
+import { TokenInvalidationService } from '../services/token-invalidation.service';
 
 export const authenticateJWT = (
   req: Request,
@@ -15,6 +16,12 @@ export const authenticateJWT = (
   const token = authHeader.split(' ')[1]; // Bearer TOKEN
 
   try {
+    // Check if token is invalidated
+    if (TokenInvalidationService.isTokenInvalidated(token)) {
+      return res.status(401).json({ error: 'Token has been invalidated' });
+    }
+
+    // Verify JWT
     const decoded = JWTService.verifyToken(token);
     req.user = decoded as Express.User;
     next();

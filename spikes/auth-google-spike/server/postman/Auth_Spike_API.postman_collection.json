@@ -20,18 +20,16 @@
 								"grant_type": "authorization_code",
 								"redirect_uri": "https://oauth.pstmn.io/v1/callback",
 								"scope": "email profile openid",
-								"state": "random_state_string",
-								"challengeAlgorithm": "S256",
-								"useBrowser": true,
-								"addTokenTo": "header"
+								"state": "",
+								"tokenName": "Google OAuth"
 							}
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/health",
+							"raw": "{{BASE_URL}}/health",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "health"]
+							"path": ["health"]
 						},
 						"description": "Use this request's Authorization tab to get a new Google token. Click 'Get New Access Token' to start the flow."
 					}
@@ -47,9 +45,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/health",
+							"raw": "{{BASE_URL}}/health",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "health"]
+							"path": ["health"]
 						}
 					}
 				},
@@ -69,9 +67,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/health/auth",
+							"raw": "{{BASE_URL}}/health/auth",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "health", "auth"]
+							"path": ["health", "auth"]
 						}
 					}
 				}
@@ -109,9 +107,9 @@
 							}
 						},
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/auth/login",
+							"raw": "{{BASE_URL}}/auth/login",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "auth", "login"]
+							"path": ["auth", "login"]
 						}
 					}
 				},
@@ -131,9 +129,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/auth/profile",
+							"raw": "{{BASE_URL}}/auth/profile",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "auth", "profile"]
+							"path": ["auth", "profile"]
 						}
 					}
 				},
@@ -153,9 +151,9 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/api/v1/auth/logout",
+							"raw": "{{BASE_URL}}/auth/logout",
 							"host": ["{{BASE_URL}}"],
-							"path": ["api", "v1", "auth", "logout"]
+							"path": ["auth", "logout"]
 						}
 					}
 				}

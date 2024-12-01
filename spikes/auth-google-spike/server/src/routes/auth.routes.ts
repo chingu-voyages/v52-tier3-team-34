@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { UserService } from '../services/user.service';
 import { JWTService } from '../services/jwt.service';
+import { TokenInvalidationService } from '../services/token-invalidation.service';
 import { authenticateJWT } from '../middleware/auth.middleware';
 import { User } from '@prisma/client';
 
@@ -66,10 +67,19 @@ router.get('/profile', authenticateJWT, (req: AuthRequest, res) => {
 
 /**
  * POST /auth/logout
- * Logout user (client will remove token)
+ * Logout user and invalidate token
  */
 router.post('/logout', authenticateJWT, (req: AuthRequest, res) => {
-  res.json({ message: 'Logged out successfully' });
+  try {
+    // Get token from Authorization header
+    const token = req.headers.authorization?.split(' ')[1];
+    if (token) {
+      TokenInvalidationService.invalidateToken(token);
+    }
+    res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to logout' });
+  }
 });
 
 export default router;
