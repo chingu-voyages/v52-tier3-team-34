@@ -14,10 +14,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 
 function RootComponent() {
   return (
-    <>
-      <Navbar />
-      <Outlet />
+    <div className="bg-[#1c1c1c] text-white w-full">
+      <div className="max-w-7xl mx-auto">
+        <Navbar />
+        <Outlet />
+      </div>
       <TanStackRouterDevtools position="bottom-right" />
-    </>
+    </div>
   );
 }
