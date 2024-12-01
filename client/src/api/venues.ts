@@ -1,5 +1,6 @@
 import { serverBaseUrl } from '@/config';
-import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '@/types/venues';
+import { FetchVenuesOptions, VenuesResponse } from '@/types/venues';
+import { VenueFormData } from '@/validations/venueValidation';
 // GET ALL
 export const fetchVenues = async ({
   queryKey: [, options]
