@@ -33,7 +33,7 @@ export default function Home() {
         <div className="space-y-4">
           <Link
             to="/map"
-            search={{ lat: 1, lng: 20, radius: 20 }}
+            search={{ lat: 41.390205, lng: 2.154007, radius: 20 }}
             className="w-full flex items-center justify-center bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors group"
           >
             <MapPin className="mr-2 group-hover:rotate-12 transition-transform" />
