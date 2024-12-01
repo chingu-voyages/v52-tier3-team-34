@@ -1,9 +1,18 @@
 import express from 'express';
+import cors from 'cors';
 import { config } from './config/env';
 import authRoutes from './routes/auth.routes';
 import healthRoutes from './routes/health.routes';
 
 const app = express();
+
+// CORS configuration
+app.use(cors({
+  origin: config.CLIENT_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware
 app.use(express.json());
@@ -29,11 +38,6 @@ Available endpoints:
    GET http://localhost:${port}/api/v1/health
 
  Protected:
-   GET http://localhost:${port}/api/v1/health/auth
-   
- Auth:
-   POST http://localhost:${port}/api/v1/auth/login
-   GET  http://localhost:${port}/api/v1/auth/profile
-   POST http://localhost:${port}/api/v1/auth/logout
+   All /api/v1/auth/* endpoints
 `);
 });

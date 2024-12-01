@@ -1,40 +1,48 @@
 {
 	"info": {
 		"name": "Auth Spike API",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Collection for testing the Auth Spike API. Before starting:\n1. Import both collection and environment files\n2. Set your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the environment\n3. Select the environment before running requests"
 	},
 	"item": [
 		{
-			"name": "0. Google OAuth Setup",
+			"name": "0. Get Google ID Token",
 			"item": [
 				{
-					"name": "Get Google Token",
+					"name": "Get Google ID Token (OAuth Flow)",
 					"request": {
 						"auth": {
 							"type": "oauth2",
 							"oauth2": {
-								"accessTokenUrl": "https://oauth2.googleapis.com/token",
+								"grant_type": "authorization_code",
+								"headerPrefix": "Bearer",
+								"addTokenTo": "header",
+								"tokenName": "Google OAuth",
+								"callbackUrl": "https://oauth.pstmn.io/v1/callback",
 								"authUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+								"accessTokenUrl": "https://oauth2.googleapis.com/token",
 								"clientId": "{{GOOGLE_CLIENT_ID}}",
 								"clientSecret": "{{GOOGLE_CLIENT_SECRET}}",
-								"grant_type": "authorization_code",
-								"redirect_uri": "https://oauth.pstmn.io/v1/callback",
 								"scope": "email profile openid",
 								"state": "",
-								"tokenName": "Google OAuth"
+								"clientAuth": "basic",
+								"useBrowser": true,
+								"challengeAlgorithm": "S256",
+								"tokenType": "Bearer"
 							}
 						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{BASE_URL}}/health",
-							"host": ["{{BASE_URL}}"],
-							"path": ["health"]
+							"raw": "https://oauth2.googleapis.com/tokeninfo",
+							"host": ["oauth2.googleapis.com"],
+							"path": ["tokeninfo"]
 						},
-						"description": "Use this request's Authorization tab to get a new Google token. Click 'Get New Access Token' to start the flow."
+						"description": "This request helps you get a Google ID token. Steps:\n\n1. Make sure environment variables are set:\n   - GOOGLE_CLIENT_ID\n   - GOOGLE_CLIENT_SECRET\n\n2. Go to Authorization tab\n3. Type should be OAuth 2.0\n4. Click 'Get New Access Token'\n5. Complete Google sign-in\n6. Copy the ID token (not Access token)\n7. Use this ID token in 'Login with Google' request"
 					}
 				}
-			]
+			],
+			"description": "Get a Google ID token through OAuth 2.0 flow. Make sure to use environment variables for credentials."
 		},
 		{
 			"name": "1. Health Checks",

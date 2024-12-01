@@ -1,71 +1,70 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { CredentialResponse } from '@react-oauth/google';
 import { AuthContext } from './AuthContext';
-import { AuthState, User } from '../types/auth';
+import { User } from '../types/auth';
+import { authenticateWithGoogle, logout as logoutApi } from '../services/api';
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-export function AuthProvider({ children }: AuthProviderProps) {
-  const [authState, setAuthState] = useState<AuthState>({
-    isAuthenticated: false,
-    user: null,
-    token: null,
-  });
+  useEffect(() => {
+    // Check for existing token and validate it
+    const token = localStorage.getItem('token');
+    if (token) {
+      // TODO: Validate token with backend
+      // For now, we'll just check if it exists
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
+    }
+    setLoading(false);
+  }, []);
 
-  const login = async (googleToken: string) => {
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
     try {
-      // TODO: Implement the actual API call
-      // const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ googleToken })
-      // });
-      // const data = await response.json();
+      if (!credentialResponse.credential) {
+        throw new Error('No credential received');
+      }
       
-      // For now, just mock the response
-      console.log('Received Google token:', googleToken);
-      
-      const mockUser: User = {
-        id: '1',
-        email: 'test@example.com',
-        name: 'Test User',
-      };
-
-      setAuthState({
-        isAuthenticated: true,
-        user: mockUser,
-        token: 'mock-jwt-token',
-      });
+      // Send ID token to our backend
+      const data = await authenticateWithGoogle(credentialResponse.credential);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
     } catch (error) {
-      console.error('Login failed:', error);
-      throw error;
+      console.error('Authentication failed:', error);
+      // TODO: Handle error properly
     }
   };
 
   const logout = async () => {
     try {
-      // TODO: Call API to invalidate token
-      setAuthState({
-        isAuthenticated: false,
-        user: null,
-        token: null,
-      });
+      await logoutApi();
     } catch (error) {
       console.error('Logout failed:', error);
-      throw error;
+    } finally {
+      // Always clear local state, even if server call fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      setUser(null);
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <AuthContext.Provider
-      value={{
-        ...authState,
-        login,
-        logout,
+    <AuthContext.Provider 
+      value={{ 
+        user,
+        login: handleGoogleSuccess,
+        logout 
       }}
     >
       {children}
     </AuthContext.Provider>
   );
-}
+};

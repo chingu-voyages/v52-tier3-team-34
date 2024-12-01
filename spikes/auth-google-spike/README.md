@@ -1,148 +1,80 @@
 # Google OAuth Authentication Spike
 
-This spike project explores implementing Google OAuth2 authentication for our Live Music Finder application, focusing on both API-only and web client flows.
+## Purpose
+This spike demonstrates a complete "Login with Google" implementation for Live Music Finder, showing how the client and server work together to provide secure authentication.
 
-## Overview
+## Architecture
+```
+┌─────────────┐         ┌──────────┐         ┌──────────┐
+│   React     │  token  │  Express │  verify │  Google  │
+│   Client    │ ───────►│  Server  │ ───────►│  OAuth   │
+│             │         │          │         │          │
+└─────────────┘         └──────────┘         └──────────┘
+      ▲                      │
+      │                      │
+      └──────────────────────┘
+           JWT response
+```
 
-### Server Spike (Completed)
-A TypeScript/Node.js implementation testing:
-- Google OAuth2 authentication flow
-- JWT token management
-- Protected API endpoints
-- User data management
-- Token invalidation
+## Quick Start
+1. Configure Google OAuth:
+   - Create project in Google Console
+   - Configure OAuth consent screen
+   - Create OAuth credentials
+   - Get Client ID and Secret
 
-### Client Spike (Upcoming)
-A React implementation that will test:
-- Google OAuth integration in React
-- Token management in browser
-- Protected route handling
-- User session management
-
-## Authentication Flows
-
-### API-Only Flow
-1. Client obtains Google ID Token (e.g., via Postman OAuth)
-2. Client sends token to `/auth/login`
-3. Server verifies token with Google
-4. Server creates/updates user in database
-5. Server returns JWT for subsequent requests
-6. JWT used for protected endpoint access
-7. Logout invalidates token server-side
-
-### Web Client Flow (Upcoming)
-1. User clicks "Login with Google"
-2. Google OAuth popup/redirect
-3. React app receives ID token
-4. Same server-side flow as API-only
-5. React app stores JWT
-6. Protected routes use JWT
-7. Logout clears tokens
-
-## Server Implementation
-
-### Setup
-1. Install dependencies:
+2. Start server:
    ```bash
    cd server
    npm install
-   ```
-
-2. Configure environment:
-   ```env
-   DATABASE_URL="file:./dev.db"
-   GOOGLE_CLIENT_ID="your-client-id"
-   GOOGLE_CLIENT_SECRET="your-client-secret"
-   JWT_SECRET="your-jwt-secret"
-   ```
-
-3. Run migrations:
-   ```bash
-   npx prisma migrate dev
-   ```
-
-4. Start server:
-   ```bash
    npm run dev
    ```
 
-### API Endpoints
+3. Start client:
+   ```bash
+   cd client
+   npm install
+   npm run dev
+   ```
 
-#### Public Endpoints
-- `GET /health`: Server health check
-  ```json
-  {"status": "up", "timestamp": "2024-12-01T10:00:00.000Z"}
-  ```
+## Key Findings
 
-#### Authentication Endpoints
-- `POST /auth/login`: Login with Google ID token
-  ```json
-  {
-    "googleIdToken": "token-from-google"
-  }
-  ```
+### What Works Well
+1. Google OAuth provides secure authentication
+2. JWT tokens for session management
+3. TypeScript ensures type safety
+4. Protected routes work as expected
+5. Error handling is comprehensive
 
-- `POST /auth/logout`: Invalidate current token
-  - Requires Authorization header
-  - Invalidates token server-side
+### Implementation Recommendations
+1. Use this spike's auth flow pattern
+2. Implement proper token refresh
+3. Add rate limiting in production
+4. Use secure token storage
+5. Add comprehensive logging
 
-- `GET /auth/profile`: Get user profile
-  - Requires Authorization header
-  - Returns user data
+## Testing the Solution
+1. Start both server and client
+2. Use Profile component to test:
+   - Login with Google
+   - Access protected routes
+   - Test error scenarios
+   - Test logout flow
 
-#### Protected Endpoints
-- `GET /health/auth`: Protected health check
-  - Requires Authorization header
-  - Verifies authentication
-
-### Database Operations
-On Google login:
-- Checks for existing user by Google ID
-- Creates new user if not found
-- Updates user data if found
-- Schema includes: id, email, name, googleId, profileImage
-
-### Testing with Postman
-
-1. Import collection and environment from `/server/postman/`
-
-2. Configure environment variables:
-   - `BASE_URL`: http://localhost:3000/api/v1
-   - `GOOGLE_CLIENT_ID`: Your Google Client ID
-   - `GOOGLE_CLIENT_SECRET`: Your Google Client Secret
-
-3. Test Flow:
-   1. Use "Get Google Token" request to obtain token
-   2. Login using token
-   3. Test protected endpoints with received JWT
-   4. Test logout and token invalidation
-
-## Security Features
-- Server-side token validation
-- Token invalidation on logout
-- Protected route middleware
-- Type-safe implementation
-- SQL injection protection via Prisma
-- Request validation using Zod
-
-## Development Notes
-
-### Key Decisions
-- TypeScript for type safety
-- JWT for stateless authentication
-- Prisma for type-safe database access
-- Token invalidation for security
-- API versioning for future compatibility
-
-### Known Limitations
-- In-memory token invalidation (would use Redis in production)
-- Basic error handling
-- Limited user profile data
-- No refresh token implementation
+## Security Considerations
+1. Never expose secrets in client
+2. Validate tokens server-side
+3. Use secure token storage in production
+4. Implement proper CORS
+5. Add rate limiting
 
 ## Next Steps
-1. Implement React client spike
-2. Test full OAuth flow in browser
-3. Implement proper error handling
-4. Add refresh token support
-5. Move successful patterns to main project
+1. Move code to main project
+2. Enhance security measures
+3. Add production monitoring
+4. Implement refresh tokens
+5. Add user session management
+
+## Documentation
+- [Server Implementation](./server/README.md)
+- [Client Implementation](./client/README.md)

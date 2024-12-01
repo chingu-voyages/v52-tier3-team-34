@@ -4,9 +4,37 @@
 - Server running at http://localhost:3000
 - Postman collection imported
 - Environment variables configured:
-  - `GOOGLE_CLIENT_ID`
-  - `GOOGLE_CLIENT_SECRET`
+  - `GOOGLE_CLIENT_ID` (from Google Cloud Console)
+  - `GOOGLE_CLIENT_SECRET` (from Google Cloud Console)
   - `BASE_URL` (http://localhost:3000/api/v1)
+
+## Initial Setup
+
+### Step 0: Configure OAuth in Postman
+1. Import both the collection and environment files
+2. Set your environment variables in Postman
+3. Go to "Get Google ID Token" request
+4. In the Authorization tab, configure OAuth 2.0 exactly as follows:
+
+```
+Type: OAuth 2.0
+Add auth data to: Request Headers
+Token Name: Google OAuth
+Grant Type: Authorization Code
+Callback URL: https://oauth.pstmn.io/v1/callback
+Auth URL: https://accounts.google.com/o/oauth2/v2/auth
+Access Token URL: https://oauth2.googleapis.com/token
+Client ID: {{GOOGLE_CLIENT_ID}}
+Client Secret: {{GOOGLE_CLIENT_SECRET}}
+Scope: email profile openid
+State: (leave empty)
+Client Authentication: Send as Basic Auth header
+```
+
+5. Click "Get New Access Token"
+6. Complete Google sign-in
+7. In the token response, copy the ID token (not the Access token)
+8. Use this ID token for subsequent "Login with Google" requests
 
 ## Test Suites
 

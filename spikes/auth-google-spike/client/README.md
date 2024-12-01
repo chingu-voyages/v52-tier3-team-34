@@ -1,88 +1,114 @@
-# Google OAuth Authentication Spike - Client
+# Google OAuth Authentication - Client Implementation
 
-This spike explores implementing Google OAuth2 authentication in a React client application, working with our custom backend server.
+## Overview
+React client implementation for Google OAuth authentication in Live Music Finder. Handles login flow, token management, and protected routes.
 
 ## Tech Stack
 - React + TypeScript
 - Vite for build tooling
-- @tanstack/react-router for routing
 - @react-oauth/google for Google OAuth
-- Tailwind CSS for styling
 - Axios for API requests
-- Zod for runtime type validation
+- Tailwind CSS for styling
 
-## Project Structure
-```
-/client
-├── src/
-│   ├── auth/        # Authentication related components and hooks
-│   ├── components/  # Reusable UI components
-│   ├── pages/       # Page components
-│   ├── services/    # API and external services
-│   ├── styles/      # Global styles and Tailwind configuration
-│   └── types/       # TypeScript type definitions
+## Quick Start
+```bash
+npm install
+npm run dev
 ```
 
-## Development Setup
+## Key Components
 
-### Prerequisites
-- Node.js 18+
-- npm 9+
-- Google OAuth credentials (Client ID and Secret)
+### Authentication Context
+`src/auth/AuthContext.tsx`
+- Manages auth state
+- Provides login/logout methods
+- Handles token storage
+- Type-safe implementation
 
-### Installation
-1. Install dependencies:
-   ```bash
-   npm install
-   ```
+### Auth Provider
+`src/auth/AuthProvider.tsx`
+- Wraps app with auth context
+- Handles Google OAuth setup
+- Manages user session
+- Error handling
 
-2. Environment Configuration:
-   - Copy `.env.example` to `.env`
-   - Configure your Google OAuth credentials
-   - Set the API URL (default: http://localhost:3000)
+### API Service
+`src/services/api.ts`
+- Axios instance setup
+- Token interceptors
+- Error handling
+- Type-safe requests
 
-3. Start Development Server:
-   ```bash
-   npm run dev
-   ```
+### Profile Component
+`src/components/Profile.tsx`
+- Test component for auth flow
+- Public/protected route testing
+- Error scenario testing
 
-## Implementation Details
-
-### Authentication Flow
+## Authentication Flow
 1. User clicks "Login with Google"
 2. Google OAuth popup opens
-3. On successful authentication:
-   - Receive Google ID token
-   - Exchange token with our backend
-   - Store JWT for subsequent requests
+3. On success:
+   ```typescript
+   // Get token from Google
+   const response = await googleLogin();
+   
+   // Exchange for JWT
+   const { token } = await api.post('/auth/login', {
+     googleIdToken: response.credential
+   });
+   
+   // Store token
+   localStorage.setItem('token', token);
+   ```
 
-### Security Considerations
-- OAuth credentials stored in `.env`
-- No sensitive data in localStorage
-- Token validation on each protected request
+## Protected Routes
+```typescript
+// Example protected route
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  return children;
+};
+```
 
-### Type Safety
-- TypeScript for compile-time safety
-- Zod for runtime validation
-- Environment variable type definitions
+## Error Handling
+```typescript
+// API error handling
+api.interceptors.response.use(
+  response => response,
+  error => {
+    if (error.response?.status === 401) {
+      // Clear token & redirect
+      localStorage.removeItem('token');
+    }
+    return Promise.reject(error);
+  }
+);
+```
 
-## Testing Instructions
-1. Start the development server
-2. Test authentication flow:
+## Environment Setup
+```env
+VITE_GOOGLE_CLIENT_ID="your-client-id"
+VITE_API_URL="http://localhost:3000/api/v1"
+```
+
+> **Security Note**: The client only needs the Google Client ID, not the Client Secret. The Client Secret is exclusively used server-side and should never be included in client-side code or environment variables. This is a critical security practice in OAuth implementations.
+
+## Testing
+1. Start development server
+2. Test authentication:
    - Login with Google
    - Access protected routes
    - Test token expiration
+   - Test error scenarios
    - Test logout flow
 
-## Known Issues & Limitations
-- Document any issues discovered during development
-- Add workarounds if applicable
-
-## Lessons Learned
-- Document key decisions and their rationale
-- Note improvements for main project implementation
-
-## Development Decisions & Notes
-- Update this section as we implement features
-- Document important architectural decisions
-- Note any challenges and solutions
+## Known Limitations
+- Token stored in localStorage
+- No refresh token handling
+- Basic error handling
