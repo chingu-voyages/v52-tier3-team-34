@@ -1,3 +1,5 @@
+import { Venue } from './venues';
+
 // Genre array type (could be any number of genres, assuming they're all strings)
 type Genre = string[];
 
@@ -50,5 +52,26 @@ export interface EventsResponse {
   status: string;
   data: Event[]; // Array of events
   meta: Meta; // Pagination and metadata
+  timestamp: string; // Timestamp of the response (ISO 8601 string)
+}
+
+// Response object for a single event
+export interface EventResponse {
+  status: string; // Response status (e.g., "success")
+  data: {
+    id: number;
+    title: string;
+    description: string;
+    startDate: string; // ISO 8601 string (e.g., '2024-11-30T19:00:00.000Z')
+    endDate: string; // ISO 8601 string (e.g., '2024-11-30T22:00:00.000Z')
+    status: 'published' | 'draft' | 'archived'; // Example statuses
+    artist: string;
+    genre: Genre;
+    price: number;
+    venueId: number;
+    createdAt: string; // ISO 8601 string
+    updatedAt: string; // ISO 8601 string
+    venue: Venue; // Detailed venue information
+  };
   timestamp: string; // Timestamp of the response (ISO 8601 string)
 }

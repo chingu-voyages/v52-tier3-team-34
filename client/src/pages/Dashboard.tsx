@@ -90,6 +90,11 @@ const Dashboard = () => {
               <EventCard eventInfo={event} key={event.id} />
             ))}
           </div>
+          {filteredEvents.length < 1 && (
+            <p>
+              You haven't added any events yet. <br /> Start by creating one! Just click the "+" icon.
+            </p>
+          )}
         </div>
       </div>
     </>

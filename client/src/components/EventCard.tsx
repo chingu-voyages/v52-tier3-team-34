@@ -1,4 +1,5 @@
 import { Event } from '@/types/events';
+import { Link } from '@tanstack/react-router';
 
 interface EventCardProps {
   eventInfo: Event;
@@ -6,11 +7,15 @@ interface EventCardProps {
 
 const EventCard = ({ eventInfo }: EventCardProps) => {
   return (
-    <div className="flex flex-col">
+    <Link
+      to="/dashboard/event/$eventId"
+      params={{ eventId: eventInfo.id.toString() }}
+      className="flex flex-col hover:bg-white/10 p-3"
+    >
       <h3 className="font-bold">{eventInfo.title}</h3>
       <p>{eventInfo.artist}</p>
       <p>venueId: {eventInfo.venueId}</p>
-    </div>
+    </Link>
   );
 };
 

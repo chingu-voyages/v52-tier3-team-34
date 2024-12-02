@@ -20,6 +20,8 @@ import { Route as IndexImport } from './routes/index'
 import { Route as ProtectDashboardIndexImport } from './routes/_protect/dashboard/index'
 import { Route as ProtectDashboardRegisterVenueImport } from './routes/_protect/dashboard/register-venue'
 import { Route as ProtectDashboardAddEventImport } from './routes/_protect/dashboard/add-event'
+import { Route as ProtectDashboardVenueVenueIdImport } from './routes/_protect/dashboard/venue.$venueId'
+import { Route as ProtectDashboardEventEventIdImport } from './routes/_protect/dashboard/event.$eventId'
 
 // Create/Update Routes
 
@@ -76,6 +78,20 @@ const ProtectDashboardAddEventRoute = ProtectDashboardAddEventImport.update({
   path: '/dashboard/add-event',
   getParentRoute: () => ProtectRoute,
 } as any)
+
+const ProtectDashboardVenueVenueIdRoute =
+  ProtectDashboardVenueVenueIdImport.update({
+    id: '/dashboard/venue/$venueId',
+    path: '/dashboard/venue/$venueId',
+    getParentRoute: () => ProtectRoute,
+  } as any)
+
+const ProtectDashboardEventEventIdRoute =
+  ProtectDashboardEventEventIdImport.update({
+    id: '/dashboard/event/$eventId',
+    path: '/dashboard/event/$eventId',
+    getParentRoute: () => ProtectRoute,
+  } as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -144,6 +160,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectDashboardIndexImport
       parentRoute: typeof ProtectImport
     }
+    '/_protect/dashboard/event/$eventId': {
+      id: '/_protect/dashboard/event/$eventId'
+      path: '/dashboard/event/$eventId'
+      fullPath: '/dashboard/event/$eventId'
+      preLoaderRoute: typeof ProtectDashboardEventEventIdImport
+      parentRoute: typeof ProtectImport
+    }
+    '/_protect/dashboard/venue/$venueId': {
+      id: '/_protect/dashboard/venue/$venueId'
+      path: '/dashboard/venue/$venueId'
+      fullPath: '/dashboard/venue/$venueId'
+      preLoaderRoute: typeof ProtectDashboardVenueVenueIdImport
+      parentRoute: typeof ProtectImport
+    }
   }
 }
 
@@ -153,12 +183,16 @@ interface ProtectRouteChildren {
   ProtectDashboardAddEventRoute: typeof ProtectDashboardAddEventRoute
   ProtectDashboardRegisterVenueRoute: typeof ProtectDashboardRegisterVenueRoute
   ProtectDashboardIndexRoute: typeof ProtectDashboardIndexRoute
+  ProtectDashboardEventEventIdRoute: typeof ProtectDashboardEventEventIdRoute
+  ProtectDashboardVenueVenueIdRoute: typeof ProtectDashboardVenueVenueIdRoute
 }
 
 const ProtectRouteChildren: ProtectRouteChildren = {
   ProtectDashboardAddEventRoute: ProtectDashboardAddEventRoute,
   ProtectDashboardRegisterVenueRoute: ProtectDashboardRegisterVenueRoute,
   ProtectDashboardIndexRoute: ProtectDashboardIndexRoute,
+  ProtectDashboardEventEventIdRoute: ProtectDashboardEventEventIdRoute,
+  ProtectDashboardVenueVenueIdRoute: ProtectDashboardVenueVenueIdRoute,
 }
 
 const ProtectRouteWithChildren =
@@ -174,6 +208,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/add-event': typeof ProtectDashboardAddEventRoute
   '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
   '/dashboard': typeof ProtectDashboardIndexRoute
+  '/dashboard/event/$eventId': typeof ProtectDashboardEventEventIdRoute
+  '/dashboard/venue/$venueId': typeof ProtectDashboardVenueVenueIdRoute
 }
 
 export interface FileRoutesByTo {
@@ -186,6 +222,8 @@ export interface FileRoutesByTo {
   '/dashboard/add-event': typeof ProtectDashboardAddEventRoute
   '/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
   '/dashboard': typeof ProtectDashboardIndexRoute
+  '/dashboard/event/$eventId': typeof ProtectDashboardEventEventIdRoute
+  '/dashboard/venue/$venueId': typeof ProtectDashboardVenueVenueIdRoute
 }
 
 export interface FileRoutesById {
@@ -199,6 +237,8 @@ export interface FileRoutesById {
   '/_protect/dashboard/add-event': typeof ProtectDashboardAddEventRoute
   '/_protect/dashboard/register-venue': typeof ProtectDashboardRegisterVenueRoute
   '/_protect/dashboard/': typeof ProtectDashboardIndexRoute
+  '/_protect/dashboard/event/$eventId': typeof ProtectDashboardEventEventIdRoute
+  '/_protect/dashboard/venue/$venueId': typeof ProtectDashboardVenueVenueIdRoute
 }
 
 export interface FileRouteTypes {
@@ -213,6 +253,8 @@ export interface FileRouteTypes {
     | '/dashboard/add-event'
     | '/dashboard/register-venue'
     | '/dashboard'
+    | '/dashboard/event/$eventId'
+    | '/dashboard/venue/$venueId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -224,6 +266,8 @@ export interface FileRouteTypes {
     | '/dashboard/add-event'
     | '/dashboard/register-venue'
     | '/dashboard'
+    | '/dashboard/event/$eventId'
+    | '/dashboard/venue/$venueId'
   id:
     | '__root__'
     | '/'
@@ -235,6 +279,8 @@ export interface FileRouteTypes {
     | '/_protect/dashboard/add-event'
     | '/_protect/dashboard/register-venue'
     | '/_protect/dashboard/'
+    | '/_protect/dashboard/event/$eventId'
+    | '/_protect/dashboard/venue/$venueId'
   fileRoutesById: FileRoutesById
 }
 
@@ -282,7 +328,9 @@ export const routeTree = rootRoute
       "children": [
         "/_protect/dashboard/add-event",
         "/_protect/dashboard/register-venue",
-        "/_protect/dashboard/"
+        "/_protect/dashboard/",
+        "/_protect/dashboard/event/$eventId",
+        "/_protect/dashboard/venue/$venueId"
       ]
     },
     "/login": {
@@ -307,6 +355,14 @@ export const routeTree = rootRoute
     },
     "/_protect/dashboard/": {
       "filePath": "_protect/dashboard/index.tsx",
+      "parent": "/_protect"
+    },
+    "/_protect/dashboard/event/$eventId": {
+      "filePath": "_protect/dashboard/event.$eventId.tsx",
+      "parent": "/_protect"
+    },
+    "/_protect/dashboard/venue/$venueId": {
+      "filePath": "_protect/dashboard/venue.$venueId.tsx",
       "parent": "/_protect"
     }
   }
