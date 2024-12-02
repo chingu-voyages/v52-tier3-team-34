@@ -7,11 +7,11 @@ import { EventFormData, eventSchema, EventSubmissionData } from '../validations/
 import { convertToISO8601 } from '@/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createEvent } from '@/api/events';
-import { Navigate } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 const AddEvent: React.FC = () => {
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -27,7 +27,7 @@ const AddEvent: React.FC = () => {
         minutes: '0'
       },
       image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
-      venueId: 1
+      venueId: 50
     }
   });
 
@@ -65,7 +65,8 @@ const AddEvent: React.FC = () => {
       genre: formData.genre,
       price: Number(formData.price),
       venueId: formData.venueId,
-      image: formData.image
+      image: formData.image,
+      status: formData.status
     };
 
     mutation.mutate(submissionData);
@@ -76,7 +77,7 @@ const AddEvent: React.FC = () => {
     onSuccess: () => {
       // Invalidate and refetch the events query
       queryClient.invalidateQueries({ queryKey: ['events'] });
-      return <Navigate to="/" />;
+      navigate({ to: '/dashboard' });
     }
   });
 
@@ -92,7 +93,7 @@ const AddEvent: React.FC = () => {
     setValue('artist', faker.person.fullName());
     setValue('genre', faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2));
     setValue('price', faker.number.int({ min: 0, max: 50 }));
-    setValue('venueId', 1);
+    setValue('venueId', 50);
     setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
     setValue('terms', true);
   };
@@ -280,6 +281,23 @@ const AddEvent: React.FC = () => {
             className="mt-1 block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.image && <p className="text-red-500 text-xs">{errors.image.message}</p>}
+        </div>
+        {/* status */}
+        {/* Status Dropdown */}
+        <div>
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+            Status
+          </label>
+          <select
+            id="status"
+            {...register('status')}
+            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="published">Publish</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archive</option>
+          </select>
+          {errors.status && <p className="text-red-500 text-xs">{errors.status.message}</p>}
         </div>
 
         <div className="flex flex-col space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">

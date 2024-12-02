@@ -17,6 +17,7 @@ export interface EventFormData {
   image: string;
   terms: boolean;
   endDate: string;
+  status: 'published' | 'draft' | 'archived';
 }
 
 // Separate type for data that will be sent to the API
@@ -49,6 +50,9 @@ export const eventSchema = z.object({
   image: z.string().url('Please enter a valid URL for the image').optional(),
   terms: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms'
+  }),
+  status: z.enum(['published', 'draft', 'archived'], {
+    errorMap: () => ({ message: 'Please select a valid status' })
   }),
   endDate: z.string().refine((date) => {
     try {

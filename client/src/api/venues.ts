@@ -1,20 +1,31 @@
 import { serverBaseUrl } from '@/config';
-import { FetchVenuesOptions, VenueFormData, VenuesResponse } from '@/types/venues';
-
+import { FetchVenuesOptions, VenuesResponse } from '@/types/venues';
+import { VenueFormData } from '@/validations/venueValidation';
 // GET ALL
 export const fetchVenues = async ({
   queryKey: [, options]
 }: {
   queryKey: readonly ['venues', FetchVenuesOptions];
 }): Promise<VenuesResponse> => {
-  const { page = 1, limit = 10, orderBy = 'name', order = 'asc' } = options;
+  const { page = 1, limit = 10, sort = 'createdAt:desc', include = '', filter = {} } = options;
 
-  // Build query string
+  // Initialize query parameters
   const params = new URLSearchParams({
     page: page.toString(),
     limit: limit.toString(),
-    orderBy,
-    order
+    sort
+  });
+
+  // Add 'include' if it's not empty
+  if (include) {
+    params.append('include', include);
+  }
+
+  // Add filters dynamically if they exist
+  Object.entries(filter).forEach(([key, value]) => {
+    if (value) {
+      params.append(`filter[${key}]`, value.toString());
+    }
   });
 
   const response = await fetch(`${serverBaseUrl}/venues?${params.toString()}`);
@@ -22,6 +33,7 @@ export const fetchVenues = async ({
   if (!response.ok) {
     throw new Error('Error fetching venues');
   }
+
   const data = await response.json();
   return data;
 };
