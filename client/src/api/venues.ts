@@ -1,5 +1,5 @@
 import { serverBaseUrl } from '@/config';
-import { FetchVenuesOptions, VenuesResponse } from '@/types/venues';
+import { FetchVenuesOptions, VenueResponse, VenuesResponse } from '@/types/venues';
 import { VenueFormData } from '@/validations/venueValidation';
 // GET ALL
 export const fetchVenues = async ({
@@ -52,3 +52,27 @@ export const createVenue = async (data: VenueFormData) => {
   }
   return response.json();
 };
+
+export async function fetchVenue(venueId: string): Promise<VenueResponse> {
+  try {
+    const url = `${serverBaseUrl}/venues/${venueId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Check for a successful response
+    if (!response.ok) {
+      throw new Error(`Error fetching events: ${response.statusText}`);
+    }
+
+    // Parse the response as JSON
+    const data: VenueResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch Venue:', error);
+    throw error;
+  }
+}
