@@ -75,7 +75,7 @@ function LoginComponent() {
               name="username"
               placeholder="Enter your name"
               type="text"
-              className="border rounded-md p-2 w-full"
+              className="border rounded-md p-2 w-full text-black"
               required
             />
           </div>
