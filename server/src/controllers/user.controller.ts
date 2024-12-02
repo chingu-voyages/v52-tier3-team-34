@@ -6,8 +6,15 @@ import {
   GoogleUserInput,
   GoogleUserUpdateInput,
   UserParams,
+  UserEventsQuery
 } from "../types/user.types";
 import { ApiResponse, ApiErrorResponse } from "../types/api.types";
+import { Event, Venue } from "@prisma/client";
+
+// Type for events with venue data
+type EventWithVenue = Event & {
+  venue: Venue;
+};
 
 export class UserController {
   static async getById(req: Request, res: Response) {
@@ -31,10 +38,49 @@ export class UserController {
           message: error instanceof Error ? error.message : "User not found",
           details: { id: req.params.id }
         },
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toISOString()
       };
 
       res.status(404).json(response);
+    }
+  }
+
+  static async getUserEvents(
+    req: Request<UserParams, {}, {}, UserEventsQuery>,
+    res: Response
+  ) {
+    try {
+      const userId = Number(req.params.id);
+      const result = await UserService.findUserEvents(userId, req.query);
+
+      const response: ApiResponse<{
+        events: EventWithVenue[];
+        pagination: {
+          total: number;
+          page: number;
+          limit: number;
+          pages: number;
+        };
+      }> = {
+        status: "success",
+        data: result,
+        timestamp: new Date().toISOString(),
+      };
+
+      res.json(response);
+    } catch (error) {
+      const response: ApiErrorResponse = {
+        status: "error",
+        error: {
+          code: "USER_EVENTS_ERROR",
+          message: error instanceof Error ? error.message : "Error fetching user events",
+          details: { userId: req.params.id }
+        },
+        timestamp: new Date().toISOString()
+      };
+
+      res.status(error instanceof Error && error.message === "User not found" ? 404 : 500)
+        .json(response);
     }
   }
 

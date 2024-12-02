@@ -31,8 +31,7 @@ export interface VenuesResponse {
 // Complete response structure for venue data
 export interface VenueResponse {
   status: 'success';
-  data: Venue[];
-  meta: Meta;
+  data: Venue;
   timestamp: string; // ISO 8601 string
 }
 
