@@ -6,16 +6,19 @@ This directory contains Postman collections and environments for testing the V52
 
 ```
 postman/
-├── v52-tier3-team-34_v3.postman_collection.json  # Main API collection
-├── local.postman_environment.json                # Local environment variables
-├── production.postman_environment.json           # Production environment variables
-└── README.md                                     # This file
+├── main.postman_collection.json           # Parent collection referencing all modules
+├── users.postman_collection.json          # User-related endpoints
+├── venues.postman_collection.json         # Venue-related endpoints
+├── events.postman_collection.json         # Event-related endpoints
+├── local.postman_environment.json         # Local environment variables
+├── production.postman_environment.json    # Production environment variables
+└── README.md                             # This file
 ```
 
 ## Getting Started
 
 1. Install [Postman](https://www.postman.com/downloads/)
-2. Import the collection file: `v52-tier3-team-34_v3.postman_collection.json`
+2. Import the collection file: `main.postman_collection.json`
 3. Import both environment files:
    - `local.postman_environment.json` for local testing
    - `production.postman_environment.json` for production testing

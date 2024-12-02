@@ -1,0 +1,115 @@
+{
+  "info": {
+    "name": "Venues API",
+    "description": "Venue management endpoints including creation, updates, and geolocation queries",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "List Venues - Basic",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/venues",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "venues"]
+        },
+        "description": "Get a list of venues with default pagination"
+      }
+    },
+    {
+      "name": "Create Venue",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"The Venue\",\n  \"description\": \"A great venue for events\",\n  \"address\": \"123 Main St, City, Country\",\n  \"contact\": {\n    \"email\": \"venue@example.com\",\n    \"phone\": \"+1-234-567-8900\",\n    \"website\": \"https://venue.example.com\"\n  },\n  \"coordinates\": {\n    \"lat\": 40.7128,\n    \"lng\": -74.0060\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/venues",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "venues"]
+        },
+        "description": "Create a new venue"
+      }
+    },
+    {
+      "name": "Update Venue - Full Update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Venue\",\n  \"description\": \"Updated description\",\n  \"address\": \"456 New St, City, Country\",\n  \"contact\": {\n    \"email\": \"updated@example.com\",\n    \"phone\": \"+1-234-567-8901\",\n    \"website\": \"https://updated.example.com\"\n  },\n  \"coordinates\": {\n    \"lat\": 40.7129,\n    \"lng\": -74.0061\n  }\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/venues/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "venues", "1"]
+        },
+        "description": "Update all venue fields"
+      }
+    },
+    {
+      "name": "Update Venue - Partial Update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Updated Name\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/venues/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "venues", "1"]
+        },
+        "description": "Update specific venue fields"
+      }
+    },
+    {
+      "name": "Get Venues in Zone",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7128&lng=-74.0060&radius=5",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "venues", "zone"],
+          "query": [
+            {
+              "key": "lat",
+              "value": "40.7128"
+            },
+            {
+              "key": "lng",
+              "value": "-74.0060"
+            },
+            {
+              "key": "radius",
+              "value": "5"
+            }
+          ]
+        },
+        "description": "Get venues within a specific radius of coordinates"
+      }
+    }
+  ]
+}

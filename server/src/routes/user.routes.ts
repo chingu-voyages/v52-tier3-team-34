@@ -5,7 +5,8 @@ import {
   UserParamsSchema, 
   UserQuerySchema, 
   GoogleUserSchema,
-  GoogleUserUpdateSchema 
+  GoogleUserUpdateSchema,
+  UserEventsQuerySchema
 } from "../types/user.types";
 
 const router = Router();
@@ -15,6 +16,14 @@ router.post("/", validateRequest.body(GoogleUserSchema), UserController.create);
 
 // List users (with query validation)
 router.get("/", validateRequest.query(UserQuerySchema), UserController.list);
+
+// Get user's events
+router.get(
+  "/:id/events",
+  validateRequest.params(UserParamsSchema),
+  validateRequest.query(UserEventsQuerySchema),
+  UserController.getUserEvents
+);
 
 // Get user by ID
 router.get("/:id", validateRequest.params(UserParamsSchema), UserController.getById);

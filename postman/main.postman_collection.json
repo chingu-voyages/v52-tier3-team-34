@@ -1,0 +1,39 @@
+{
+  "info": {
+    "name": "V52 Tier3 Team 34 API",
+    "description": "Complete collection for testing the V52 Tier3 Team 34 REST API endpoints. This is the main collection that references all modular collections.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "health"]
+            },
+            "description": "Check if the API server is running"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints - See users.postman_collection.json for details"
+    },
+    {
+      "name": "Venues",
+      "description": "Venue management endpoints - See venues.postman_collection.json for details"
+    },
+    {
+      "name": "Events",
+      "description": "Event management endpoints - See events.postman_collection.json for details"
+    }
+  ]
+}
