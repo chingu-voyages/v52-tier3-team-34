@@ -1,0 +1,188 @@
+{
+	"info": {
+		"name": "Auth Spike API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"description": "Collection for testing the Auth Spike API. Before starting:\n1. Import both collection and environment files\n2. Set your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the environment\n3. Select the environment before running requests"
+	},
+	"item": [
+		{
+			"name": "0. Get Google ID Token",
+			"item": [
+				{
+					"name": "Get Google ID Token (OAuth Flow)",
+					"request": {
+						"auth": {
+							"type": "oauth2",
+							"oauth2": {
+								"grant_type": "authorization_code",
+								"headerPrefix": "Bearer",
+								"addTokenTo": "header",
+								"tokenName": "Google OAuth",
+								"callbackUrl": "https://oauth.pstmn.io/v1/callback",
+								"authUrl": "https://accounts.google.com/o/oauth2/v2/auth",
+								"accessTokenUrl": "https://oauth2.googleapis.com/token",
+								"clientId": "{{GOOGLE_CLIENT_ID}}",
+								"clientSecret": "{{GOOGLE_CLIENT_SECRET}}",
+								"scope": "email profile openid",
+								"state": "",
+								"clientAuth": "basic",
+								"useBrowser": true,
+								"challengeAlgorithm": "S256",
+								"tokenType": "Bearer"
+							}
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://oauth2.googleapis.com/tokeninfo",
+							"host": ["oauth2.googleapis.com"],
+							"path": ["tokeninfo"]
+						},
+						"description": "This request helps you get a Google ID token. Steps:\n\n1. Make sure environment variables are set:\n   - GOOGLE_CLIENT_ID\n   - GOOGLE_CLIENT_SECRET\n\n2. Go to Authorization tab\n3. Type should be OAuth 2.0\n4. Click 'Get New Access Token'\n5. Complete Google sign-in\n6. Copy the ID token (not Access token)\n7. Use this ID token in 'Login with Google' request"
+					}
+				}
+			],
+			"description": "Get a Google ID token through OAuth 2.0 flow. Make sure to use environment variables for credentials."
+		},
+		{
+			"name": "1. Health Checks",
+			"item": [
+				{
+					"name": "Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/health",
+							"host": ["{{BASE_URL}}"],
+							"path": ["health"]
+						}
+					}
+				},
+				{
+					"name": "Protected Health Check",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/health/auth",
+							"host": ["{{BASE_URL}}"],
+							"path": ["health", "auth"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "2. Authentication Flow",
+			"item": [
+				{
+					"name": "Login with Google",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"if (jsonData.token) {",
+									"    pm.environment.set(\"JWT\", jsonData.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"googleIdToken\": \"{{GOOGLE_ID_TOKEN}}\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/auth/login",
+							"host": ["{{BASE_URL}}"],
+							"path": ["auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auth/profile",
+							"host": ["{{BASE_URL}}"],
+							"path": ["auth", "profile"]
+						}
+					}
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{JWT}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}/auth/logout",
+							"host": ["{{BASE_URL}}"],
+							"path": ["auth", "logout"]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [""]
+			}
+		}
+	],
+	"variable": []
+}
