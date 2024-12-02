@@ -1,5 +1,5 @@
 import { serverBaseUrl } from '@/config';
-import { EventsResponse, FetchEventsOptions } from '@/types/events';
+import { EventResponse, EventsResponse, FetchEventsOptions } from '@/types/events';
 import { EventSubmissionData } from '@/validations/eventValidation';
 
 // POST
@@ -80,3 +80,28 @@ export const fetchEvents = async ({
     throw error; // Optionally, handle the error in a user-friendly way
   }
 };
+
+export async function fetchEvent(eventId: string): Promise<EventResponse> {
+  try {
+    const url = `${serverBaseUrl}/events/${eventId}`;
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+        // Add any necessary headers (e.g., authorization tokens)
+      }
+    });
+
+    // Check for a successful response
+    if (!response.ok) {
+      throw new Error(`Error fetching events: ${response.statusText}`);
+    }
+
+    // Parse the response as JSON
+    const data: EventResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch Event:', error);
+    throw error;
+  }
+}
