@@ -1,5 +1,5 @@
 import prisma from "../config/database";
-import { GoogleUserInput, GoogleUserUpdateInput, UserQuery } from "../types/user.types";
+import { GoogleUserInput, GoogleUserUpdateInput, UserQuery, UserEventsQuery } from "../types/user.types";
 import { Prisma } from "@prisma/client";
 
 export class UserService {
@@ -55,6 +55,59 @@ export class UserService {
     }
 
     return user;
+  }
+
+  static async findUserEvents(userId: number, query: UserEventsQuery) {
+    const { page = 1, limit = 10, sort, include, filter } = query;
+    const skip = (page - 1) * limit;
+
+    // First verify if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true }
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Build where clause
+    const where: Prisma.EventWhereInput = {
+      venue: {
+        userId: userId
+      },
+      ...(filter && {
+        ...(filter.startDate && { startDate: { gte: filter.startDate } }),
+        ...(filter.endDate && { endDate: { lte: filter.endDate } }),
+        ...(filter.status && { status: filter.status })
+      })
+    };
+
+    // Build query options
+    const [events, total] = await Promise.all([
+      prisma.event.findMany({
+        where,
+        skip,
+        take: limit,
+        orderBy: sort ? {
+          [sort.split(':')[0]]: sort.split(':')[1].toLowerCase()
+        } : undefined,
+        include: {
+          venue: true
+        }
+      }),
+      prisma.event.count({ where })
+    ]);
+
+    return {
+      events,
+      pagination: {
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit)
+      }
+    };
   }
 
   static async findAll(query: UserQuery) {
