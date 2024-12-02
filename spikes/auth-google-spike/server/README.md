@@ -10,8 +10,26 @@ Server-side implementation of Google OAuth authentication for Live Music Finder.
 - Google OAuth2 APIs
 
 ## Quick Start
+
+### 1. Install Dependencies
 ```bash
 npm install
+```
+
+### 2. Database Setup
+```bash
+# Generate Prisma client
+npx prisma generate
+
+# Create SQLite database and run migrations
+npx prisma migrate dev
+
+# (Optional) View database with Prisma Studio
+npx prisma studio
+```
+
+### 3. Start Server
+```bash
 npm run dev
 ```
 
