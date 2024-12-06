@@ -43,7 +43,8 @@ export default [
             caseInsensitive: true
           }
         }
-      ]
+      ],
+      'func-style': ['error', 'declaration', { allowArrowFunctions: false }]
     }
   },
   {
