@@ -84,6 +84,6 @@ export interface Pagination {
 // Metadata for the response, including pagination and filters
 export interface Meta {
   pagination: Pagination;
-  filters: Record<string, any>; // Filters can be more specific if the structure is known
-  includes: any[]; // Include can be more specific if needed
+  filters: Record<string, unknown>; // Representing an object where keys are strings and values can be of any type
+  includes: unknown[]; // Representing an array of any type, can be made specific if structure is known
 }
