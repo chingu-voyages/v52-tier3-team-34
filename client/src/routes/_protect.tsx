@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { Outlet, createFileRoute, redirect, useRouter } from '@tanstack/react-router';
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_protect')({
   beforeLoad: ({ context, location }) => {
