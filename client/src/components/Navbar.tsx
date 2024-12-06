@@ -1,7 +1,8 @@
-import { useAuth } from '@/auth';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Route } from '@/routes';
+
 import logoWithText from '@/assets/Logo-with-text.svg';
+import { useAuth } from '@/auth';
+import { Route } from '@/routes';
 
 const UnauthenticatedMenu = () => {
   return (
@@ -18,7 +19,7 @@ const UnauthenticatedMenu = () => {
         <div className="flex items-center gap-6 max-md:hidden xl:gap-12">
           <div id="header-right-element-desktop" className="flex">
             <Link to="/dashboard" className="relative text-xs font-semibold uppercase tracking-wider max-lg:hidden">
-              I'm an organizer
+              I&apos;m an organizer
               <svg
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
