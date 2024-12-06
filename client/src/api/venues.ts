@@ -2,11 +2,11 @@ import { serverBaseUrl } from '@/config';
 import { FetchVenuesOptions, VenueResponse, VenuesResponse } from '@/types/venues';
 import { VenueFormData } from '@/validations/venueValidation';
 // GET ALL
-export const fetchVenues = async ({
+export async function fetchVenues({
   queryKey: [, options]
 }: {
   queryKey: readonly ['venues', FetchVenuesOptions];
-}): Promise<VenuesResponse> => {
+}): Promise<VenuesResponse> {
   const { page = 1, limit = 10, sort = 'createdAt:desc', include = '', filter = {} } = options;
 
   // Initialize query parameters
@@ -36,10 +36,10 @@ export const fetchVenues = async ({
 
   const data = await response.json();
   return data;
-};
+}
 
 // POST
-export const createVenue = async (data: VenueFormData) => {
+export async function createVenue(data: VenueFormData) {
   const response = await fetch(`${serverBaseUrl}/venues`, {
     method: 'POST',
     headers: {
@@ -51,7 +51,7 @@ export const createVenue = async (data: VenueFormData) => {
     throw new Error('Failed to create venue');
   }
   return response.json();
-};
+}
 
 export async function fetchVenue(venueId: string): Promise<VenueResponse> {
   try {

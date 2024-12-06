@@ -37,10 +37,10 @@ export default function AddVenue() {
     }
   }, [data]);
 
-  const handleFillExample = () => {
+  function handleFillExample() {
     const exampleData = generateExampleVenue();
     reset(exampleData);
-  };
+  }
 
   const queryClient = useQueryClient();
 
@@ -54,13 +54,13 @@ export default function AddVenue() {
     }
   });
 
-  const onSubmit = (data: VenueFormData) => {
+  function onSubmit(data: VenueFormData) {
     const userId = Number(firstUserId);
     const venueData = { ...data, userId };
     console.log('Venue data submitted: ', venueData);
 
     mutation.mutate(venueData);
-  };
+  }
 
   return (
     <div className="max-w-2xl mx-auto py-10">

@@ -11,7 +11,7 @@ import { EventFormData, eventSchema, EventSubmissionData } from '../validations/
 import { createEvent } from '@/api/events';
 import { convertToISO8601 } from '@/utils';
 
-const AddEvent: React.FC = () => {
+function AddEvent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const {
@@ -57,7 +57,7 @@ const AddEvent: React.FC = () => {
     }
   }, [startDate, duration, setValue]);
 
-  const onSubmit = (formData: EventFormData) => {
+  function onSubmit(formData: EventFormData) {
     const submissionData: EventSubmissionData = {
       title: formData.title,
       description: formData.description,
@@ -72,7 +72,7 @@ const AddEvent: React.FC = () => {
     };
 
     mutation.mutate(submissionData);
-  };
+  }
 
   const mutation = useMutation({
     mutationFn: createEvent,
@@ -83,7 +83,7 @@ const AddEvent: React.FC = () => {
     }
   });
 
-  const autofillExampleData = () => {
+  function autofillExampleData() {
     setValue('title', faker.lorem.words(3));
     setValue('description', faker.lorem.paragraph());
     setValue('startDate', faker.date.future().toISOString().slice(0, 16));
@@ -98,9 +98,9 @@ const AddEvent: React.FC = () => {
     setValue('venueId', 50);
     //setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
     setValue('terms', true);
-  };
+  }
 
-  const calculateEndDate = () => {
+  function calculateEndDate() {
     if (!startDate || !duration) return null;
 
     try {
@@ -122,7 +122,7 @@ const AddEvent: React.FC = () => {
       console.error('Error calculating end date:', error);
       return null;
     }
-  };
+  }
 
   return (
     <div className="max-w-lg p-6 mx-auto">
@@ -356,6 +356,6 @@ const AddEvent: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default AddEvent;

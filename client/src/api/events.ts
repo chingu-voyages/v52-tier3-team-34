@@ -3,7 +3,7 @@ import { EventResponse, EventsResponse, FetchEventsOptions } from '@/types/event
 import { EventSubmissionData } from '@/validations/eventValidation';
 
 // POST
-export const createEvent = async (data: EventSubmissionData) => {
+export async function createEvent(data: EventSubmissionData) {
   console.log('Creating event with: ', data);
 
   const response = await fetch(`${serverBaseUrl}/events`, {
@@ -19,13 +19,13 @@ export const createEvent = async (data: EventSubmissionData) => {
   }
 
   return response.json();
-};
+}
 
-export const fetchEvents = async ({
+export async function fetchEvents({
   queryKey: [, options]
 }: {
   queryKey: readonly ['events', FetchEventsOptions];
-}): Promise<EventsResponse> => {
+}): Promise<EventsResponse> {
   const { status, sort = 'startDate:asc', fields, include = '', page = 1, limit = 20, filter = {} } = options;
 
   // Initialize query parameters
@@ -79,7 +79,7 @@ export const fetchEvents = async ({
     console.error('Failed to fetch events:', error);
     throw error; // Optionally, handle the error in a user-friendly way
   }
-};
+}
 
 export async function fetchEvent(eventId: string): Promise<EventResponse> {
   try {

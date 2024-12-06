@@ -4,7 +4,7 @@ import logoWithText from '@/assets/Logo-with-text.svg';
 import { useAuth } from '@/auth';
 import { Route } from '@/routes';
 
-const UnauthenticatedMenu = () => {
+function UnauthenticatedMenu() {
   return (
     <nav className="container">
       <header className="relative z-10 flex h-16 items-center justify-between py-11 px-3">
@@ -37,14 +37,14 @@ const UnauthenticatedMenu = () => {
       </header>
     </nav>
   );
-};
+}
 
-const AuthenticatedMenu = () => {
+function AuthenticatedMenu() {
   const router = useRouter();
   const navigate = Route.useNavigate();
   const auth = useAuth();
 
-  const handleLogout = () => {
+  function handleLogout() {
     if (window.confirm('Are you sure you want to logout?')) {
       auth.logout().then(() => {
         router.invalidate().finally(() => {
@@ -52,7 +52,7 @@ const AuthenticatedMenu = () => {
         });
       });
     }
-  };
+  }
 
   return (
     <>
@@ -85,12 +85,12 @@ const AuthenticatedMenu = () => {
       </nav>
     </>
   );
-};
+}
 
-const Navbar = () => {
+function Navbar() {
   const { isAuthenticated } = useAuth();
 
   return <>{isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}</>;
-};
+}
 
 export default Navbar;

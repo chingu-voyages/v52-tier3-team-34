@@ -71,9 +71,9 @@ function RouteComponent() {
     }
   });
 
-  const onSubmit = (filteredData: NewUserData) => {
+  function onSubmit(filteredData: NewUserData) {
     registerUser.mutate(filteredData);
-  };
+  }
 
   // State to toggle password visibility
   const [showPassword, setShowPassword] = React.useState(false);

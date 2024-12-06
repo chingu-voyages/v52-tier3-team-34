@@ -7,7 +7,7 @@ interface VenuetDetailsProps {
   onSave?: (updatedVenue: VenueFormData) => void;
 }
 
-const VenueDetails = ({ venueResponse }: VenuetDetailsProps) => {
+function VenueDetails({ venueResponse }: VenuetDetailsProps) {
   const venueDetails: Venue = venueResponse.data;
 
   return (
@@ -17,6 +17,6 @@ const VenueDetails = ({ venueResponse }: VenuetDetailsProps) => {
       <div>{venueDetails.description}</div>
     </div>
   );
-};
+}
 
 export default VenueDetails;

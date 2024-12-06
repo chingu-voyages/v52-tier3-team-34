@@ -7,7 +7,7 @@ interface VenueCardProps {
   filterEventsByVenueId: (venueId: number) => void;
   isSelected?: boolean;
 }
-const VenueCard = ({ venueInfo, filterEventsByVenueId, isSelected = false }: VenueCardProps) => {
+function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: VenueCardProps) {
   return (
     <div
       className={`
@@ -28,6 +28,6 @@ const VenueCard = ({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
       </Link>
     </div>
   );
-};
+}
 
 export default VenueCard;

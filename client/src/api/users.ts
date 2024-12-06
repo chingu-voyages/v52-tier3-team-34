@@ -1,7 +1,7 @@
 import { serverBaseUrl } from '@/config';
 import { UsersResponse } from '@/types/user';
 
-export const fetchUsers = async (): Promise<UsersResponse> => {
+export async function fetchUsers(): Promise<UsersResponse> {
   const response = await fetch(`${serverBaseUrl}/users`);
 
   if (!response.ok) {
@@ -9,4 +9,4 @@ export const fetchUsers = async (): Promise<UsersResponse> => {
   }
   const data = await response.json();
   return data;
-};
+}
