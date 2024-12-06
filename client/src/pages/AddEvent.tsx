@@ -1,13 +1,15 @@
+import { faker } from '@faker-js/faker';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
 import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
-import { convertToISO8601 } from '@/utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { createEvent } from '@/api/events';
-import { useNavigate } from '@tanstack/react-router';
+import { convertToISO8601 } from '@/utils';
 
 const AddEvent: React.FC = () => {
   const queryClient = useQueryClient();
@@ -26,7 +28,7 @@ const AddEvent: React.FC = () => {
         hours: '1',
         minutes: '0'
       },
-      image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
+      //image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
       venueId: 50
     }
   });
@@ -65,7 +67,7 @@ const AddEvent: React.FC = () => {
       genre: formData.genre,
       price: Number(formData.price),
       venueId: formData.venueId,
-      image: formData.image,
+      //image: formData.image,
       status: formData.status
     };
 
@@ -94,7 +96,7 @@ const AddEvent: React.FC = () => {
     setValue('genre', faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2));
     setValue('price', faker.number.int({ min: 0, max: 50 }));
     setValue('venueId', 50);
-    setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
+    //setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
     setValue('terms', true);
   };
 
@@ -269,7 +271,7 @@ const AddEvent: React.FC = () => {
         </div>
 
         {/* Image URL Input */}
-        <div>
+        {/* <div>
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">
             Event Image URL:
           </label>
@@ -281,7 +283,7 @@ const AddEvent: React.FC = () => {
             className="mt-1 block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.image && <p className="text-red-500 text-xs">{errors.image.message}</p>}
-        </div>
+        </div> */}
         {/* status */}
         {/* Status Dropdown */}
         <div>
