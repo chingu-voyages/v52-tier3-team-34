@@ -1,6 +1,7 @@
 import { Router, RequestHandler } from "express";
 import { VenueController } from "../controllers/venue.controller";
 import { validateRequest } from "../middleware/validateRequest";
+import { authMiddleware } from "../middleware/authMiddleware";
 import { 
   VenueParamsSchema, 
   VenueQuerySchema, 
@@ -25,10 +26,11 @@ router.get(
 router.get("/:id", validateRequest.params(VenueParamsSchema), VenueController.getById);
 
 // Create venue
-router.post("/", validateRequest.body(VenueSchema), VenueController.create);
+router.post("/", authMiddleware, validateRequest.body(VenueSchema), VenueController.create);
 
 // Update venue (PATCH)
 router.patch("/:id", 
+  authMiddleware,
   validateRequest.params(VenueParamsSchema),
   validateRequest.body(VenueUpdateSchema),
   VenueController.update
@@ -36,6 +38,7 @@ router.patch("/:id",
 
 // Replace venue (PUT)
 router.put("/:id", 
+  authMiddleware,
   validateRequest.params(VenueParamsSchema),
   validateRequest.body(VenueSchema),
   VenueController.replace

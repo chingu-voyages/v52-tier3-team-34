@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { EventController } from "../controllers/event.controller";
 import { validateRequest } from "../middleware/validateRequest";
+import { authMiddleware } from "../middleware/authMiddleware";
 import { 
   EventParamsSchema, 
   EventQuerySchema, 
@@ -27,10 +28,11 @@ router.get("/:id/geojson",
 router.get("/:id", validateRequest.params(EventParamsSchema), EventController.getById);
 
 // Create event
-router.post("/", validateRequest.body(EventSchema), EventController.create);
+router.post("/", authMiddleware, validateRequest.body(EventSchema), EventController.create);
 
 // Update event (PATCH)
 router.patch("/:id", 
+  authMiddleware,
   validateRequest.params(EventParamsSchema),
   validateRequest.body(EventUpdateSchema),
   EventController.update
@@ -38,6 +40,7 @@ router.patch("/:id",
 
 // Replace event (PUT)
 router.put("/:id", 
+  authMiddleware,
   validateRequest.params(EventParamsSchema),
   validateRequest.body(EventSchema),
   EventController.replace
