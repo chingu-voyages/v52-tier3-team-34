@@ -1,5 +1,6 @@
-import { Event } from '@/types/events';
 import { Link } from '@tanstack/react-router';
+
+import { Event } from '@/types/events';
 
 interface EventCardProps {
   eventInfo: Event;
