@@ -1,6 +1,6 @@
 export interface GoogleUser {
   email: string;
-  name: string;
+  name?: string;
   picture?: string;
   given_name?: string;
   family_name?: string;
@@ -9,7 +9,7 @@ export interface GoogleUser {
 export interface JWTPayload {
   userId: number;
   email: string;
-  name: string;
+  name?: string;
 }
 
 export interface AuthResponse {
@@ -17,7 +17,7 @@ export interface AuthResponse {
   user: {
     id: number;
     email: string;
-    name: string;
+    name?: string;
     picture?: string;
   };
 }

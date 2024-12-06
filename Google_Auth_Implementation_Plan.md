@@ -51,13 +51,19 @@ Implementation of Google Authentication for the Live Music Finder API, based on 
 1.6. [ ] Test with Postman's Google OAuth flow (pending auth routes implementation)
 
 ## Phase 2: User Management
-2.1. [ ] Review current User model compatibility
-2.2. [ ] Add auth-related fields if needed
-2.3. [ ] Implement user service methods:
-   2.3.1. [ ] findOrCreateGoogleUser
-   2.3.2. [ ] updateUserProfile
-2.4. [ ] Add user type definitions
-2.5. [ ] Test user operations with Postman
+2.1. [x] Review current User model compatibility
+2.2. [x] Add auth-related fields:
+   - [x] Optional name field
+   - [x] Google ID field
+   - [x] Profile image field
+2.3. [x] Implement user service methods:
+   2.3.1. [x] findOrCreateGoogleUser
+   2.3.2. [x] updateUserProfile
+2.4. [x] Add user type definitions:
+   - [x] GoogleUserSchema
+   - [x] GoogleUserUpdateSchema
+   - [x] Query schemas consistent with other models
+2.5. [ ] Test user operations with Postman (pending auth routes)
 
 ## Phase 3: Auth Endpoints
 3.1. [ ] Implement auth routes:
@@ -90,7 +96,7 @@ Implementation of Google Authentication for the Live Music Finder API, based on 
 For each phase:
 - [x] Phase 0: Project Setup
 - [x] Phase 1: Core Services (pending final OAuth flow test)
-- [ ] Phase 2: User Management
+- [x] Phase 2: User Management (pending auth routes testing)
 - [ ] Phase 3: Auth Endpoints
 - [x] Phase 4: Protected Routes (pending final testing with auth)
 
@@ -99,3 +105,11 @@ For each phase:
 - Keep the app running without errors throughout implementation
 - Update Postman collection with each new endpoint
 - Document any deviations from spike implementation
+
+## Current Status (Updated)
+- Core services implemented (Google Auth, JWT)
+- User model updated with auth fields
+- Type definitions and schemas complete
+- Protected routes middleware added
+- Next: Implementing Auth Controller & Routes
+- Pending: Complete OAuth flow testing
