@@ -1,3 +1,7 @@
+import { Link } from '@tanstack/react-router';
+import { ChevronLeftCircle, ChevronRightCircle, CirclePlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
 import EventCard from '@/components/EventCard';
 import VenueCard from '@/components/VenueCard';
 import { useUserEvents } from '@/hooks/useUserEvents';
@@ -5,9 +9,6 @@ import { useUsers } from '@/hooks/useUsers';
 import { useVenues } from '@/hooks/useVenues';
 import { Event } from '@/types/events';
 import { Venue } from '@/types/venues';
-import { Link } from '@tanstack/react-router';
-import { ChevronLeft, ChevronLeftCircle, ChevronRight, ChevronRightCircle, CirclePlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 const Dashboard = () => {
   // TODO: Update id to dynamic from Auth

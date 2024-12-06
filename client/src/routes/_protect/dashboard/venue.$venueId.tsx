@@ -1,7 +1,7 @@
-import * as React from 'react';
 import { createFileRoute, ErrorComponent, ErrorComponentProps } from '@tanstack/react-router';
-import VenueDetails from '@/pages/VenueDetails';
+
 import { fetchVenue } from '@/api/venues';
+import VenueDetails from '@/pages/VenueDetails';
 import { VenueResponse } from '@/types/venues';
 
 export const Route = createFileRoute('/_protect/dashboard/venue/$venueId')({
