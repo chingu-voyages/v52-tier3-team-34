@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
 import { Clock, MapPin, Ticket, Music, Edit, Trash2, Save, X } from 'lucide-react';
+import { useState } from 'react';
+
 import { EventResponse } from '@/types/events';
 import { Venue } from '@/types/venues'; // Assuming you have a Venue type
+import { EventSubmissionData } from '@/validations/eventValidation';
 
 interface EventDetailsProps {
   eventResponse: EventResponse;
   onDelete?: () => void;
-  onSave?: (updatedEvent: any) => void;
+  onSave?: (updatedEvent: EventSubmissionData) => void;
 }
 
 const EventDetails = ({ eventResponse, onDelete, onSave }: EventDetailsProps) => {
@@ -101,7 +103,7 @@ const EventDetails = ({ eventResponse, onDelete, onSave }: EventDetailsProps) =>
           <span className="text-xl font-bold text-green-600">${eventDetails.price.toFixed(2)}</span>
         </div>
 
-        {eventDetails.description && <div className="text-sm italic">"{eventDetails.description}"</div>}
+        {eventDetails.description && <div className="text-sm italic">&quot;{eventDetails.description}&quot;</div>}
       </div>
     </>
   );
