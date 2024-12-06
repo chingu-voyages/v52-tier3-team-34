@@ -1,5 +1,6 @@
-import { Venue } from '@/types/venues';
 import { Link } from '@tanstack/react-router';
+
+import { Venue } from '@/types/venues';
 
 interface VenueCardProps {
   venueInfo: Venue;
