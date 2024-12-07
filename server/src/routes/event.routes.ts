@@ -48,6 +48,7 @@ router.put("/:id",
 
 // Delete event
 router.delete("/:id",
+  authMiddleware,
   validateRequest.params(EventParamsSchema),
   EventController.delete
 );

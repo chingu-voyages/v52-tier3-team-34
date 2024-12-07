@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export interface GoogleUser {
   email: string;
   name?: string;
@@ -21,3 +23,8 @@ export interface AuthResponse {
     picture?: string;
   };
 }
+
+// Login validation schema
+export const LoginSchema = z.object({
+  googleIdToken: z.string().min(1, "Google ID token is required")
+});

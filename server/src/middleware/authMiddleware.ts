@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { JWTService } from '../services/auth/jwt.service';
 import { JWTPayload } from '../types/auth.types';
+import { TokenInvalidationService } from '../services/auth/token-invalidation.service';
 
 // Define a local interface for AuthRequest
 interface AuthRequest extends Request {
@@ -17,6 +18,12 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
   }
 
   try {
+    // Check if token is invalidated
+    if (TokenInvalidationService.isTokenInvalidated(token)) {
+      res.status(401).json({ message: 'Token has been invalidated' });
+      return;
+    }
+
     const decoded = JWTService.verifyToken(token);
     req.user = decoded;
     next();

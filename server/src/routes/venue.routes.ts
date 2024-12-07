@@ -46,6 +46,7 @@ router.put("/:id",
 
 // Delete venue
 router.delete("/:id",
+  authMiddleware,
   validateRequest.params(VenueParamsSchema),
   VenueController.delete
 );

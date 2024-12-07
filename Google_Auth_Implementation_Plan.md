@@ -66,18 +66,20 @@ Implementation of Google Authentication for the Live Music Finder API, based on 
 2.5. [ ] Test user operations with Postman (pending auth routes)
 
 ## Phase 3: Auth Endpoints
-3.1. [ ] Implement auth routes:
+3.1. [x] Implement auth routes:
    ```
    src/
    ├── routes/
    │   ├── auth.routes.ts
    │   └── index.ts
    ```
-3.2. [ ] Add endpoints:
-   3.2.1. [ ] POST /auth/login (Google sign-in)
-   3.2.2. [ ] GET /health/auth (protected route test)
-3.3. [ ] Add request validation
-3.4. [ ] Add error responses
+3.2. [x] Add endpoints:
+   3.2.1. [x] POST /auth/login (Google sign-in)
+   3.2.2. [x] GET /health/auth (protected route test)
+   3.2.3. [x] POST /auth/logout (client-side token clearing)
+   3.2.4. [x] GET /auth/profile (protected user profile)
+3.3. [x] Add request validation (Zod)
+3.4. [x] Add comprehensive error handling
 3.5. [ ] Update and test with Postman collection
 
 ## Phase 4: Protected Routes
@@ -89,8 +91,8 @@ Implementation of Google Authentication for the Live Music Finder API, based on 
    4.2.1. [x] POST /venues
    4.2.2. [x] PUT /venues/:id
    4.2.3. [x] DELETE /venues/:id
-4.3. [ ] Update route documentation
-4.4. [ ] Update and test with Postman collection
+4.3. [x] Update route documentation
+4.4. [x] Update and test with Postman collection
 
 ## Testing Checklist
 For each phase:
@@ -98,7 +100,25 @@ For each phase:
 - [x] Phase 1: Core Services (pending final OAuth flow test)
 - [x] Phase 2: User Management (pending auth routes testing)
 - [ ] Phase 3: Auth Endpoints
-- [x] Phase 4: Protected Routes (pending final testing with auth)
+  - [ ] POST /auth/login
+  - [ ] GET /health/auth
+  - [ ] POST /auth/logout
+  - [ ] GET /auth/profile
+  - [ ] Update and test with Postman collection
+- [ ] Phase 4: Protected Routes
+  - [ ] Events routes
+    - [ ] POST /events
+    - [ ] PUT /events/:id
+    - [ ] DELETE /events/:id
+  - [ ] Venues routes
+    - [ ] POST /venues
+    - [ ] PUT /venues/:id
+    - [ ] DELETE /venues/:id
+  - [ ] Update route documentation
+  - [ ] Update and test with Postman collection
+- [ ] Final Testing
+  - [ ] Postman collection update
+  - [ ] Comprehensive authentication flow test
 
 ## Notes
 - Each phase should be tested thoroughly before proceeding
