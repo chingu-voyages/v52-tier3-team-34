@@ -4,7 +4,7 @@ import { JWTPayload } from '../types/auth.types';
 import { TokenInvalidationService } from '../services/auth/token-invalidation.service';
 
 // Define a local interface for AuthRequest
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: JWTPayload;
 }
 

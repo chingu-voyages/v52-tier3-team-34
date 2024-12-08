@@ -2,12 +2,18 @@ import express from "express";
 import cors from "cors";
 import { errorHandler } from "./middleware/errorHandler";
 import router from "./routes";
+import { config } from "./config/env";
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = config.PORT;
 
 // CORS middleware - allow all origins
-app.use(cors());
+app.use(cors({
+  origin: config.CLIENT_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
 // Middleware to parse JSON bodies
 app.use(express.json());

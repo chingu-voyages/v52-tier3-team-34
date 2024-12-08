@@ -8,10 +8,10 @@ import { authMiddleware } from '../middleware/authMiddleware';
 import { validateRequest } from '../middleware/validateRequest';
 
 const router = Router();
-const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET
-);
+const googleClient = new OAuth2Client({
+  clientId: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET
+});
 
 // Error handling wrapper
 const asyncHandler = (fn: (req: Request, res: Response, next: NextFunction) => Promise<any>) => 
@@ -29,6 +29,11 @@ router.post('/login',
     const { googleIdToken } = req.body;
   
     try {
+      // Log the client ID and token for debugging
+      console.log('Google Client ID:', process.env.GOOGLE_CLIENT_ID);
+      console.log('Google Client Secret:', process.env.GOOGLE_CLIENT_SECRET ? 'Present' : 'Missing');
+      console.log('Received Google ID Token:', googleIdToken);
+      
       // Verify Google ID token
       const ticket = await googleClient.verifyIdToken({
         idToken: googleIdToken,
@@ -36,6 +41,7 @@ router.post('/login',
       });
     
       const payload = ticket.getPayload();
+      console.log('Token Payload:', payload);
     
       if (!payload) {
         return res.status(401).json({ 
@@ -81,58 +87,34 @@ router.post('/login',
 
       res.status(200).json(authResponse);
     } catch (error) {
-      console.error('Google login error:', error);
-    
-      if (error instanceof Error) {
-        if (error.name === 'TokenExpiredError') {
-          return res.status(401).json({ 
-            error: 'Token Expired',
-            message: 'Google ID token has expired' 
-          });
-        }
+      console.error('FULL Google login error:', error);
       
-        if (error.name === 'JsonWebTokenError') {
-          return res.status(401).json({ 
-            error: 'Invalid Token',
-            message: 'Google ID token is invalid' 
-          });
-        }
+      if (error instanceof Error) {
+        console.error('Error Name:', error.name);
+        console.error('Error Message:', error.message);
+        console.error('Error Stack:', error.stack);
       }
-
+      
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ 
+          error: 'Token Expired',
+          message: 'Google ID token has expired' 
+        });
+      }
+      
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ 
+          error: 'Invalid Token',
+          message: 'Google ID token is invalid' 
+        });
+      }
+      
       res.status(500).json({ 
         error: 'Authentication Failed',
         message: 'Unable to complete Google authentication' 
       });
     }
   }));
-
-// Public health check
-router.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'up'
-  });
-});
-
-// Protected authentication health check
-router.get('/health/auth', 
-  authMiddleware, 
-  asyncHandler(async (req: Request, res: Response) => {
-    const user = (req as any).user;
-    res.status(200).json({
-      status: 'up',
-      auth: {
-        status: 'authenticated',
-        provider: 'google',
-        user: {
-          id: user.userId,
-          email: user.email,
-          name: user.name || undefined,
-          profileImage: user.profileImage || undefined
-        }
-      }
-    });
-  })
-);
 
 /**
  * Logout Endpoint

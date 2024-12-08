@@ -1,9 +1,10 @@
 import jwt from 'jsonwebtoken';
 import { JWTPayload } from '../../types/auth.types';
+import { config } from '../../config/env';
 
 export class JWTService {
-  private static readonly secret = process.env.JWT_SECRET as string;
-  private static readonly expiresIn = process.env.JWT_EXPIRATION || '1h';
+  private static readonly secret = config.JWT_SECRET;
+  private static readonly expiresIn = config.JWT_EXPIRATION;
 
   static generateToken(payload: JWTPayload): string {
     if (!this.secret) {
