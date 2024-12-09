@@ -17,15 +17,31 @@ function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
   const deleteVenueMutation = useDeleteVenue();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  function handleDelete(venueId: string) {
-    deleteVenueMutation.mutate(venueId, {
-      onSuccess: () => {
+  function handleFilterEventsByVenueId() {
+    filterEventsByVenueId(venueInfo.id);
+  }
+
+  function openDeleteModal(event: React.MouseEvent) {
+    event.stopPropagation(); // Prevent triggering the parent `onClick`
+    setIsDeleteModalOpen(true);
+  }
+
+  function closeDeleteModal() {
+    setIsDeleteModalOpen(false);
+  }
+
+  /**
+   * Confirms the deletion of the venue and handles the API mutation.
+   */
+  function confirmDeleteVenue() {
+    deleteVenueMutation.mutate(venueInfo.id.toString(), {
+      onSuccess: function () {
         console.log('Venue deleted successfully');
-        setIsDeleteModalOpen(false); // Close the modal
+        setIsDeleteModalOpen(false);
       },
-      onError: (error) => {
+      onError: function (error) {
         console.error('Error deleting venue:', error);
-        setIsDeleteModalOpen(false); // Close the modal on error
+        setIsDeleteModalOpen(false);
       }
     });
   }
@@ -35,7 +51,7 @@ function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
       className={`cursor-pointer p-3 border-[0.5px] border-white/30 rounded-md transition-all ${
         isSelected ? 'bg-white/30 shadow-xl' : 'hover:bg-white/10'
       }`}
-      onClick={() => filterEventsByVenueId(venueInfo.id)}
+      onClick={handleFilterEventsByVenueId}
     >
       <p>Id: {venueInfo.id}</p>
       <h3>{venueInfo.name}</h3>
@@ -43,20 +59,13 @@ function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
         <Link to="/dashboard/venue/$venueId" params={{ venueId: venueInfo.id.toString() }} className="mt-3 underline">
           Details
         </Link>
-        <Trash2
-          onClick={(e) => {
-            e.stopPropagation(); // Prevent triggering the parent `onClick`
-            setIsDeleteModalOpen(true); // Open the confirmation modal
-          }}
-          className="opacity-50 hover:opacity-100"
-        />
+        <Trash2 onClick={openDeleteModal} className="opacity-50 hover:opacity-100" />
       </div>
 
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={() => handleDelete(venueInfo.id.toString())}
+        onClose={closeDeleteModal}
+        onConfirm={confirmDeleteVenue}
         title="Confirm Delete"
         message="Are you sure you want to delete this venue?"
         confirmText="Delete"
