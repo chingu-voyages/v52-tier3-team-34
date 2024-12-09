@@ -28,11 +28,13 @@ router.get("/:id/geojson",
 router.get("/:id", validateRequest.params(EventParamsSchema), EventController.getById);
 
 // Create event
-router.post("/", authMiddleware, validateRequest.body(EventSchema), EventController.create);
+router.post("/", 
+  // authMiddleware,
+   validateRequest.body(EventSchema), EventController.create);
 
 // Update event (PATCH)
 router.patch("/:id", 
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(EventParamsSchema),
   validateRequest.body(EventUpdateSchema),
   EventController.update
@@ -40,7 +42,7 @@ router.patch("/:id",
 
 // Replace event (PUT)
 router.put("/:id", 
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(EventParamsSchema),
   validateRequest.body(EventSchema),
   EventController.replace
@@ -48,7 +50,7 @@ router.put("/:id",
 
 // Delete event
 router.delete("/:id",
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(EventParamsSchema),
   EventController.delete
 );

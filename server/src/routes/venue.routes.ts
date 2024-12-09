@@ -26,11 +26,13 @@ router.get(
 router.get("/:id", validateRequest.params(VenueParamsSchema), VenueController.getById);
 
 // Create venue
-router.post("/", authMiddleware, validateRequest.body(VenueSchema), VenueController.create);
+router.post("/", 
+  // authMiddleware, 
+  validateRequest.body(VenueSchema), VenueController.create);
 
 // Update venue (PATCH)
 router.patch("/:id", 
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(VenueParamsSchema),
   validateRequest.body(VenueUpdateSchema),
   VenueController.update
@@ -38,7 +40,7 @@ router.patch("/:id",
 
 // Replace venue (PUT)
 router.put("/:id", 
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(VenueParamsSchema),
   validateRequest.body(VenueSchema),
   VenueController.replace
@@ -46,7 +48,7 @@ router.put("/:id",
 
 // Delete venue
 router.delete("/:id",
-  authMiddleware,
+  // authMiddleware,
   validateRequest.params(VenueParamsSchema),
   VenueController.delete
 );
