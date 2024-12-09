@@ -1,7 +1,7 @@
 import { serverBaseUrl } from '@/config';
 import { HealthResponse } from '@/types/health';
 
-export const fetchHealth = async (): Promise<HealthResponse> => {
+export async function fetchHealth(): Promise<HealthResponse> {
   const response = await fetch(`${serverBaseUrl}/health`);
 
   if (!response.ok) {
@@ -9,4 +9,4 @@ export const fetchHealth = async (): Promise<HealthResponse> => {
   }
   const data = await response.json();
   return data;
-};
+}

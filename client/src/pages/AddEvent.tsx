@@ -1,15 +1,17 @@
+import { faker } from '@faker-js/faker';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Wand2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { faker } from '@faker-js/faker';
 import { useForm, useWatch } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
-import { convertToISO8601 } from '@/utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createEvent } from '@/api/events';
-import { useNavigate } from '@tanstack/react-router';
 
-const AddEvent: React.FC = () => {
+import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
+
+import { createEvent } from '@/api/events';
+import { convertToISO8601 } from '@/utils';
+
+function AddEvent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const {
@@ -26,7 +28,7 @@ const AddEvent: React.FC = () => {
         hours: '1',
         minutes: '0'
       },
-      image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
+      //image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
       venueId: 50
     }
   });
@@ -55,7 +57,7 @@ const AddEvent: React.FC = () => {
     }
   }, [startDate, duration, setValue]);
 
-  const onSubmit = (formData: EventFormData) => {
+  function onSubmit(formData: EventFormData) {
     const submissionData: EventSubmissionData = {
       title: formData.title,
       description: formData.description,
@@ -65,12 +67,12 @@ const AddEvent: React.FC = () => {
       genre: formData.genre,
       price: Number(formData.price),
       venueId: formData.venueId,
-      image: formData.image,
+      //image: formData.image,
       status: formData.status
     };
 
     mutation.mutate(submissionData);
-  };
+  }
 
   const mutation = useMutation({
     mutationFn: createEvent,
@@ -81,7 +83,7 @@ const AddEvent: React.FC = () => {
     }
   });
 
-  const autofillExampleData = () => {
+  function autofillExampleData() {
     setValue('title', faker.lorem.words(3));
     setValue('description', faker.lorem.paragraph());
     setValue('startDate', faker.date.future().toISOString().slice(0, 16));
@@ -94,11 +96,11 @@ const AddEvent: React.FC = () => {
     setValue('genre', faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2));
     setValue('price', faker.number.int({ min: 0, max: 50 }));
     setValue('venueId', 50);
-    setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
+    //setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
     setValue('terms', true);
-  };
+  }
 
-  const calculateEndDate = () => {
+  function calculateEndDate() {
     if (!startDate || !duration) return null;
 
     try {
@@ -120,7 +122,7 @@ const AddEvent: React.FC = () => {
       console.error('Error calculating end date:', error);
       return null;
     }
-  };
+  }
 
   return (
     <div className="max-w-lg p-6 mx-auto">
@@ -269,7 +271,7 @@ const AddEvent: React.FC = () => {
         </div>
 
         {/* Image URL Input */}
-        <div>
+        {/* <div>
           <label htmlFor="image" className="block text-sm font-medium text-gray-700">
             Event Image URL:
           </label>
@@ -281,7 +283,7 @@ const AddEvent: React.FC = () => {
             className="mt-1 block w-full px-3 py-2 text-sm border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
           {errors.image && <p className="text-red-500 text-xs">{errors.image.message}</p>}
-        </div>
+        </div> */}
         {/* status */}
         {/* Status Dropdown */}
         <div>
@@ -354,6 +356,6 @@ const AddEvent: React.FC = () => {
       </form>
     </div>
   );
-};
+}
 
 export default AddEvent;

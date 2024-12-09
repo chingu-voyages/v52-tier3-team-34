@@ -1,12 +1,13 @@
-import { Venue } from '@/types/venues';
 import { Link } from '@tanstack/react-router';
+
+import { Venue } from '@/types/venues';
 
 interface VenueCardProps {
   venueInfo: Venue;
   filterEventsByVenueId: (venueId: number) => void;
   isSelected?: boolean;
 }
-const VenueCard = ({ venueInfo, filterEventsByVenueId, isSelected = false }: VenueCardProps) => {
+function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: VenueCardProps) {
   return (
     <div
       className={`
@@ -27,6 +28,6 @@ const VenueCard = ({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
       </Link>
     </div>
   );
-};
+}
 
 export default VenueCard;

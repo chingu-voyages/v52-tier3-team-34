@@ -1,11 +1,11 @@
 import { serverBaseUrl } from '@/config';
 import { UserEventsResponse } from '@/types/userEvents';
 
-export const fetchUserEvents = async (
+export async function fetchUserEvents(
   userId: string,
   page: number = 1,
   limit: number = 10
-): Promise<UserEventsResponse> => {
+): Promise<UserEventsResponse> {
   const response = await fetch(`${serverBaseUrl}/users/${userId}/events?page=${page}&limit=${limit}`);
 
   if (!response.ok) {
@@ -14,4 +14,4 @@ export const fetchUserEvents = async (
 
   const data = await response.json();
   return data;
-};
+}

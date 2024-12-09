@@ -1,9 +1,10 @@
-import { useAuth } from '@/auth';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Route } from '@/routes';
-import logoWithText from '@/assets/Logo-with-text.svg';
 
-const UnauthenticatedMenu = () => {
+import logoWithText from '@/assets/Logo-with-text.svg';
+import { useAuth } from '@/auth';
+import { Route } from '@/routes';
+
+function UnauthenticatedMenu() {
   return (
     <nav className="container">
       <header className="relative z-10 flex h-16 items-center justify-between py-11 px-3">
@@ -18,7 +19,7 @@ const UnauthenticatedMenu = () => {
         <div className="flex items-center gap-6 max-md:hidden xl:gap-12">
           <div id="header-right-element-desktop" className="flex">
             <Link to="/dashboard" className="relative text-xs font-semibold uppercase tracking-wider max-lg:hidden">
-              I'm an organizer
+              I&apos;m an organizer
               <svg
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
@@ -36,14 +37,14 @@ const UnauthenticatedMenu = () => {
       </header>
     </nav>
   );
-};
+}
 
-const AuthenticatedMenu = () => {
+function AuthenticatedMenu() {
   const router = useRouter();
   const navigate = Route.useNavigate();
   const auth = useAuth();
 
-  const handleLogout = () => {
+  function handleLogout() {
     if (window.confirm('Are you sure you want to logout?')) {
       auth.logout().then(() => {
         router.invalidate().finally(() => {
@@ -51,7 +52,7 @@ const AuthenticatedMenu = () => {
         });
       });
     }
-  };
+  }
 
   return (
     <>
@@ -84,12 +85,12 @@ const AuthenticatedMenu = () => {
       </nav>
     </>
   );
-};
+}
 
-const Navbar = () => {
+function Navbar() {
   const { isAuthenticated } = useAuth();
 
   return <>{isAuthenticated ? <AuthenticatedMenu /> : <UnauthenticatedMenu />}</>;
-};
+}
 
 export default Navbar;

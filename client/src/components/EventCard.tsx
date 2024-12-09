@@ -1,11 +1,12 @@
-import { Event } from '@/types/events';
 import { Link } from '@tanstack/react-router';
+
+import { Event } from '@/types/events';
 
 interface EventCardProps {
   eventInfo: Event;
 }
 
-const EventCard = ({ eventInfo }: EventCardProps) => {
+function EventCard({ eventInfo }: EventCardProps) {
   return (
     <Link
       to="/dashboard/event/$eventId"
@@ -17,6 +18,6 @@ const EventCard = ({ eventInfo }: EventCardProps) => {
       <p>venueId: {eventInfo.venueId}</p>
     </Link>
   );
-};
+}
 
 export default EventCard;

@@ -1,3 +1,7 @@
+import { Link } from '@tanstack/react-router';
+import { ChevronLeftCircle, ChevronRightCircle, CirclePlus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
 import EventCard from '@/components/EventCard';
 import VenueCard from '@/components/VenueCard';
 import { useUserEvents } from '@/hooks/useUserEvents';
@@ -5,11 +9,8 @@ import { useUsers } from '@/hooks/useUsers';
 import { useVenues } from '@/hooks/useVenues';
 import { Event } from '@/types/events';
 import { Venue } from '@/types/venues';
-import { Link } from '@tanstack/react-router';
-import { ChevronLeft, ChevronLeftCircle, ChevronRight, ChevronRightCircle, CirclePlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
-const Dashboard = () => {
+function Dashboard() {
   // TODO: Update id to dynamic from Auth
   const [firstUserId, setFirstUserId] = useState<string>('1');
   const [selectedVenueIds, setSelectedVenueIds] = useState<number[]>([]);
@@ -45,11 +46,11 @@ const Dashboard = () => {
     setSelectedVenueIds((prev) => (prev.includes(venueId) ? prev.filter((id) => id !== venueId) : [...prev, venueId]));
   }
 
-  const handlePageChange = (newPage: number) => {
+  function handlePageChange(newPage: number) {
     if (newPage > 0 && newPage <= (pagination?.pages || 1)) {
       setCurrentEventPage(newPage);
     }
-  };
+  }
 
   return (
     <>
@@ -120,6 +121,6 @@ const Dashboard = () => {
       </div>
     </>
   );
-};
+}
 
 export default Dashboard;

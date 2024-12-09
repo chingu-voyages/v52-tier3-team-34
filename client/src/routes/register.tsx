@@ -1,10 +1,11 @@
-import * as React from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Eye, EyeClosed } from 'lucide-react';
+import * as React from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import GoogleLogo from '@/assets/google-icon.svg';
 
 // Define the type for the user data
@@ -70,10 +71,9 @@ function RouteComponent() {
     }
   });
 
-  const onSubmit = (data: NewUserData) => {
-    const { acceptPrivacy, confirmPassword, ...filteredData } = data; // Destructure to exclude acceptPrivacy
+  function onSubmit(filteredData: NewUserData) {
     registerUser.mutate(filteredData);
-  };
+  }
 
   // State to toggle password visibility
   const [showPassword, setShowPassword] = React.useState(false);

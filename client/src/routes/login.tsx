@@ -1,11 +1,10 @@
-import * as React from 'react';
 import { createFileRoute, redirect, useRouter, useRouterState } from '@tanstack/react-router';
+import * as React from 'react';
+import { z } from 'zod';
 
 import { useAuth } from '@/auth';
 import { sleep } from '@/utils';
-import { z } from 'zod';
 
-// eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
 const fallback = '/dashboard' as const;
 
 export const Route = createFileRoute('/login')({
@@ -29,7 +28,7 @@ function LoginComponent() {
 
   const search = Route.useSearch();
 
-  const onFormSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+  async function onFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
     setIsSubmitting(true);
     try {
       evt.preventDefault();
@@ -52,7 +51,7 @@ function LoginComponent() {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }
 
   const isLoggingIn = isLoading || isSubmitting;
 
