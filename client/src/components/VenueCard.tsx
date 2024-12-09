@@ -2,6 +2,8 @@ import { Link } from '@tanstack/react-router';
 import { Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
+import ConfirmationModal from './ConfirmationModal';
+
 import { useDeleteVenue } from '@/hooks/useDeleteVenue';
 import { Venue } from '@/types/venues';
 
@@ -51,34 +53,15 @@ function VenueCard({ venueInfo, filterEventsByVenueId, isSelected = false }: Ven
       </div>
 
       {/* Confirmation Modal */}
-      {isDeleteModalOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
-          onClick={() => setIsDeleteModalOpen(false)} // Close the modal if the backdrop is clicked
-        >
-          <div
-            className="bg-white text-black p-5 rounded shadow-lg text-center"
-            onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the modal
-          >
-            <h2 className="text-lg font-bold">Confirm Delete</h2>
-            <p>Are you sure you want to delete this venue?</p>
-            <div className="flex justify-center gap-4 mt-4">
-              <button
-                onClick={() => setIsDeleteModalOpen(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleDelete(venueInfo.id.toString())}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={() => handleDelete(venueInfo.id.toString())}
+        title="Confirm Delete"
+        message="Are you sure you want to delete this venue?"
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
     </div>
   );
 }
