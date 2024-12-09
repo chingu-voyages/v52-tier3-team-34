@@ -1,7 +1,8 @@
 import { serverBaseUrl } from '@/config';
 import { FetchVenuesOptions, VenueResponse, VenuesResponse } from '@/types/venues';
 import { VenueFormData } from '@/validations/venueValidation';
-// GET ALL
+
+// GET ALL venues
 export async function fetchVenues({
   queryKey: [, options]
 }: {
@@ -38,7 +39,7 @@ export async function fetchVenues({
   return data;
 }
 
-// POST
+// POST a venue
 export async function createVenue(data: VenueFormData) {
   const response = await fetch(`${serverBaseUrl}/venues`, {
     method: 'POST',
@@ -53,6 +54,7 @@ export async function createVenue(data: VenueFormData) {
   return response.json();
 }
 
+// GET ONE venue
 export async function fetchVenue(venueId: string): Promise<VenueResponse> {
   try {
     const url = `${serverBaseUrl}/venues/${venueId}`;
@@ -73,6 +75,26 @@ export async function fetchVenue(venueId: string): Promise<VenueResponse> {
     return data;
   } catch (error) {
     console.error('Failed to fetch Venue:', error);
+    throw error;
+  }
+}
+
+// DELETE a venue
+export async function deleteVenue(venueId: string): Promise<void> {
+  try {
+    const url = `${serverBaseUrl}/venues/${venueId}`;
+    const response = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete venue: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error('Error deleting venue:', error);
     throw error;
   }
 }
