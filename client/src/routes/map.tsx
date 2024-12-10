@@ -1,13 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { useZones } from '@/hooks/useZones';
-import { ZoneResponse, ZoneFeature, Event, Venue } from '@/types/zones';
-import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
-import { useState, useRef } from 'react';
-import type { ViewState } from '@vis.gl/react-maplibre';
 import { Link } from '@tanstack/react-router';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import { z } from 'zod';
+import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
+import type { ViewState } from '@vis.gl/react-maplibre';
+import { useState, useRef } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
+import { z } from 'zod';
+
+import { useZones } from '@/hooks/useZones';
+import { ZoneResponse, ZoneFeature } from '@/types/zones';
+
+import 'maplibre-gl/dist/maplibre-gl.css';
 
 export const Route = createFileRoute('/map')({
   validateSearch: z.object({
