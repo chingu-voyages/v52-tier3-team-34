@@ -26,7 +26,7 @@ const envSchema = z.object({
     required_error: 'JWT_SECRET is required in .env',
   }),
   JWT_EXPIRATION: z.string().default('1h'),
-  CLIENT_URL: z.string().default('http://localhost:5173'),
+  CLIENT_URL: z.string().default('http://127.0.0.1:5173'),
 });
 
 // Parse and validate environment variables
