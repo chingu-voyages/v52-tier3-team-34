@@ -19,10 +19,27 @@ type VenueEventTypes = {
 const prisma = new PrismaClient();
 
 async function main() {
-  // Clear existing data
-  await prisma.event.deleteMany();
-  await prisma.venue.deleteMany();
-  await prisma.user.deleteMany();
+  // Clear existing data in the correct order
+  // First delete child records (events)
+  try {
+    await prisma.event.deleteMany();
+  } catch (e) {
+    console.log('No events to delete');
+  }
+  
+  // Then delete venues
+  try {
+    await prisma.venue.deleteMany();
+  } catch (e) {
+    console.log('No venues to delete');
+  }
+  
+  // Finally delete users
+  try {
+    await prisma.user.deleteMany();
+  } catch (e) {
+    console.log('No users to delete');
+  }
 
   // Create venue managers/owners
   const users = await Promise.all([
