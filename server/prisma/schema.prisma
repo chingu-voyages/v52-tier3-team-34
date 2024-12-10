@@ -31,6 +31,7 @@ model Event {
   artist      String?
   genre       String[]
   price       Float    @default(0)
+  images      String[]
   venue       Venue    @relation(fields: [venueId], references: [id])
   venueId     Int
   createdAt   DateTime @default(now())
@@ -43,7 +44,7 @@ model Venue {
   description String
   address     String
   contact     Json // {phone, email, website}
-  images      String[] // Array of image URLs
+  images      String[]
   coordinates Json // {lat: number, lng: number}
   events      Event[]
   user        User     @relation(fields: [userId], references: [id])
