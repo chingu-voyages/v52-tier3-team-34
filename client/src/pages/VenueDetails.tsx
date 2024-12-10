@@ -1,14 +1,15 @@
 import { Venue, VenueResponse } from '@/types/venues';
-import React, { useState } from 'react';
+import { VenueFormData } from '@/validations/venueValidation';
 
 interface VenuetDetailsProps {
   venueResponse: VenueResponse;
   onDelete?: () => void;
-  onSave?: (updatedVenue: any) => void;
+  onSave?: (updatedVenue: VenueFormData) => void;
 }
 
-const VenueDetails = ({ venueResponse }: VenuetDetailsProps) => {
-  const [venueDetails, setVenueDetails] = useState<Venue>(venueResponse.data);
+function VenueDetails({ venueResponse }: VenuetDetailsProps) {
+  const venueDetails: Venue = venueResponse.data;
+
   return (
     <div className="p-6">
       <div className="font-bold text-xl">{venueDetails.name}</div>
@@ -16,6 +17,6 @@ const VenueDetails = ({ venueResponse }: VenuetDetailsProps) => {
       <div>{venueDetails.description}</div>
     </div>
   );
-};
+}
 
 export default VenueDetails;

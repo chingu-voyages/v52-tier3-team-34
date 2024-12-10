@@ -14,7 +14,6 @@ export interface EventFormData {
   genre: string[];
   price: number;
   venueId: number;
-  image: string;
   terms: boolean;
   endDate: string;
   status: 'published' | 'draft' | 'archived';
@@ -47,7 +46,7 @@ export const eventSchema = z.object({
   genre: z.array(z.string()).min(1, 'Please select at least one genre'),
   price: z.number().min(0, 'Price must be a positive number'),
   venueId: z.number({ message: 'Venue ID must be number' }),
-  image: z.string().url('Please enter a valid URL for the image').optional(),
+  // image: z.string().url('Please enter a valid URL for the image').optional(),
   terms: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms'
   }),

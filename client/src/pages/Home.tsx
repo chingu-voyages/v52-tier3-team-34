@@ -1,11 +1,10 @@
-import React from 'react';
-import { Headphones, MapPin, Plus } from 'lucide-react';
 import { Link } from '@tanstack/react-router';
+import { Headphones, MapPin, Plus } from 'lucide-react';
+
 import { useHealth } from '@/hooks/useHealth';
-import logoWithText from '@/assets/Logo-with-text.svg';
 
 export default function Home() {
-  const { data, isPending, isError } = useHealth();
+  const { data, isPending } = useHealth();
 
   return (
     <div className="mt-14 flex flex-col items-start justify-center p-6 ">
@@ -20,7 +19,7 @@ export default function Home() {
         </span>
       </div>
 
-      <p className="text-gray-200 mb-10 italic text-lg">"Find your next eargasm before your ears get bored!"</p>
+      <p className="text-gray-200 mb-10 italic text-lg">&quot;Find your next eargasm before your ears get bored!&quot;</p>
 
       <div className="space-y-6">
         <div className="space-y-4 w-full min-w-48">

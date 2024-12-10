@@ -1,5 +1,5 @@
-import * as React from 'react';
 import { createFileRoute, ErrorComponent, ErrorComponentProps } from '@tanstack/react-router';
+
 import { fetchEvent } from '@/api/events';
 import EventDetails from '@/pages/EventDetails';
 import { EventResponse } from '@/types/events';

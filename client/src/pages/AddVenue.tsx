@@ -1,12 +1,13 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Building2, Mail, Phone, Globe, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
-import { generateExampleVenue } from '@/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
+import { Building2, Mail, Phone, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+
 import { createVenue } from '@/api/venues';
 import { useUsers } from '@/hooks/useUsers';
-import { useEffect, useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { generateExampleVenue } from '@/utils';
 import { VenueFormData, venueSchema } from '@/validations/venueValidation';
 
 export default function AddVenue() {
@@ -25,7 +26,7 @@ export default function AddVenue() {
     }
   });
 
-  const [firstUserId, setFirstUserId] = useState<String>('1');
+  const [firstUserId, setFirstUserId] = useState<string>('1');
   const { data } = useUsers();
   const users = data?.data;
 
@@ -36,10 +37,10 @@ export default function AddVenue() {
     }
   }, [data]);
 
-  const handleFillExample = () => {
+  function handleFillExample() {
     const exampleData = generateExampleVenue();
     reset(exampleData);
-  };
+  }
 
   const queryClient = useQueryClient();
 
@@ -53,13 +54,13 @@ export default function AddVenue() {
     }
   });
 
-  const onSubmit = (data: VenueFormData) => {
+  function onSubmit(data: VenueFormData) {
     const userId = Number(firstUserId);
     const venueData = { ...data, userId };
     console.log('Venue data submitted: ', venueData);
 
     mutation.mutate(venueData);
-  };
+  }
 
   return (
     <div className="max-w-2xl mx-auto py-10">
