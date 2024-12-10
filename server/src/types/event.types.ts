@@ -20,6 +20,7 @@ export const EventSchema = z.object({
   artist: z.string().optional(),
   genre: z.array(z.string()).default([]),
   price: z.number().nonnegative().default(0),
+  images: z.array(z.string().url()).default([]),
   venueId: z.number().positive("Venue ID is required"),
 });
 
@@ -28,20 +29,24 @@ export const EventUpdateSchema = EventSchema.partial();
 
 // Schema for query parameters
 export const EventQuerySchema = BaseQuerySchema.extend({
-  filter: z.object({
-    id: z.coerce.number().int().positive().optional(),
-    title: z.string().optional(),
-    description: z.string().optional(),
-    status: z.enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED]).optional(),
-    venueId: z.coerce.number().int().positive().optional(),
-    startDate: z.coerce.date().optional(),
-    endDate: z.coerce.date().optional(),
-    artist: z.string().optional(),
-    genre: z.string().optional(),
-    price: z.coerce.number().nonnegative().optional(),
-    createdAt: z.coerce.date().optional(),
-    updatedAt: z.coerce.date().optional()
-  }).optional()
+  filter: z
+    .object({
+      id: z.coerce.number().int().positive().optional(),
+      title: z.string().optional(),
+      description: z.string().optional(),
+      status: z
+        .enum([EventStatus.DRAFT, EventStatus.PUBLISHED, EventStatus.CANCELLED])
+        .optional(),
+      venueId: z.coerce.number().int().positive().optional(),
+      startDate: z.coerce.date().optional(),
+      endDate: z.coerce.date().optional(),
+      artist: z.string().optional(),
+      genre: z.string().optional(),
+      price: z.coerce.number().nonnegative().optional(),
+      createdAt: z.coerce.date().optional(),
+      updatedAt: z.coerce.date().optional(),
+    })
+    .optional(),
 });
 
 // Schema for URL parameters
@@ -92,6 +97,7 @@ export type EventResponse = {
   artist?: string;
   genre: string[];
   price: number;
+  images: string[];
   venueId: number;
   venue?: {
     id: number;
@@ -134,6 +140,7 @@ export type EventGeoJSONFeature = {
     artist?: string;
     genre: string[];
     price: number;
+    images: string[];
     venue: {
       id: number;
       name: string;

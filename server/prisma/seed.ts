@@ -10,6 +10,7 @@ type EventType = {
   artist: (city: string) => string;
   genre: string[];
   price: number;
+  images: string[];  // Add images to event type
 };
 
 type VenueEventTypes = {
@@ -124,27 +125,47 @@ async function main() {
     jazz: {
       artist: (city: string) => `${city} Jazz Quartet`,
       genre: ["Jazz", "Blues"],
-      price: 35.00
+      price: 35.00,
+      images: [
+        "https://example.com/images/jazz/1.jpg",
+        "https://example.com/images/jazz/2.jpg"
+      ]
     },
     classical: {
       artist: (city: string) => `${city} Symphony Orchestra`,
       genre: ["Classical", "Chamber Music"],
-      price: 65.00
+      price: 65.00,
+      images: [
+        "https://example.com/images/classical/1.jpg",
+        "https://example.com/images/classical/2.jpg"
+      ]
     },
     electronic: {
       artist: (city: string) => `DJ ${city}Beat`,
       genre: ["Electronic", "Techno", "House"],
-      price: 30.00
+      price: 30.00,
+      images: [
+        "https://example.com/images/electronic/1.jpg",
+        "https://example.com/images/electronic/2.jpg"
+      ]
     },
     rock: {
       artist: (city: string) => `${city} Rock Collective`,
       genre: ["Rock", "Alternative"],
-      price: 28.00
+      price: 28.00,
+      images: [
+        "https://example.com/images/rock/1.jpg",
+        "https://example.com/images/rock/2.jpg"
+      ]
     },
     world: {
       artist: (city: string) => `${city} World Ensemble`,
       genre: ["World", "Folk"],
-      price: 40.00
+      price: 40.00,
+      images: [
+        "https://example.com/images/world/1.jpg",
+        "https://example.com/images/world/2.jpg"
+      ]
     }
   };
 
@@ -1571,6 +1592,7 @@ async function main() {
           artist: eventTypes.jazz.artist("NYC"),
           genre: eventTypes.jazz.genre,
           price: eventTypes.jazz.price,
+          images: eventTypes.jazz.images,
           venueId: venue.id
         }
       }),
@@ -1584,6 +1606,7 @@ async function main() {
           artist: eventTypes.rock.artist("NYC"),
           genre: eventTypes.rock.genre,
           price: eventTypes.rock.price,
+          images: eventTypes.rock.images,
           venueId: venue.id
         }
       })
