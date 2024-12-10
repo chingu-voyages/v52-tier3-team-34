@@ -30,7 +30,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Music Festival\",\n  \"description\": \"Annual music festival\",\n  \"startDate\": \"2024-07-01T18:00:00Z\",\n  \"endDate\": \"2024-07-01T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"Various Artists\",\n  \"genre\": [\"Rock\", \"Pop\"],\n  \"price\": 50,\n  \"venueId\": 1\n}"
+          "raw": "{\n  \"title\": \"Music Festival\",\n  \"description\": \"Annual music festival\",\n  \"startDate\": \"2024-07-01T18:00:00Z\",\n  \"endDate\": \"2024-07-01T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"Various Artists\",\n  \"genre\": [\"Rock\", \"Pop\"],\n  \"price\": 50,\n  \"images\": [\n    \"https://example.com/events/festival1.jpg\",\n    \"https://example.com/events/festival2.jpg\"\n  ],\n  \"venueId\": 1\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/api/v1/events",
@@ -52,7 +52,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Updated Festival\",\n  \"description\": \"Updated description\",\n  \"startDate\": \"2024-07-02T18:00:00Z\",\n  \"endDate\": \"2024-07-02T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"New Artists\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 60,\n  \"venueId\": 1\n}"
+          "raw": "{\n  \"title\": \"Updated Festival\",\n  \"description\": \"Updated description\",\n  \"startDate\": \"2024-07-02T18:00:00Z\",\n  \"endDate\": \"2024-07-02T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"New Artists\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 60,\n  \"images\": [\n    \"https://example.com/events/updated1.jpg\",\n    \"https://example.com/events/updated2.jpg\"\n  ],\n  \"venueId\": 1\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/api/v1/events/1",
@@ -74,7 +74,7 @@
         ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"title\": \"Updated Title\",\n  \"price\": 55\n}"
+          "raw": "{\n  \"title\": \"Updated Title\",\n  \"price\": 55,\n  \"images\": [\n    \"https://example.com/events/new1.jpg\",\n    \"https://example.com/events/new2.jpg\"\n  ]\n}"
         },
         "url": {
           "raw": "{{baseUrl}}/api/v1/events/1",
