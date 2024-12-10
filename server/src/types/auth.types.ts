@@ -11,7 +11,7 @@ export interface GoogleUser {
 export interface JWTPayload {
   userId: number;
   email: string;
-  name?: string;
+  name: string | null;
 }
 
 export interface AuthResponse {
@@ -19,7 +19,7 @@ export interface AuthResponse {
   user: {
     id: number;
     email: string;
-    name?: string;
+    name: string | null;
     picture?: string;
   };
 }
@@ -28,3 +28,8 @@ export interface AuthResponse {
 export const LoginSchema = z.object({
   googleIdToken: z.string().min(1, "Google ID token is required")
 });
+
+export interface JWTError extends Error {
+  name: 'JsonWebTokenError' | 'TokenExpiredError' | 'NotBeforeError';
+  message: string;
+}

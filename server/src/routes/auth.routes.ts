@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { OAuth2Client } from 'google-auth-library';
-import { GoogleUser, AuthResponse, JWTPayload, LoginSchema } from '../types/auth.types';
+import { GoogleUser, AuthResponse, JWTPayload, LoginSchema, JWTError } from '../types/auth.types';
 import { UserService } from '../services/user.service';
 import { JWTService } from '../services/auth/jwt.service';
 import { TokenInvalidationService } from '../services/auth/token-invalidation.service';
@@ -95,18 +95,22 @@ router.post('/login',
         console.error('Error Stack:', error.stack);
       }
       
-      if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ 
-          error: 'Token Expired',
-          message: 'Google ID token has expired' 
-        });
+      if (error instanceof Error) {
+        if ((error as JWTError).name === 'TokenExpiredError') {
+          return res.status(401).json({ 
+            error: 'Token Expired',
+            message: 'Google ID token has expired' 
+          });
+        }
       }
       
-      if (error.name === 'JsonWebTokenError') {
-        return res.status(401).json({ 
-          error: 'Invalid Token',
-          message: 'Google ID token is invalid' 
-        });
+      if (error instanceof Error) {
+        if ((error as JWTError).name === 'JsonWebTokenError') {
+          return res.status(401).json({ 
+            error: 'Invalid Token',
+            message: 'Google ID token is invalid' 
+          });
+        }
       }
       
       res.status(500).json({ 

@@ -53,9 +53,7 @@ export interface UserResponse {
 }
 
 // Parameter types
-export interface UserParams {
-  id: string;
-}
+export type UserParams = z.infer<typeof UserParamsSchema>;
 
 // Query types derived from schemas
 export type UserQuery = z.infer<typeof UserQuerySchema>;
