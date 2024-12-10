@@ -75,6 +75,7 @@ export class EventService {
           artist: true,
           genre: true,
           price: true,
+          images: true,
           venueId: true,
           createdAt: true,
           updatedAt: true,
