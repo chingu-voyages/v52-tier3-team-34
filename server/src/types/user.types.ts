@@ -2,12 +2,20 @@ import { z } from 'zod';
 import { BaseQuerySchema } from './base.types';
 import { EventStatus } from './event.types';
 
+// Schema for Google user data
 export const GoogleUserSchema = z.object({
   email: z.string().email(),
-  name: z.string(),
+  name: z.string().optional(),
   googleId: z.string(),
-  profileImage: z.string().optional()
+  profileImage: z.string().url().optional()
 });
+
+// Schema for updating user data
+export const GoogleUserUpdateSchema = GoogleUserSchema.partial();
+
+// TypeScript types derived from schemas
+export type GoogleUserInput = z.infer<typeof GoogleUserSchema>;
+export type GoogleUserUpdateInput = z.infer<typeof GoogleUserUpdateSchema>;
 
 export const UserParamsSchema = z.object({
   id: z.string()
@@ -35,19 +43,20 @@ export const UserEventsQuerySchema = BaseQuerySchema.extend({
   }).optional()
 });
 
-// Schema for PATCH operations - all fields are optional
-export const GoogleUserUpdateSchema = GoogleUserSchema.partial();
-
-export type UserResponse = {
+// Response types
+export interface UserResponse {
   id: number;
   email: string;
-  name: string;
+  name: string | null;
   profileImage: string | null;
   createdAt: Date;
 }
 
-export type GoogleUserInput = z.infer<typeof GoogleUserSchema>;
-export type GoogleUserUpdateInput = z.infer<typeof GoogleUserUpdateSchema>;
-export type UserParams = z.infer<typeof UserParamsSchema>;
+// Parameter types
+export interface UserParams {
+  id: string;
+}
+
+// Query types derived from schemas
 export type UserQuery = z.infer<typeof UserQuerySchema>;
 export type UserEventsQuery = z.infer<typeof UserEventsQuerySchema>;
