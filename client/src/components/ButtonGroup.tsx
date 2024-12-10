@@ -1,10 +1,8 @@
-import * as React from 'react';
-
 type ButtonGroupProps = {
   onFilterChange: (filter: string) => void; // Callback to handle button clicks
 };
 
-const ButtonGroup: React.FC<ButtonGroupProps> = ({ onFilterChange }) => {
+function ButtonGroup({ onFilterChange }: ButtonGroupProps) {
   return (
     <div className="flex space-x-2 p-4 ">
       <button
@@ -33,6 +31,6 @@ const ButtonGroup: React.FC<ButtonGroupProps> = ({ onFilterChange }) => {
       </button>
     </div>
   );
-};
+}
 
 export default ButtonGroup;
