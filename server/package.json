@@ -16,8 +16,7 @@
     "test:prod": "set NODE_ENV=production && jest",
     "test:api": "set NODE_ENV=development && jest tests/api",
     "test:unit": "set NODE_ENV=development && jest tests/unit",
-    "test:integration": "set NODE_ENV=development && jest tests/integration",
-    "postbuild": "prisma migrate deploy"
+    "test:integration": "set NODE_ENV=development && jest tests/integration"
   },
   "keywords": [],
   "author": "",
