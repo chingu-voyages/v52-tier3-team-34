@@ -15,9 +15,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events",
+							"raw": "{{baseUrl}}/events",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events"]
+							"path": ["events"]
 						}
 					},
 					"response": []
@@ -28,9 +28,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"raw": "{{baseUrl}}/events/{{eventId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "{{eventId}}"],
+							"path": ["events", "{{eventId}}"],
 							"variable": [
 								{
 									"key": "eventId",
@@ -56,9 +56,9 @@
 							"raw": "{\n    \"title\": \"Summer Music Festival\",\n    \"description\": \"A fantastic summer music festival featuring local artists\",\n    \"startDate\": \"2024-07-15T18:00:00.000Z\",\n    \"endDate\": \"2024-07-15T23:00:00.000Z\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\",\n    \"capacity\": 500,\n    \"price\": 25.00,\n    \"tags\": [\"music\", \"festival\", \"summer\"],\n    \"status\": \"upcoming\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/events",
+							"raw": "{{baseUrl}}/events",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events"]
+							"path": ["events"]
 						}
 					},
 					"response": []
@@ -78,9 +78,9 @@
 							"raw": "{\n    \"title\": \"Updated Summer Music Festival\",\n    \"capacity\": 600,\n    \"price\": 30.00\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"raw": "{{baseUrl}}/events/{{eventId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "{{eventId}}"],
+							"path": ["events", "{{eventId}}"],
 							"variable": [
 								{
 									"key": "eventId",
@@ -97,9 +97,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"raw": "{{baseUrl}}/events/{{eventId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "{{eventId}}"],
+							"path": ["events", "{{eventId}}"],
 							"variable": [
 								{
 									"key": "eventId",
@@ -121,9 +121,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
+							"raw": "{{baseUrl}}/events/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "near"],
+							"path": ["events", "near"],
 							"query": [
 								{
 									"key": "lat",
@@ -148,9 +148,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
+							"raw": "{{baseUrl}}/events/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "near"],
+							"path": ["events", "near"],
 							"query": [
 								{
 									"key": "lat",
@@ -175,9 +175,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/near?lat=40.7829&lng=-73.9654&maxDistance=2000",
+							"raw": "{{baseUrl}}/events/near?lat=40.7829&lng=-73.9654&maxDistance=2000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "near"],
+							"path": ["events", "near"],
 							"query": [
 								{
 									"key": "lat",
@@ -225,9 +225,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/invalid_id",
+							"raw": "{{baseUrl}}/events/invalid_id",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "invalid_id"]
+							"path": ["events", "invalid_id"]
 						}
 					},
 					"response": []
@@ -265,9 +265,9 @@
 							"raw": "{\n    \"description\": \"Missing required fields\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/events",
+							"raw": "{{baseUrl}}/events",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events"]
+							"path": ["events"]
 						}
 					},
 					"response": []
@@ -305,9 +305,9 @@
 							"raw": "{\n    \"title\": \"Invalid Date Event\",\n    \"description\": \"Event with invalid date format\",\n    \"startDate\": \"invalid-date\",\n    \"endDate\": \"2024-13-45\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/events",
+							"raw": "{{baseUrl}}/events",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events"]
+							"path": ["events"]
 						}
 					},
 					"response": []
@@ -345,9 +345,9 @@
 							"raw": "{\n    \"title\": \"Updated Title\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/events/65c3a2f156e4c5920f1811ff",
+							"raw": "{{baseUrl}}/events/65c3a2f156e4c5920f1811ff",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "65c3a2f156e4c5920f1811ff"]
+							"path": ["events", "65c3a2f156e4c5920f1811ff"]
 						}
 					},
 					"response": []
@@ -376,9 +376,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/events/near?lat=invalid&lng=invalid",
+							"raw": "{{baseUrl}}/events/near?lat=invalid&lng=invalid",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "events", "near"],
+							"path": ["events", "near"],
 							"query": [
 								{
 									"key": "lat",

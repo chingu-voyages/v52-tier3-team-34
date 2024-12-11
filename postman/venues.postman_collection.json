@@ -15,9 +15,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues",
+							"raw": "{{baseUrl}}/venues",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues"]
+							"path": ["venues"]
 						}
 					},
 					"response": []
@@ -28,9 +28,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/{{venueId}}",
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "{{venueId}}"],
+							"path": ["venues", "{{venueId}}"],
 							"variable": [
 								{
 									"key": "venueId",
@@ -56,9 +56,9 @@
 							"raw": "{\n    \"name\": \"Blue Note Jazz Club\",\n    \"description\": \"Iconic jazz venue featuring world-class musicians\",\n    \"address\": {\n        \"street\": \"131 W 3rd St\",\n        \"city\": \"New York\",\n        \"state\": \"NY\",\n        \"zipCode\": \"10012\",\n        \"country\": \"USA\"\n    },\n    \"location\": {\n        \"type\": \"Point\",\n        \"coordinates\": [-74.0014, 40.7308]\n    },\n    \"capacity\": 200,\n    \"amenities\": [\"Full Bar\", \"Restaurant\", \"VIP Seating\"],\n    \"contact\": {\n        \"phone\": \"+1-212-475-8592\",\n        \"email\": \"info@bluenote.net\",\n        \"website\": \"www.bluenotejazz.com\"\n    }\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/venues",
+							"raw": "{{baseUrl}}/venues",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues"]
+							"path": ["venues"]
 						}
 					},
 					"response": []
@@ -78,9 +78,9 @@
 							"raw": "{\n    \"name\": \"Updated Blue Note Jazz Club\",\n    \"capacity\": 250,\n    \"amenities\": [\"Full Bar\", \"Restaurant\", \"VIP Seating\", \"Private Events\"]\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/{{venueId}}",
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "{{venueId}}"],
+							"path": ["venues", "{{venueId}}"],
 							"variable": [
 								{
 									"key": "venueId",
@@ -97,9 +97,9 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/{{venueId}}",
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "{{venueId}}"],
+							"path": ["venues", "{{venueId}}"],
 							"variable": [
 								{
 									"key": "venueId",
@@ -121,9 +121,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
+							"raw": "{{baseUrl}}/venues/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "near"],
+							"path": ["venues", "near"],
 							"query": [
 								{
 									"key": "lat",
@@ -148,9 +148,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
+							"raw": "{{baseUrl}}/venues/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "near"],
+							"path": ["venues", "near"],
 							"query": [
 								{
 									"key": "lat",
@@ -175,9 +175,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/search?city=New York",
+							"raw": "{{baseUrl}}/venues/search?city=New York",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "search"],
+							"path": ["venues", "search"],
 							"query": [
 								{
 									"key": "city",
@@ -199,9 +199,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/search?minCapacity=200&maxCapacity=1000",
+							"raw": "{{baseUrl}}/venues/search?minCapacity=200&maxCapacity=1000",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "search"],
+							"path": ["venues", "search"],
 							"query": [
 								{
 									"key": "minCapacity",
@@ -222,9 +222,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/search?amenities=Full Bar,VIP Seating",
+							"raw": "{{baseUrl}}/venues/search?amenities=Full Bar,VIP Seating",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "search"],
+							"path": ["venues", "search"],
 							"query": [
 								{
 									"key": "amenities",
@@ -264,9 +264,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/invalid_id",
+							"raw": "{{baseUrl}}/venues/invalid_id",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "invalid_id"]
+							"path": ["venues", "invalid_id"]
 						}
 					},
 					"response": []
@@ -304,9 +304,9 @@
 							"raw": "{\n    \"description\": \"Missing required fields\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/venues",
+							"raw": "{{baseUrl}}/venues",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues"]
+							"path": ["venues"]
 						}
 					},
 					"response": []
@@ -344,9 +344,9 @@
 							"raw": "{\n    \"name\": \"Invalid Location Venue\",\n    \"location\": {\n        \"type\": \"Invalid\",\n        \"coordinates\": [\"not\", \"valid\"]\n    }\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/venues",
+							"raw": "{{baseUrl}}/venues",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues"]
+							"path": ["venues"]
 						}
 					},
 					"response": []
@@ -375,9 +375,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/venues/near?lat=invalid&lng=invalid",
+							"raw": "{{baseUrl}}/venues/near?lat=invalid&lng=invalid",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "venues", "near"],
+							"path": ["venues", "near"],
 							"query": [
 								{
 									"key": "lat",

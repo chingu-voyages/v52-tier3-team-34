@@ -20,9 +20,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/users?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
+							"raw": "{{baseUrl}}/users?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users"],
+							"path": ["users"],
 							"query": [
 								{
 									"key": "page",
@@ -60,9 +60,9 @@
 							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"picture\": \"https://example.com/profile.jpg\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users",
+							"raw": "{{baseUrl}}/users",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users"]
+							"path": ["users"]
 						}
 					},
 					"response": []
@@ -78,9 +78,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/{{userId}}",
+							"raw": "{{baseUrl}}/users/{{userId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "{{userId}}"]
+							"path": ["users", "{{userId}}"]
 						}
 					},
 					"response": []
@@ -104,9 +104,9 @@
 							"raw": "{\n    \"firstName\": \"John Updated\",\n    \"lastName\": \"Doe Updated\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users/{{userId}}",
+							"raw": "{{baseUrl}}/users/{{userId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "{{userId}}"]
+							"path": ["users", "{{userId}}"]
 						}
 					},
 					"response": []
@@ -130,9 +130,9 @@
 							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"picture\": \"https://example.com/profile.jpg\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users/{{userId}}",
+							"raw": "{{baseUrl}}/users/{{userId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "{{userId}}"]
+							"path": ["users", "{{userId}}"]
 						}
 					},
 					"response": []
@@ -148,9 +148,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/{{userId}}",
+							"raw": "{{baseUrl}}/users/{{userId}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "{{userId}}"]
+							"path": ["users", "{{userId}}"]
 						}
 					},
 					"response": []
@@ -171,9 +171,9 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/{{userId}}/events?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
+							"raw": "{{baseUrl}}/users/{{userId}}/events?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "{{userId}}", "events"],
+							"path": ["users", "{{userId}}", "events"],
 							"query": [
 								{
 									"key": "page",
@@ -225,9 +225,9 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/api/users/invalid_id",
+							"raw": "{{baseUrl}}/users/invalid_id",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users", "invalid_id"]
+							"path": ["users", "invalid_id"]
 						}
 					},
 					"response": []
@@ -265,9 +265,9 @@
 							"raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/api/users",
+							"raw": "{{baseUrl}}/users",
 							"host": ["{{baseUrl}}"],
-							"path": ["api", "users"]
+							"path": ["users"]
 						}
 					},
 					"response": []

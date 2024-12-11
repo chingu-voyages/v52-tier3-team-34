@@ -40,42 +40,6 @@
           }
         }
       ]
-    },
-    {
-      "name": "Authentication",
-      "description": "User authentication and authorization endpoints",
-      "item": [
-        {
-          "$ref": "auth.postman_collection.json"
-        }
-      ]
-    },
-    {
-      "name": "Events",
-      "description": "Event management and discovery endpoints",
-      "item": [
-        {
-          "$ref": "events.postman_collection.json"
-        }
-      ]
-    },
-    {
-      "name": "Users",
-      "description": "User profile and management endpoints",
-      "item": [
-        {
-          "$ref": "users.postman_collection.json"
-        }
-      ]
-    },
-    {
-      "name": "Venues",
-      "description": "Venue management and discovery endpoints",
-      "item": [
-        {
-          "$ref": "venues.postman_collection.json"
-        }
-      ]
     }
   ]
 }
