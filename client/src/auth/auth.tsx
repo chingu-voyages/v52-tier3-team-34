@@ -1,8 +1,7 @@
-import { CredentialResponse, googleLogout } from '@react-oauth/google';
-import { redirect } from '@tanstack/react-router';
-import React, { createContext, useContext, useState } from 'react';
+import { CredentialResponse } from '@react-oauth/google';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { serverBaseUrl } from '@/config';
+import { authenticateWithGoogle, logout as logoutApi } from '@/auth/api';
 
 interface User {
   id: string;
@@ -22,60 +21,63 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  async function login(response: CredentialResponse): Promise<void> {
-
-    if (!response.credential) {
-      throw new Error('No credential provided');
+  useEffect(() => {
+    // Check for existing token and validate it
+    const token = localStorage.getItem('token');
+    if (token) {
+      // TODO: Validate token with backend
+      // For now, we'll just check if it exists
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        setUser(JSON.parse(savedUser));
+      }
     }
+    setLoading(false);
+  }, []);
 
+  async function handleGoogleSuccess(credentialResponse: CredentialResponse) {
     try {
-      // Send the token to your backend to validate and fetch user info
-      const res = await fetch(`${serverBaseUrl}/auth/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ googleIdToken: response.credential })
-      });
-
-      if (!res.ok) {
-        throw new Error('Login failed');
+      if (!credentialResponse.credential) {
+        throw new Error('No credential received');
       }
 
-      const data = await res.json();
-
-      // Update user state with the received user data
-      setUser({
-        id: data.user.id,
-        email: data.user.email,
-        name: data.user.name,
-        picture: data.user.picture
-      });
-      throw redirect({ to: '/dashboard' });
+      // Send ID token to our backend
+      const data = await authenticateWithGoogle(credentialResponse.credential);
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      setUser(data.user);
     } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+      console.error('Authentication failed:', error);
+      // TODO: Handle error properly
     }
   }
 
-  async function logout(): Promise<void> {
+  async function logout() {
     try {
-      googleLogout();
-
-      await fetch(`${serverBaseUrl}/auth/logout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
-      });
-
-      setUser(null);
+      await logoutApi();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error('Logout failed:', error);
+    } finally {
+      // Always clear local state, even if server call fails
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       setUser(null);
     }
+  }
+
+  if (loading) {
+    return <div>Loading...</div>;
   }
 
   const isAuthenticated = !!user;
 
-  return <AuthContext.Provider value={{ user, login, logout, isAuthenticated }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login: handleGoogleSuccess, logout, isAuthenticated }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth(): AuthContextType {
