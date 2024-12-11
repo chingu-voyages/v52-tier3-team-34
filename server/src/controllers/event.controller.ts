@@ -237,6 +237,7 @@ export class EventController {
             artist: event.artist || undefined,
             genre: event.genre,
             price: event.price,
+            images: event.images,
             venue: {
               id: event.venue.id,
               name: event.venue.name,

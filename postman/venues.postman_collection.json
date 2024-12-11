@@ -1,115 +1,425 @@
 {
-  "info": {
-    "name": "Venues API",
-    "description": "Venue management endpoints including creation, updates, and geolocation queries",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "List Venues - Basic",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/venues",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "venues"]
-        },
-        "description": "Get a list of venues with default pagination"
-      }
-    },
-    {
-      "name": "Create Venue",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"The Venue\",\n  \"description\": \"A great venue for events\",\n  \"address\": \"123 Main St, City, Country\",\n  \"contact\": {\n    \"email\": \"venue@example.com\",\n    \"phone\": \"+1-234-567-8900\",\n    \"website\": \"https://venue.example.com\"\n  },\n  \"coordinates\": {\n    \"lat\": 40.7128,\n    \"lng\": -74.0060\n  }\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/venues",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "venues"]
-        },
-        "description": "Create a new venue"
-      }
-    },
-    {
-      "name": "Update Venue - Full Update",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Updated Venue\",\n  \"description\": \"Updated description\",\n  \"address\": \"456 New St, City, Country\",\n  \"contact\": {\n    \"email\": \"updated@example.com\",\n    \"phone\": \"+1-234-567-8901\",\n    \"website\": \"https://updated.example.com\"\n  },\n  \"coordinates\": {\n    \"lat\": 40.7129,\n    \"lng\": -74.0061\n  }\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/venues/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "venues", "1"]
-        },
-        "description": "Update all venue fields"
-      }
-    },
-    {
-      "name": "Update Venue - Partial Update",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Updated Name\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/venues/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "venues", "1"]
-        },
-        "description": "Update specific venue fields"
-      }
-    },
-    {
-      "name": "Get Venues in Zone",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/venues/zone?lat=40.7128&lng=-74.0060&radius=5",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "venues", "zone"],
-          "query": [
-            {
-              "key": "lat",
-              "value": "40.7128"
-            },
-            {
-              "key": "lng",
-              "value": "-74.0060"
-            },
-            {
-              "key": "radius",
-              "value": "5"
-            }
-          ]
-        },
-        "description": "Get venues within a specific radius of coordinates"
-      }
-    }
-  ]
-}
+	"info": {
+		"_postman_id": "f4d2e8b0-6c1a-4d1c-8c1d-9b6f9b6f9b6f",
+		"name": "Venues API",
+		"description": "Collection for testing the Venues API endpoints including basic operations, geospatial queries, and error scenarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Basic Operations",
+			"item": [
+				{
+					"name": "Get All Venues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Venue by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "{{venueId}}"],
+							"variable": [
+								{
+									"key": "venueId",
+									"value": "65c3a2f156e4c5920f1811df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Venue",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Blue Note Jazz Club\",\n    \"description\": \"Iconic jazz venue featuring world-class musicians\",\n    \"address\": {\n        \"street\": \"131 W 3rd St\",\n        \"city\": \"New York\",\n        \"state\": \"NY\",\n        \"zipCode\": \"10012\",\n        \"country\": \"USA\"\n    },\n    \"location\": {\n        \"type\": \"Point\",\n        \"coordinates\": [-74.0014, 40.7308]\n    },\n    \"capacity\": 200,\n    \"amenities\": [\"Full Bar\", \"Restaurant\", \"VIP Seating\"],\n    \"contact\": {\n        \"phone\": \"+1-212-475-8592\",\n        \"email\": \"info@bluenote.net\",\n        \"website\": \"www.bluenotejazz.com\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/venues",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Venue",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Blue Note Jazz Club\",\n    \"capacity\": 250,\n    \"amenities\": [\"Full Bar\", \"Restaurant\", \"VIP Seating\", \"Private Events\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "{{venueId}}"],
+							"variable": [
+								{
+									"key": "venueId",
+									"value": "65c3a2f156e4c5920f1811df"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Venue",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/{{venueId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "{{venueId}}"],
+							"variable": [
+								{
+									"key": "venueId",
+									"value": "65c3a2f156e4c5920f1811df"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Geospatial Operations",
+			"item": [
+				{
+					"name": "Find Venues Near Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7128"
+								},
+								{
+									"key": "lng",
+									"value": "-74.0060"
+								},
+								{
+									"key": "maxDistance",
+									"value": "10000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Venues in Radius (Times Square)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7580"
+								},
+								{
+									"key": "lng",
+									"value": "-73.9855"
+								},
+								{
+									"key": "maxDistance",
+									"value": "5000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Venues by City",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/search?city=New York",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "search"],
+							"query": [
+								{
+									"key": "city",
+									"value": "New York"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Advanced Queries",
+			"item": [
+				{
+					"name": "Search Venues by Capacity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/search?minCapacity=200&maxCapacity=1000",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "search"],
+							"query": [
+								{
+									"key": "minCapacity",
+									"value": "200"
+								},
+								{
+									"key": "maxCapacity",
+									"value": "1000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Venues by Amenities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/search?amenities=Full Bar,VIP Seating",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "search"],
+							"query": [
+								{
+									"key": "amenities",
+									"value": "Full Bar,VIP Seating"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "Get Invalid Venue ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Venue not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/invalid_id",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "invalid_id"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Venue - Missing Required Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error message is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"validation failed\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Missing required fields\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/venues",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Venue - Invalid Location Format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Location validation error is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"location\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Invalid Location Venue\",\n    \"location\": {\n        \"type\": \"Invalid\",\n        \"coordinates\": [\"not\", \"valid\"]\n    }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/venues",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Geospatial Query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error for coordinates\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"coordinates\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/venues/near?lat=invalid&lng=invalid",
+							"host": ["{{baseUrl}}"],
+							"path": ["venues", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "invalid"
+								},
+								{
+									"key": "lng",
+									"value": "invalid"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+} 
