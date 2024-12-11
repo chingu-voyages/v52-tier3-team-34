@@ -1,115 +1,426 @@
 {
-  "info": {
-    "name": "Events API",
-    "description": "Event management endpoints including creation, updates, and advanced filtering",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "List Events - Basic",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/events",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "events"]
-        },
-        "description": "Get a list of events with default pagination"
-      }
-    },
-    {
-      "name": "Create Event",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"Music Festival\",\n  \"description\": \"Annual music festival\",\n  \"startDate\": \"2024-07-01T18:00:00Z\",\n  \"endDate\": \"2024-07-01T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"Various Artists\",\n  \"genre\": [\"Rock\", \"Pop\"],\n  \"price\": 50,\n  \"images\": [\n    \"https://example.com/events/festival1.jpg\",\n    \"https://example.com/events/festival2.jpg\"\n  ],\n  \"venueId\": 1\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/events",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "events"]
-        },
-        "description": "Create a new event"
-      }
-    },
-    {
-      "name": "Update Event - Full Update",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"Updated Festival\",\n  \"description\": \"Updated description\",\n  \"startDate\": \"2024-07-02T18:00:00Z\",\n  \"endDate\": \"2024-07-02T23:00:00Z\",\n  \"status\": \"published\",\n  \"artist\": \"New Artists\",\n  \"genre\": [\"Jazz\", \"Blues\"],\n  \"price\": 60,\n  \"images\": [\n    \"https://example.com/events/updated1.jpg\",\n    \"https://example.com/events/updated2.jpg\"\n  ],\n  \"venueId\": 1\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/events/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "events", "1"]
-        },
-        "description": "Update all event fields"
-      }
-    },
-    {
-      "name": "Update Event - Partial Update",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"title\": \"Updated Title\",\n  \"price\": 55,\n  \"images\": [\n    \"https://example.com/events/new1.jpg\",\n    \"https://example.com/events/new2.jpg\"\n  ]\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/events/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "events", "1"]
-        },
-        "description": "Update specific event fields"
-      }
-    },
-    {
-      "name": "Get Events in Zone",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/events/zone?lat=40.7128&lng=-74.0060&radius=5",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "events", "zone"],
-          "query": [
-            {
-              "key": "lat",
-              "value": "40.7128"
-            },
-            {
-              "key": "lng",
-              "value": "-74.0060"
-            },
-            {
-              "key": "radius",
-              "value": "5"
-            }
-          ]
-        },
-        "description": "Get events at venues within a specific radius of coordinates"
-      }
-    }
-  ]
-}
+	"info": {
+		"_postman_id": "e5f3f8a0-5b1a-4b1c-9c1d-8b5f8b5f8b5f",
+		"name": "Events API",
+		"description": "Collection for testing the Events API endpoints including basic operations, geospatial queries, and error scenarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Basic Operations",
+			"item": [
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Summer Music Festival\",\n    \"description\": \"A fantastic summer music festival featuring local artists\",\n    \"startDate\": \"2024-07-15T18:00:00.000Z\",\n    \"endDate\": \"2024-07-15T23:00:00.000Z\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\",\n    \"capacity\": 500,\n    \"price\": 25.00,\n    \"tags\": [\"music\", \"festival\", \"summer\"],\n    \"status\": \"upcoming\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Summer Music Festival\",\n    \"capacity\": 600,\n    \"price\": 30.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Geospatial Operations",
+			"item": [
+				{
+					"name": "Find Events Near Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7128"
+								},
+								{
+									"key": "lng",
+									"value": "-74.0060"
+								},
+								{
+									"key": "maxDistance",
+									"value": "10000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Events in Radius (Times Square)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7580"
+								},
+								{
+									"key": "lng",
+									"value": "-73.9855"
+								},
+								{
+									"key": "maxDistance",
+									"value": "5000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Events in Radius (Central Park)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/near?lat=40.7829&lng=-73.9654&maxDistance=2000",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7829"
+								},
+								{
+									"key": "lng",
+									"value": "-73.9654"
+								},
+								{
+									"key": "maxDistance",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "Get Invalid Event ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Event not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/invalid_id",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "invalid_id"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event - Missing Required Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error message is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"validation failed\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Missing required fields\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event - Invalid Date Format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Date validation error is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"date\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Invalid Date Event\",\n    \"description\": \"Event with invalid date format\",\n    \"startDate\": \"invalid-date\",\n    \"endDate\": \"2024-13-45\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Non-existent Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Event not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Title\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/events/65c3a2f156e4c5920f1811ff",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "65c3a2f156e4c5920f1811ff"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Geospatial Query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error for coordinates\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"coordinates\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/events/near?lat=invalid&lng=invalid",
+							"host": ["{{baseUrl}}"],
+							"path": ["events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "invalid"
+								},
+								{
+									"key": "lng",
+									"value": "invalid"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+} 

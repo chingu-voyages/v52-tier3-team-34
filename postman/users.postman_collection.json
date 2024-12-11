@@ -1,155 +1,310 @@
 {
-  "info": {
-    "name": "Users API",
-    "description": "User management endpoints including authentication, profile management, and user events",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "List Users - Basic",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users"]
-        },
-        "description": "Get a list of users with default pagination"
-      }
-    },
-    {
-      "name": "Create User",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"user@example.com\",\n  \"name\": \"John Doe\",\n  \"picture\": \"https://example.com/photo.jpg\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users"]
-        },
-        "description": "Create a new user"
-      }
-    },
-    {
-      "name": "Update User - Full Update",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"email\": \"updated@example.com\",\n  \"name\": \"Updated Name\",\n  \"picture\": \"https://example.com/updated.jpg\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users", "1"]
-        },
-        "description": "Update all user fields"
-      }
-    },
-    {
-      "name": "Update User - Partial Update",
-      "request": {
-        "method": "PATCH",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"name\": \"Updated Name\"\n}"
-        },
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users/1",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users", "1"]
-        },
-        "description": "Update specific user fields"
-      }
-    },
-    {
-      "name": "Get User Events - Basic",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users/1/events",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users", "1", "events"]
-        },
-        "description": "Retrieve all events for a specific user with default pagination (10 items per page)"
-      }
-    },
-    {
-      "name": "Get User Events - Filtered",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users/1/events?filter[startDate]=2024-11-30&filter[endDate]=2024-12-02&filter[status]=published&sort=startDate:asc",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users", "1", "events"],
-          "query": [
-            {
-              "key": "filter[startDate]",
-              "value": "2024-11-30"
-            },
-            {
-              "key": "filter[endDate]",
-              "value": "2024-12-02"
-            },
-            {
-              "key": "filter[status]",
-              "value": "published"
-            },
-            {
-              "key": "sort",
-              "value": "startDate:asc"
-            }
-          ]
-        },
-        "description": "Retrieve filtered events for a specific user:\n- Date range filter\n- Status filter\n- Sorted by start date ascending"
-      }
-    },
-    {
-      "name": "Get User Events - Paginated",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "{{baseUrl}}/api/v1/users/1/events?page=2&limit=5",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "v1", "users", "1", "events"],
-          "query": [
-            {
-              "key": "page",
-              "value": "2"
-            },
-            {
-              "key": "limit",
-              "value": "5"
-            }
-          ]
-        },
-        "description": "Retrieve paginated events for a specific user:\n- Page 2\n- 5 items per page"
-      }
-    }
-  ]
-}
+	"info": {
+		"_postman_id": "d1c3e8b0-7c1a-4d1c-8c1d-9b6f9b6f9b6f",
+		"name": "Users API",
+		"description": "Collection for testing the Users API endpoints based on user.routes.ts",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Basic Operations",
+			"item": [
+				{
+					"name": "List Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{currentPage}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{pageSize}}"
+								},
+								{
+									"key": "sortBy",
+									"value": "{{sortBy}}"
+								},
+								{
+									"key": "sortOrder",
+									"value": "{{sortOrder}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"picture\": \"https://example.com/profile.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "{{userId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User (PATCH)",
+					"request": {
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"John Updated\",\n    \"lastName\": \"Doe Updated\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "{{userId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Replace User (PUT)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"john.doe@example.com\",\n    \"firstName\": \"John\",\n    \"lastName\": \"Doe\",\n    \"picture\": \"https://example.com/profile.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "{{userId}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "{{userId}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Events",
+			"item": [
+				{
+					"name": "Get User's Events",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{JWT}}"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}/events?page={{currentPage}}&limit={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "{{userId}}", "events"],
+							"query": [
+								{
+									"key": "page",
+									"value": "{{currentPage}}"
+								},
+								{
+									"key": "limit",
+									"value": "{{pageSize}}"
+								},
+								{
+									"key": "sortBy",
+									"value": "{{sortBy}}"
+								},
+								{
+									"key": "sortOrder",
+									"value": "{{sortOrder}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "Get Invalid User ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message indicates user not found\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/invalid_id",
+							"host": ["{{baseUrl}}"],
+							"path": ["users", "invalid_id"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Invalid Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error message is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"validation failed\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"\",\n    \"lastName\": \"\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": ["{{baseUrl}}"],
+							"path": ["users"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "JWT",
+			"value": "",
+			"type": "string"
+		}
+	]
+} 

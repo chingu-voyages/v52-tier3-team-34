@@ -6,7 +6,7 @@ import {
   GoogleUserInput,
   GoogleUserUpdateInput,
   UserParams,
-  UserEventsQuery
+  UserEventsQuery,
 } from "../types/user.types";
 import { ApiResponse, ApiErrorResponse } from "../types/api.types";
 import { Event, Venue } from "@prisma/client";
@@ -17,7 +17,7 @@ type EventWithVenue = Event & {
 };
 
 export class UserController {
-  static async getById(req: Request, res: Response) {
+  static async getById(req: Request<UserParams>, res: Response) {
     try {
       const id = Number(req.params.id);
       const include = req.query.include as string;
@@ -36,9 +36,9 @@ export class UserController {
         error: {
           code: "USER_NOT_FOUND",
           message: error instanceof Error ? error.message : "User not found",
-          details: { id: req.params.id }
+          details: { id: req.params.id },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.status(404).json(response);
@@ -73,13 +73,21 @@ export class UserController {
         status: "error",
         error: {
           code: "USER_EVENTS_ERROR",
-          message: error instanceof Error ? error.message : "Error fetching user events",
-          details: { userId: req.params.id }
+          message:
+            error instanceof Error
+              ? error.message
+              : "Error fetching user events",
+          details: { userId: req.params.id },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      res.status(error instanceof Error && error.message === "User not found" ? 404 : 500)
+      res
+        .status(
+          error instanceof Error && error.message === "User not found"
+            ? 404
+            : 500
+        )
         .json(response);
     }
   }
@@ -98,14 +106,14 @@ export class UserController {
             total: result.pagination.totalItems,
             totalPages: result.pagination.totalPages,
             hasNext: result.pagination.hasNextPage,
-            hasPrevious: result.pagination.hasPreviousPage
+            hasPrevious: result.pagination.hasPreviousPage,
           },
           filters: result.meta.filters,
           sort: result.meta.sort,
           fields: result.meta.fields,
-          includes: result.meta.includes
+          includes: result.meta.includes,
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.json(response);
@@ -114,10 +122,11 @@ export class UserController {
         status: "error",
         error: {
           code: "USER_LIST_ERROR",
-          message: error instanceof Error ? error.message : "Failed to list users",
-          details: { query: req.query }
+          message:
+            error instanceof Error ? error.message : "Failed to list users",
+          details: { query: req.query },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.status(400).json(response);
@@ -140,8 +149,9 @@ export class UserController {
         status: "error",
         error: {
           code: "USER_CREATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to create user",
-          details: req.body
+          message:
+            error instanceof Error ? error.message : "Failed to create user",
+          details: req.body,
         },
         timestamp: new Date().toISOString(),
       };
@@ -169,18 +179,21 @@ export class UserController {
       const response: ApiErrorResponse = {
         status: "error",
         error: {
-          code: error instanceof Error && error.message === "User not found" 
-            ? "USER_NOT_FOUND" 
-            : "USER_UPDATE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to update user",
-          details: { id: req.params.id, ...req.body }
+          code:
+            error instanceof Error && error.message === "User not found"
+              ? "USER_NOT_FOUND"
+              : "USER_UPDATE_ERROR",
+          message:
+            error instanceof Error ? error.message : "Failed to update user",
+          details: { id: req.params.id, ...req.body },
         },
         timestamp: new Date().toISOString(),
       };
 
-      const statusCode = error instanceof Error && error.message === "User not found"
-        ? 404
-        : 400;
+      const statusCode =
+        error instanceof Error && error.message === "User not found"
+          ? 404
+          : 400;
       res.status(statusCode).json(response);
     }
   }
@@ -196,7 +209,7 @@ export class UserController {
       const response: ApiResponse<UserResponse> = {
         status: "success",
         data: user,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.json(response);
@@ -204,26 +217,26 @@ export class UserController {
       const response: ApiErrorResponse = {
         status: "error",
         error: {
-          code: error instanceof Error && error.message === "User not found" 
-            ? "USER_NOT_FOUND" 
-            : "USER_REPLACE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to replace user",
-          details: { id: req.params.id, ...req.body }
+          code:
+            error instanceof Error && error.message === "User not found"
+              ? "USER_NOT_FOUND"
+              : "USER_REPLACE_ERROR",
+          message:
+            error instanceof Error ? error.message : "Failed to replace user",
+          details: { id: req.params.id, ...req.body },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      const statusCode = error instanceof Error && error.message === "User not found"
-        ? 404
-        : 400;
+      const statusCode =
+        error instanceof Error && error.message === "User not found"
+          ? 404
+          : 400;
       res.status(statusCode).json(response);
     }
   }
 
-  static async delete(
-    req: Request<UserParams>,
-    res: Response
-  ) {
+  static async delete(req: Request<UserParams>, res: Response) {
     try {
       const userId = req.params.id;
       const success = await UserService.delete(userId);
@@ -231,7 +244,7 @@ export class UserController {
       const response: ApiResponse<boolean> = {
         status: "success",
         data: success,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       res.json(response);
@@ -239,18 +252,21 @@ export class UserController {
       const response: ApiErrorResponse = {
         status: "error",
         error: {
-          code: error instanceof Error && error.message === "User not found" 
-            ? "USER_NOT_FOUND" 
-            : "USER_DELETE_ERROR",
-          message: error instanceof Error ? error.message : "Failed to delete user",
-          details: { id: req.params.id }
+          code:
+            error instanceof Error && error.message === "User not found"
+              ? "USER_NOT_FOUND"
+              : "USER_DELETE_ERROR",
+          message:
+            error instanceof Error ? error.message : "Failed to delete user",
+          details: { id: req.params.id },
         },
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
-      const statusCode = error instanceof Error && error.message === "User not found"
-        ? 404
-        : 400;
+      const statusCode =
+        error instanceof Error && error.message === "User not found"
+          ? 404
+          : 400;
       res.status(statusCode).json(response);
     }
   }
