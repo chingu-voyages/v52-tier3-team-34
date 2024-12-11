@@ -1,39 +1,45 @@
 {
   "info": {
     "name": "V52 Tier3 Team 34 API",
-    "description": "Complete collection for testing the V52 Tier3 Team 34 REST API endpoints. This is the main collection that references all modular collections.",
+    "description": "Complete API testing suite for the Live Music Finder application.\n\n## Collections\n- Authentication API: User authentication and authorization\n- Events API: Event management and discovery\n- Users API: User profile and management\n- Venues API: Venue management and discovery\n\n## Environment Setup\n- Local: http://localhost:3000/api/v1\n- Production: https://v52-tier3-team-34.onrender.com/api/v1",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Health",
+      "name": "Health Check",
       "item": [
         {
-          "name": "Health Check",
+          "name": "API Health",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/v1/health",
+              "raw": "{{baseUrl}}/health",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "v1", "health"]
+              "path": ["health"]
             },
-            "description": "Check if the API server is running"
+            "description": "Basic health check endpoint to verify API availability"
+          }
+        },
+        {
+          "name": "Auth Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/health/auth",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "auth"]
+            },
+            "description": "Authenticated health check to verify JWT functionality"
           }
         }
       ]
-    },
-    {
-      "name": "Users",
-      "description": "User management endpoints - See users.postman_collection.json for details"
-    },
-    {
-      "name": "Venues",
-      "description": "Venue management endpoints - See venues.postman_collection.json for details"
-    },
-    {
-      "name": "Events",
-      "description": "Event management endpoints - See events.postman_collection.json for details"
     }
   ]
 }
