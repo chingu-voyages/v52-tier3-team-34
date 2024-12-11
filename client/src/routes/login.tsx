@@ -1,5 +1,6 @@
 import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
-import { createFileRoute, redirect } from '@tanstack/react-router';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 import { useAuth } from '@/auth/auth';
 
@@ -14,10 +15,17 @@ export const Route = createFileRoute('/login')({
 
 function LoginComponent() {
   const { login, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
   async function handleSuccess(credentialResponse: CredentialResponse) {
     login(credentialResponse);
   }
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: '/dashboard' });
+    }
+  }, [isAuthenticated]);
 
   return (
     <div className="min-h-96 flex items-center justify-center p-4">
