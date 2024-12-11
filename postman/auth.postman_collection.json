@@ -1,90 +1,62 @@
 {
   "info": {
-    "name": "Auth API",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "description": "Authentication endpoints for Live Music Finder API. Before using:\n1. Import both collection and environment files\n2. Set your GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in the environment\n3. Select the environment before running requests"
+    "_postman_id": "auth-collection-v1",
+    "name": "Authentication API",
+    "description": "Comprehensive authentication endpoints for Live Music Finder API\n\n## Getting Started\n1. Set up Google OAuth Credentials\n2. Configure environment variables\n3. Follow the OAuth flow step-by-step\n\n### Authentication Flow\n1. Get Google ID Token\n2. Exchange for JWT\n3. Use JWT for authenticated requests\n\n### Environment Setup\n- GOOGLE_CLIENT_ID: Your Google OAuth Client ID\n- GOOGLE_CLIENT_SECRET: Your Google OAuth Client Secret\n- Callback URL will be automatically configured",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "0. Get Google ID Token",
+      "name": "0. OAuth Configuration",
       "item": [
         {
-          "name": "Get Google ID Token (OAuth Flow)",
-          "request": {
-            "auth": {
-              "type": "oauth2",
-              "oauth2": {
-                "grant_type": "authorization_code",
-                "headerPrefix": "Bearer",
-                "addTokenTo": "header",
-                "tokenName": "Google OAuth",
-                "callbackUrl": "{{GOOGLE_OAUTH_CALLBACK_URL}}",
-                "authUrl": "{{GOOGLE_AUTH_URL}}",
-                "accessTokenUrl": "{{GOOGLE_TOKEN_URL}}",
-                "clientId": "{{GOOGLE_CLIENT_ID}}",
-                "clientSecret": "{{GOOGLE_CLIENT_SECRET}}",
-                "scope": "{{GOOGLE_SCOPES}}",
-                "state": "",
-                "clientAuth": "basic",
-                "useBrowser": true,
-                "challengeAlgorithm": "S256",
-                "tokenType": "Bearer"
-              }
-            },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "https://oauth2.googleapis.com/tokeninfo",
-              "host": ["oauth2.googleapis.com"],
-              "path": ["tokeninfo"]
-            },
-            "description": "This request helps you get a Google ID token. Steps:\n\n1. Make sure environment variables are set:\n   - GOOGLE_CLIENT_ID\n   - GOOGLE_CLIENT_SECRET\n\n2. Go to Authorization tab\n3. Type should be OAuth 2.0\n4. Click 'Get New Access Token'\n5. Complete Google sign-in\n6. Copy the ID token (not Access token)\n7. Use this ID token in 'Login with Google' request"
-          }
-        }
-      ],
-      "description": "Get a Google ID token through OAuth 2.0 flow. Make sure to use environment variables for credentials."
-    },
-    {
-      "name": "1. Health Checks",
-      "item": [
-        {
-          "name": "Health Check",
+          "name": "Get Google OAuth Credentials",
           "request": {
             "method": "GET",
-            "header": [],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/health",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "health"]
-            }
+              "raw": "https://console.cloud.google.com/apis/credentials",
+              "protocol": "https",
+              "host": ["console", "cloud", "google", "com"],
+              "path": ["apis", "credentials"]
+            },
+            "description": "Steps to get Google OAuth Credentials:\n1. Go to Google Cloud Console\n2. Create a new project or select existing\n3. Navigate to Credentials\n4. Create OAuth 2.0 Client ID\n5. Set Authorized JavaScript origins and redirect URIs\n6. Copy Client ID and Client Secret to environment variables"
           }
         },
         {
-          "name": "Protected Health Check",
+          "name": "Verify OAuth Configuration",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('OAuth variables are configured', function() {",
+                  "    pm.expect(pm.environment.get('GOOGLE_CLIENT_ID')).to.not.be.empty;",
+                  "    pm.expect(pm.environment.get('GOOGLE_CLIENT_SECRET')).to.not.be.empty;",
+                  "    pm.expect(pm.environment.get('GOOGLE_OAUTH_CALLBACK_URL')).to.not.be.empty;",
+                  "})"
+                ]
+              }
+            }
+          ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{JWT}}",
-                  "type": "string"
-                }
+            "method": "GET",
+            "url": {
+              "raw": "{{GOOGLE_AUTH_URL}}?client_id={{GOOGLE_CLIENT_ID}}&redirect_uri={{GOOGLE_OAUTH_CALLBACK_URL}}&response_type=code&scope={{GOOGLE_SCOPES}}",
+              "host": ["{{GOOGLE_AUTH_URL}}"],
+              "query": [
+                {"key": "client_id", "value": "{{GOOGLE_CLIENT_ID}}"},
+                {"key": "redirect_uri", "value": "{{GOOGLE_OAUTH_CALLBACK_URL}}"},
+                {"key": "response_type", "value": "code"},
+                {"key": "scope", "value": "{{GOOGLE_SCOPES}}"}
               ]
             },
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/health/auth",
-              "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "health", "auth"]
-            }
+            "description": "Verify OAuth configuration by constructing authorization URL\n\n### What this does:\n- Checks if OAuth variables are correctly set\n- Generates a valid Google OAuth authorization URL\n- Ensures all required parameters are present"
           }
         }
       ]
     },
     {
-      "name": "2. Authentication Flow",
+      "name": "1. Authentication Flows",
       "item": [
         {
           "name": "Login with Google",
@@ -93,18 +65,25 @@
               "listen": "test",
               "script": {
                 "exec": [
-                  "var jsonData = JSON.parse(responseBody);",
-                  "if (jsonData.token) {",
-                  "    pm.environment.set(\"JWT\", jsonData.token);",
-                  "}"
-                ],
-                "type": "text/javascript"
+                  "pm.test('Successful login', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const jsonResponse = pm.response.json();",
+                  "    pm.expect(jsonResponse).to.have.property('token');",
+                  "    pm.environment.set('JWT', jsonResponse.token);",
+                  "    pm.environment.set('userId', jsonResponse.user.id);",
+                  "})"
+                ]
               }
             }
           ],
           "request": {
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"googleIdToken\": \"{{GOOGLE_ID_TOKEN}}\"\n}",
@@ -115,57 +94,115 @@
               }
             },
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/login",
+              "raw": "{{baseUrl}}/auth/login",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "auth", "login"]
+              "path": ["auth", "login"]
             },
-            "description": "Login using Google ID Token. The token should be obtained from the 'Get Google ID Token' request."
+            "description": "Exchange Google ID Token for JWT\n\n### Prerequisites\n1. Obtain Google ID Token via OAuth flow\n2. Paste token in GOOGLE_ID_TOKEN environment variable\n\n### What this does:\n- Validates Google ID Token\n- Creates or logs in user\n- Returns JWT for subsequent authenticated requests"
           }
         },
         {
-          "name": "Get Profile",
+          "name": "Get User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Profile retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const profile = pm.response.json();",
+                  "    pm.expect(profile).to.have.property('id');",
+                  "    pm.expect(profile).to.have.property('email');",
+                  "})"
+                ]
+              }
+            }
+          ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{JWT}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "GET",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/profile",
+              "raw": "{{baseUrl}}/auth/profile",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "auth", "profile"]
+              "path": ["auth", "profile"]
             },
-            "description": "Get the profile of the currently authenticated user."
+            "description": "Retrieve authenticated user's profile\n\n### Requirements\n- Must have valid JWT\n- JWT obtained from successful login\n\n### What this does:\n- Returns full user profile\n- Confirms authentication status"
           }
         },
         {
           "name": "Logout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Logout successful', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    pm.environment.unset('JWT');",
+                  "    pm.environment.unset('userId');",
+                  "})"
+                ]
+              }
+            }
+          ],
           "request": {
-            "auth": {
-              "type": "bearer",
-              "bearer": [
-                {
-                  "key": "token",
-                  "value": "{{JWT}}",
-                  "type": "string"
-                }
-              ]
-            },
             "method": "POST",
-            "header": [],
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
             "url": {
-              "raw": "{{baseUrl}}/api/{{apiVersion}}/auth/logout",
+              "raw": "{{baseUrl}}/auth/logout",
               "host": ["{{baseUrl}}"],
-              "path": ["api", "{{apiVersion}}", "auth", "logout"]
+              "path": ["auth", "logout"]
             },
-            "description": "Logout the currently authenticated user."
+            "description": "Invalidate current JWT and log out user\n\n### What this does:\n- Revokes current authentication token\n- Clears server-side session\n- Requires valid JWT"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Error Scenarios",
+      "item": [
+        {
+          "name": "Invalid Token Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Invalid token handled', function() {",
+                  "    pm.response.to.have.status(401);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"googleIdToken\": \"invalid_token_example\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Test authentication with invalid Google ID Token\n\n### Expected Behavior\n- 401 Unauthorized\n- No JWT issued"
           }
         }
       ]
