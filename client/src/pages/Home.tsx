@@ -19,7 +19,9 @@ export default function Home() {
         </span>
       </div>
 
-      <p className="text-gray-200 mb-10 italic text-lg">&quot;Find your next eargasm before your ears get bored!&quot;</p>
+      <p className="text-gray-200 mb-10 italic text-lg">
+        &quot;Find your next eargasm before your ears get bored!&quot;
+      </p>
 
       <div className="space-y-6">
         <div className="space-y-4 w-full min-w-48">
