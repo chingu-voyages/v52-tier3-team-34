@@ -1,38 +1,32 @@
 import { Link } from '@tanstack/react-router';
 import { ChevronLeftCircle, ChevronRightCircle, CirclePlus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
+import { useAuth } from '@/auth/auth';
 import EventCard from '@/components/EventCard';
 import VenueCard from '@/components/VenueCard';
 import { useUserEvents } from '@/hooks/useUserEvents';
-import { useUsers } from '@/hooks/useUsers';
 import { useVenues } from '@/hooks/useVenues';
 import { Event } from '@/types/events';
 import { Venue } from '@/types/venues';
 
 function Dashboard() {
-  // TODO: Update id to dynamic from Auth
-  const [firstUserId, setFirstUserId] = useState<string>('1');
+  const { user } = useAuth();
+
+  if (!user?.id || !user) {
+    return null;
+  }
+
+  const userId = user.id.toString();
+
   const [selectedVenueIds, setSelectedVenueIds] = useState<number[]>([]);
   const [currentEventPage, setCurrentEventPage] = useState(1);
-  const { data } = useUsers();
-  // TODO: Update id to dynamic from Auth
-  const userEventsResponse = useUserEvents('1', currentEventPage, 10);
+  const userEventsResponse = useUserEvents(userId, currentEventPage, 10);
   const pagination = userEventsResponse.data?.data.pagination;
-
-  const users = data?.data;
-
-  useEffect(() => {
-    if (users) {
-      const firstUserId = users[0].id.toString();
-      setFirstUserId(firstUserId);
-    }
-  }, [data]);
-
   const venuesData = useVenues({
     sort: 'createdAt:desc',
     limit: 100,
-    filter: { userId: firstUserId }
+    filter: { userId: userId }
   });
 
   const venues: Venue[] = venuesData.data?.data || [];
@@ -54,7 +48,12 @@ function Dashboard() {
 
   return (
     <>
-      <h1 className="text-2xl font-bold p-3">Dashboard | Active userId: {firstUserId}</h1>
+      <h1 className="text-2xl font-bold p-3">
+        Dashboard |{' '}
+        <span className="opacity-50">
+          {user.name} id: {user.id}
+        </span>{' '}
+      </h1>
       <div className="flex border-t-[1px]">
         <div className="w-1/2 lg:w-1/3 min-h-screen border-r-[1px] p-3">
           <div className="flex gap-3 items-end mb-3">

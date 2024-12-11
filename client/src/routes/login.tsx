@@ -1,91 +1,67 @@
-import { createFileRoute, redirect, useRouter, useRouterState } from '@tanstack/react-router';
-import * as React from 'react';
-import { z } from 'zod';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
-import { useAuth } from '@/auth';
-import { sleep } from '@/utils';
-
-const fallback = '/dashboard' as const;
+import authIllustration from '@/assets/Authentication.svg';
+import { useAuth } from '@/auth/auth';
 
 export const Route = createFileRoute('/login')({
-  validateSearch: z.object({
-    redirect: z.string().optional().catch('')
-  }),
   beforeLoad: ({ context }) => {
     if (context.auth.isAuthenticated) {
-      throw redirect({ to: fallback });
+      throw redirect({ to: '/dashboard' });
     }
   },
   component: LoginComponent
 });
 
 function LoginComponent() {
-  const auth = useAuth();
-  const router = useRouter();
-  const isLoading = useRouterState({ select: (s) => s.isLoading });
-  const navigate = Route.useNavigate();
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const { login, isAuthenticated, user } = useAuth();
+  const navigate = useNavigate();
 
-  const search = Route.useSearch();
-
-  async function onFormSubmit(evt: React.FormEvent<HTMLFormElement>) {
-    setIsSubmitting(true);
-    try {
-      evt.preventDefault();
-      const data = new FormData(evt.currentTarget);
-      const fieldValue = data.get('username');
-
-      if (!fieldValue) return;
-      const username = fieldValue.toString();
-      await auth.login(username);
-
-      await router.invalidate();
-
-      // This is just a hack being used to wait for the auth state to update
-      // in a real app, you'd want to use a more robust solution
-      await sleep(1);
-
-      await navigate({ to: fallback });
-    } catch (error) {
-      console.error('Error logging in: ', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+  async function handleSuccess(credentialResponse: CredentialResponse) {
+    login(credentialResponse);
   }
 
-  const isLoggingIn = isLoading || isSubmitting;
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: '/dashboard' });
+    }
+  }, [isAuthenticated]);
 
   return (
-    <div className="p-2 grid gap-2 place-items-center">
-      <h3 className="text-xl">Login page</h3>
-      {search.redirect ? (
-        <p className="text-red-500">You need to login to access this page.</p>
-      ) : (
-        <p>Login and start adding events</p>
-      )}
-      <form className="mt-4 max-w-lg" onSubmit={onFormSubmit}>
-        <fieldset disabled={isLoggingIn} className="w-full grid gap-2">
-          <div className="grid gap-2 items-center min-w-[300px]">
-            <label htmlFor="username-input" className="text-sm font-medium">
-              Username
-            </label>
-            <input
-              id="username-input"
-              name="username"
-              placeholder="Enter your name"
-              type="text"
-              className="border rounded-md p-2 w-full text-black"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 px-4 rounded-md w-full disabled:bg-gray-300 disabled:text-gray-500"
-          >
-            {isLoggingIn ? 'Loading...' : 'Login'}
-          </button>
-        </fieldset>
-      </form>
+    <div className="min-h-96 flex items-center">
+      {/* Left Section - Login Form */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="w-full max-w-md  text-white p-6 rounded-lg ">
+          {isAuthenticated && user ? (
+            <div className="text-center space-y-4">
+              <h1 className="text-2xl font-bold text-green-500">Welcome, {user.name}</h1>
+              <p className="text-gray-400">You are ready to manage your events.</p>
+            </div>
+          ) : (
+            <div className="">
+              <h1 className="text-2xl font-bold mb-6">Welcome</h1>
+              <p className="text-gray-400 mb-11">
+                Log in to add live events, manage your venue&apos;s details, and connect with your audience.
+              </p>
+              <div className="w-fit">
+                <GoogleLogin onSuccess={handleSuccess} shape="pill" />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Right Section - Illustration */}
+      <div className="hidden md:flex flex-1 items-center justify-center">
+        <img
+          src={authIllustration} // Replace with your actual illustration path
+          alt="Venue Management Illustration"
+          className="max-w-lg"
+        />
+      </div>
     </div>
   );
 }
+
+export default LoginComponent;

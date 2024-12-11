@@ -1,8 +1,7 @@
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link, } from '@tanstack/react-router';
 
 import logoWithText from '@/assets/Logo-with-text.svg';
-import { useAuth } from '@/auth';
-import { Route } from '@/routes';
+import { useAuth } from '@/auth/auth';
 
 function UnauthenticatedMenu() {
   return (
@@ -40,18 +39,10 @@ function UnauthenticatedMenu() {
 }
 
 function AuthenticatedMenu() {
-  const router = useRouter();
-  const navigate = Route.useNavigate();
-  const auth = useAuth();
+  const { logout } = useAuth();
 
   function handleLogout() {
-    if (window.confirm('Are you sure you want to logout?')) {
-      auth.logout().then(() => {
-        router.invalidate().finally(() => {
-          navigate({ to: '/' });
-        });
-      });
-    }
+    logout();
   }
 
   return (
