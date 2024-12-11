@@ -1,0 +1,345 @@
+{
+  "info": {
+    "_postman_id": "venues-collection-v1",
+    "name": "Venues API",
+    "description": "Comprehensive venue management and discovery endpoints\n\n## Overview\n- Venue creation and management\n- Advanced venue search and filtering\n- Event-related venue queries\n\n### Authentication\n- Most endpoints require valid JWT\n- Different access levels for read/write operations\n\n### Query Capabilities\n- Geospatial searching\n- Advanced filtering\n- Pagination and sorting\n- Comprehensive venue details",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Venue Discovery",
+      "item": [
+        {
+          "name": "List Venues - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Venues retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const venues = pm.response.json();",
+                  "    pm.expect(venues).to.be.an('array');",
+                  "    pm.expect(venues.length).to.be.at.most(10);",
+                  "    if (venues.length > 0) {",
+                  "        pm.expect(venues[0]).to.have.property('id');",
+                  "        pm.expect(venues[0]).to.have.property('name');",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            },
+            "description": "Retrieve list of venues\n\n### Features\n- Default pagination (10 venues)\n- Basic venue information\n- Requires authentication"
+          }
+        },
+        {
+          "name": "Search Venues - Advanced",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Filtered venues retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const venues = pm.response.json();",
+                  "    pm.expect(venues).to.be.an('array');",
+                  "    venues.forEach(venue => {",
+                  "        pm.expect(venue.capacity).to.be.at.least({{minCapacity}});",
+                  "        pm.expect(venue.musicGenres).to.include('rock');",
+                  "    });",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/search?page={{currentPage}}&pageSize={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}&musicGenres=rock&minCapacity={{minCapacity}}&location={{location}}&radius={{radius}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "search"],
+              "query": [
+                {"key": "page", "value": "{{currentPage}}"},
+                {"key": "pageSize", "value": "{{pageSize}}"},
+                {"key": "sortBy", "value": "{{sortBy}}"},
+                {"key": "sortOrder", "value": "{{sortOrder}}"},
+                {"key": "musicGenres", "value": "rock"},
+                {"key": "minCapacity", "value": "{{minCapacity}}"},
+                {"key": "location", "value": "{{location}}"},
+                {"key": "radius", "value": "{{radius}}"}
+              ]
+            },
+            "description": "Advanced venue search with multiple filters\n\n### Query Parameters\n- `page`: Current page number\n- `pageSize`: Number of venues per page\n- `sortBy`: Field to sort venues\n- `sortOrder`: Sort direction\n- `musicGenres`: Filter by supported music genres\n- `minCapacity`: Minimum venue capacity\n- `location`: Geospatial search center\n- `radius`: Search radius in kilometers"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Venue Management",
+      "item": [
+        {
+          "name": "Get Venue by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Venue retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const venue = pm.response.json();",
+                  "    pm.expect(venue).to.have.property('id');",
+                  "    pm.expect(venue).to.have.property('name');",
+                  "    pm.expect(venue).to.have.property('address');",
+                  "    pm.environment.set('retrievedVenueId', venue.id);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "{{venueId}}"]
+            },
+            "description": "Retrieve detailed venue information\n\n### Features\n- Comprehensive venue details\n- Requires authentication\n- Returns full venue profile"
+          }
+        },
+        {
+          "name": "Create Venue",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Venue created successfully', function() {",
+                  "    pm.response.to.have.status(201);",
+                  "    const venue = pm.response.json();",
+                  "    pm.expect(venue).to.have.property('id');",
+                  "    pm.expect(venue.name).to.equal('Rock Haven');",
+                  "    pm.environment.set('newVenueId', venue.id);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Rock Haven\",\n    \"address\": \"123 Music Street\",\n    \"city\": \"San Francisco\",\n    \"state\": \"CA\",\n    \"country\": \"USA\",\n    \"postalCode\": \"94105\",\n    \"capacity\": 500,\n    \"musicGenres\": [\"rock\", \"alternative\"],\n    \"amenities\": [\"bar\", \"parking\", \"sound system\"],\n    \"coordinates\": {\n        \"latitude\": 37.7749,\n        \"longitude\": -122.4194\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            },
+            "description": "Create a new venue\n\n### Payload Details\n- Comprehensive venue information\n- Geospatial coordinates\n- Multiple music genres\n- Detailed amenities\n- Requires admin/venue manager authentication"
+          }
+        },
+        {
+          "name": "Update Venue",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Venue updated successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const venue = pm.response.json();",
+                  "    pm.expect(venue.name).to.equal('Updated Rock Haven');",
+                  "    pm.expect(venue.capacity).to.equal(750);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Rock Haven\",\n    \"capacity\": 750,\n    \"amenities\": [\"bar\", \"parking\", \"sound system\", \"green room\"],\n    \"musicGenres\": [\"rock\", \"alternative\", \"indie\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{venueId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "{{venueId}}"]
+            },
+            "description": "Partially update venue information\n\n### Update Capabilities\n- Change venue name\n- Modify capacity\n- Update amenities\n- Add/remove music genres\n- Requires venue manager or admin authentication"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Venue Events",
+      "item": [
+        {
+          "name": "Get Venue Events - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Venue events retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const events = pm.response.json();",
+                  "    pm.expect(events).to.be.an('array');",
+                  "    pm.expect(events.length).to.be.at.most(10);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{venueId}}/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "{{venueId}}", "events"]
+            },
+            "description": "Retrieve events for a specific venue\n\n### Features\n- Default pagination (10 events)\n- Returns basic event information\n- Requires authentication"
+          }
+        },
+        {
+          "name": "Get Venue Events - Filtered",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Filtered venue events retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const events = pm.response.json();",
+                  "    pm.expect(events).to.be.an('array');",
+                  "    events.forEach(event => {",
+                  "        pm.expect(event.status).to.equal('upcoming');",
+                  "        pm.expect(new Date(event.startDate)).to.be.above(new Date());",
+                  "    });",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/venues/{{venueId}}/events?status=upcoming&startDate={{currentDate}}&genre=rock&sortBy=startDate&sortOrder=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues", "{{venueId}}", "events"],
+              "query": [
+                {"key": "status", "value": "upcoming"},
+                {"key": "startDate", "value": "{{currentDate}}"},
+                {"key": "genre", "value": "rock"},
+                {"key": "sortBy", "value": "startDate"},
+                {"key": "sortOrder", "value": "asc"}
+              ]
+            },
+            "description": "Advanced event filtering for venue\n\n### Query Parameters\n- `status`: Filter by event status\n- `startDate`: Events from this date forward\n- `genre`: Filter by music genre\n- `sortBy`: Field to sort events\n- `sortOrder`: Sort direction"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Error Scenarios",
+      "item": [
+        {
+          "name": "Unauthorized Venue Creation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized venue creation prevented', function() {",
+                  "    pm.response.to.have.status(403);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{invalidJWT}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Unauthorized Venue\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/venues",
+              "host": ["{{baseUrl}}"],
+              "path": ["venues"]
+            },
+            "description": "Attempt to create venue with invalid authorization\n\n### Expected Behavior\n- 403 Forbidden\n- Prevents unauthorized venue creation"
+          }
+        }
+      ]
+    }
+  ]
+}

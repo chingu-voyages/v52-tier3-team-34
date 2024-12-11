@@ -1,0 +1,287 @@
+{
+  "info": {
+    "_postman_id": "users-collection-v1",
+    "name": "Users API",
+    "description": "Comprehensive user management endpoints\n\n## Overview\n- User profile management\n- User event interactions\n- Advanced querying and filtering\n\n### Authentication\n- All endpoints require valid JWT\n- Obtain JWT via Authentication API\n\n### Query Capabilities\n- Pagination\n- Sorting\n- Filtering\n- Advanced search options",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. User Management",
+      "item": [
+        {
+          "name": "List Users - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Users retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const users = pm.response.json();",
+                  "    pm.expect(users).to.be.an('array');",
+                  "    pm.expect(users.length).to.be.at.most(10);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"]
+            },
+            "description": "Retrieve list of users\n\n### Features\n- Default pagination (10 items)\n- Requires authentication\n- Returns basic user information"
+          }
+        },
+        {
+          "name": "List Users - Advanced",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Filtered users retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const users = pm.response.json();",
+                  "    pm.expect(users).to.be.an('array');",
+                  "    if (users.length > 0) {",
+                  "        pm.expect(users[0]).to.have.property('email');",
+                  "    }",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users?page={{currentPage}}&pageSize={{pageSize}}&sortBy={{sortBy}}&sortOrder={{sortOrder}}&role=artist&status=active",
+              "host": ["{{baseUrl}}"],
+              "path": ["users"],
+              "query": [
+                {"key": "page", "value": "{{currentPage}}"},
+                {"key": "pageSize", "value": "{{pageSize}}"},
+                {"key": "sortBy", "value": "{{sortBy}}"},
+                {"key": "sortOrder", "value": "{{sortOrder}}"},
+                {"key": "role", "value": "artist"},
+                {"key": "status", "value": "active"}
+              ]
+            },
+            "description": "Advanced user listing with filtering and sorting\n\n### Query Parameters\n- `page`: Current page number\n- `pageSize`: Number of items per page\n- `sortBy`: Field to sort by\n- `sortOrder`: Sort direction\n- `role`: Filter by user role\n- `status`: Filter by user status"
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. User Profile",
+      "item": [
+        {
+          "name": "Get User by ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('User retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const user = pm.response.json();",
+                  "    pm.expect(user).to.have.property('id');",
+                  "    pm.expect(user).to.have.property('email');",
+                  "    pm.environment.set('retrievedUserId', user.id);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Retrieve detailed user profile\n\n### Features\n- Returns comprehensive user information\n- Requires authentication\n- User can only retrieve own or admin-accessible profiles"
+          }
+        },
+        {
+          "name": "Update User Profile",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('User updated successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const user = pm.response.json();",
+                  "    pm.expect(user.name).to.equal('Updated Name');",
+                  "    pm.expect(user).to.have.property('updatedAt');",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Updated Name\",\n    \"profileImage\": \"https://example.com/new-profile.jpg\",\n    \"preferences\": {\n        \"musicGenres\": [\"rock\", \"jazz\"],\n        \"eventNotifications\": true\n    }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}"]
+            },
+            "description": "Partially update user profile\n\n### Update Capabilities\n- Change name\n- Update profile image\n- Modify user preferences\n- Requires authentication\n- User can only update own profile"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. User Events",
+      "item": [
+        {
+          "name": "Get User Events - Basic",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('User events retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const events = pm.response.json();",
+                  "    pm.expect(events).to.be.an('array');",
+                  "    pm.expect(events.length).to.be.at.most(10);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "events"]
+            },
+            "description": "Retrieve user's events\n\n### Features\n- Default pagination (10 events)\n- Returns basic event information\n- Requires authentication"
+          }
+        },
+        {
+          "name": "Get User Events - Filtered",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Filtered user events retrieved successfully', function() {",
+                  "    pm.response.to.have.status(200);",
+                  "    const events = pm.response.json();",
+                  "    pm.expect(events).to.be.an('array');",
+                  "    events.forEach(event => {",
+                  "        pm.expect(event.status).to.equal('upcoming');",
+                  "        pm.expect(new Date(event.startDate)).to.be.above(new Date());",
+                  "    });",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/{{userId}}/events?status=upcoming&startDate={{currentDate}}&genre=rock&sortBy=startDate&sortOrder=asc",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "{{userId}}", "events"],
+              "query": [
+                {"key": "status", "value": "upcoming"},
+                {"key": "startDate", "value": "{{currentDate}}"},
+                {"key": "genre", "value": "rock"},
+                {"key": "sortBy", "value": "startDate"},
+                {"key": "sortOrder", "value": "asc"}
+              ]
+            },
+            "description": "Advanced event filtering for user\n\n### Query Parameters\n- `status`: Filter by event status\n- `startDate`: Events from this date forward\n- `genre`: Filter by music genre\n- `sortBy`: Field to sort events\n- `sortOrder`: Sort direction"
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Error Scenarios",
+      "item": [
+        {
+          "name": "Unauthorized User Access",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Unauthorized access prevented', function() {",
+                  "    pm.response.to.have.status(403);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{JWT}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/users/999/events",
+              "host": ["{{baseUrl}}"],
+              "path": ["users", "999", "events"]
+            },
+            "description": "Attempt to access another user's events\n\n### Expected Behavior\n- 403 Forbidden\n- Prevents unauthorized data access"
+          }
+        }
+      ]
+    }
+  ]
+}

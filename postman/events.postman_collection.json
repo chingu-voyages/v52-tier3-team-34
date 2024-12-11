@@ -1,337 +1,426 @@
 {
-  "info": {
-    "_postman_id": "events-collection-v1",
-    "name": "Events API",
-    "description": "Comprehensive event management and discovery endpoints\n\n## Overview\n- Event creation and management\n- Advanced event search and filtering\n- User and venue event interactions\n\n### Authentication\n- Most endpoints require valid JWT\n- Different access levels for read/write operations\n\n### Query Capabilities\n- Complex filtering\n- Pagination and sorting\n- Geospatial event discovery",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
-  },
-  "item": [
-    {
-      "name": "0. Event Discovery",
-      "item": [
-        {
-          "name": "List Events - Basic",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Events retrieved successfully', function() {",
-                  "    pm.response.to.have.status(200);",
-                  "    const events = pm.response.json();",
-                  "    pm.expect(events).to.be.an('array');",
-                  "    pm.expect(events.length).to.be.at.most(10);",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/events",
-              "host": ["{{baseUrl}}"],
-              "path": ["events"]
-            },
-            "description": "Retrieve list of events\n\n### Features\n- Default pagination (10 events)\n- Basic event information\n- Requires authentication"
-          }
-        },
-        {
-          "name": "Search Events - Advanced",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Filtered events retrieved successfully', function() {",
-                  "    pm.response.to.have.status(200);",
-                  "    const events = pm.response.json();",
-                  "    pm.expect(events).to.be.an('array');",
-                  "    events.forEach(event => {",
-                  "        pm.expect(event.genre).to.equal('rock');",
-                  "        pm.expect(new Date(event.startDate)).to.be.above(new Date());",
-                  "    });",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/events/search?page={{currentPage}}&pageSize={{pageSize}}&genre=rock&startDate={{currentDate}}&status=upcoming&sortBy=startDate&sortOrder=asc&location={{location}}&radius={{radius}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "search"],
-              "query": [
-                {"key": "page", "value": "{{currentPage}}"},
-                {"key": "pageSize", "value": "{{pageSize}}"},
-                {"key": "genre", "value": "rock"},
-                {"key": "startDate", "value": "{{currentDate}}"},
-                {"key": "status", "value": "upcoming"},
-                {"key": "sortBy", "value": "startDate"},
-                {"key": "sortOrder", "value": "asc"},
-                {"key": "location", "value": "{{location}}"},
-                {"key": "radius", "value": "{{radius}}"}
-              ]
-            },
-            "description": "Advanced event search with multiple filters\n\n### Query Parameters\n- Pagination\n- Genre filtering\n- Date range\n- Event status\n- Sorting\n- Geospatial search"
-          }
-        }
-      ]
-    },
-    {
-      "name": "1. Event Management",
-      "item": [
-        {
-          "name": "Get Event by ID",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Event retrieved successfully', function() {",
-                  "    pm.response.to.have.status(200);",
-                  "    const event = pm.response.json();",
-                  "    pm.expect(event).to.have.property('id');",
-                  "    pm.expect(event).to.have.property('name');",
-                  "    pm.environment.set('retrievedEventId', event.id);",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/events/{{eventId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "{{eventId}}"]
-            },
-            "description": "Retrieve detailed event information"
-          }
-        },
-        {
-          "name": "Create Event",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Event created successfully', function() {",
-                  "    pm.response.to.have.status(201);",
-                  "    const event = pm.response.json();",
-                  "    pm.expect(event).to.have.property('id');",
-                  "    pm.expect(event.name).to.equal('Rock Fest 2024');",
-                  "    pm.environment.set('newEventId', event.id);",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Rock Fest 2024\",\n    \"description\": \"Annual rock music festival\",\n    \"startDate\": \"2024-08-15T19:00:00Z\",\n    \"endDate\": \"2024-08-17T23:00:00Z\",\n    \"venue\": \"{{venueId}}\",\n    \"genre\": \"rock\",\n    \"ticketPrice\": 75.00,\n    \"status\": \"upcoming\",\n    \"performers\": [\"Band A\", \"Band B\"],\n    \"maxAttendees\": 5000\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/events",
-              "host": ["{{baseUrl}}"],
-              "path": ["events"]
-            },
-            "description": "Create a new event with comprehensive details"
-          }
-        },
-        {
-          "name": "Update Event",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Event updated successfully', function() {",
-                  "    pm.response.to.have.status(200);",
-                  "    const event = pm.response.json();",
-                  "    pm.expect(event.name).to.equal('Updated Rock Fest');",
-                  "    pm.expect(event.ticketPrice).to.equal(85.00);",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "PATCH",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Updated Rock Fest\",\n    \"ticketPrice\": 85.00,\n    \"performers\": [\"Band A\", \"Band B\", \"Band C\"],\n    \"status\": \"on sale\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/events/{{eventId}}",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "{{eventId}}"]
-            },
-            "description": "Partially update event information"
-          }
-        }
-      ]
-    },
-    {
-      "name": "2. Event Interactions",
-      "item": [
-        {
-          "name": "Get Event Attendees",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Event attendees retrieved successfully', function() {",
-                  "    pm.response.to.have.status(200);",
-                  "    const attendees = pm.response.json();",
-                  "    pm.expect(attendees).to.be.an('array');",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/events/{{eventId}}/attendees",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "{{eventId}}", "attendees"]
-            },
-            "description": "Retrieve list of event attendees"
-          }
-        },
-        {
-          "name": "Register for Event",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Event registration successful', function() {",
-                  "    pm.response.to.have.status(201);",
-                  "    const registration = pm.response.json();",
-                  "    pm.expect(registration).to.have.property('registrationId');",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{JWT}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"eventId\": \"{{eventId}}\",\n    \"numberOfTickets\": 2,\n    \"specialRequirements\": \"Accessibility seating\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/events/register",
-              "host": ["{{baseUrl}}"],
-              "path": ["events", "register"]
-            },
-            "description": "Register user for an event"
-          }
-        }
-      ]
-    },
-    {
-      "name": "3. Error Scenarios",
-      "item": [
-        {
-          "name": "Unauthorized Event Creation",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Unauthorized event creation prevented', function() {",
-                  "    pm.response.to.have.status(403);",
-                  "})"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{invalidJWT}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"name\": \"Unauthorized Event\"\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/events",
-              "host": ["{{baseUrl}}"],
-              "path": ["events"]
-            },
-            "description": "Attempt to create event with invalid authorization"
-          }
-        }
-      ]
-    }
-  ]
-}
+	"info": {
+		"_postman_id": "e5f3f8a0-5b1a-4b1c-9c1d-8b5f8b5f8b5f",
+		"name": "Events API",
+		"description": "Collection for testing the Events API endpoints including basic operations, geospatial queries, and error scenarios",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Basic Operations",
+			"item": [
+				{
+					"name": "Get All Events",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Event by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Summer Music Festival\",\n    \"description\": \"A fantastic summer music festival featuring local artists\",\n    \"startDate\": \"2024-07-15T18:00:00.000Z\",\n    \"endDate\": \"2024-07-15T23:00:00.000Z\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\",\n    \"capacity\": 500,\n    \"price\": 25.00,\n    \"tags\": [\"music\", \"festival\", \"summer\"],\n    \"status\": \"upcoming\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Event",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Summer Music Festival\",\n    \"capacity\": 600,\n    \"price\": 30.00\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Event",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/{{eventId}}",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "{{eventId}}"],
+							"variable": [
+								{
+									"key": "eventId",
+									"value": "65c3a2f156e4c5920f1811de"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Geospatial Operations",
+			"item": [
+				{
+					"name": "Find Events Near Location",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/near?lat=40.7128&lng=-74.0060&maxDistance=10000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7128"
+								},
+								{
+									"key": "lng",
+									"value": "-74.0060"
+								},
+								{
+									"key": "maxDistance",
+									"value": "10000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Events in Radius (Times Square)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/near?lat=40.7580&lng=-73.9855&maxDistance=5000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7580"
+								},
+								{
+									"key": "lng",
+									"value": "-73.9855"
+								},
+								{
+									"key": "maxDistance",
+									"value": "5000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Events in Radius (Central Park)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/near?lat=40.7829&lng=-73.9654&maxDistance=2000",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "40.7829"
+								},
+								{
+									"key": "lng",
+									"value": "-73.9654"
+								},
+								{
+									"key": "maxDistance",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Error Scenarios",
+			"item": [
+				{
+					"name": "Get Invalid Event ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Event not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/invalid_id",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "invalid_id"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event - Missing Required Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error message is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"validation failed\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Missing required fields\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Event - Invalid Date Format",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Date validation error is present\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"date\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Invalid Date Event\",\n    \"description\": \"Event with invalid date format\",\n    \"startDate\": \"invalid-date\",\n    \"endDate\": \"2024-13-45\",\n    \"venue\": \"65c3a2f156e4c5920f1811df\",\n    \"category\": \"Music\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Non-existent Event",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Error message is correct\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Event not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Updated Title\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/events/65c3a2f156e4c5920f1811ff",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "65c3a2f156e4c5920f1811ff"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Invalid Geospatial Query",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Validation error for coordinates\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"coordinates\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/events/near?lat=invalid&lng=invalid",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "events", "near"],
+							"query": [
+								{
+									"key": "lat",
+									"value": "invalid"
+								},
+								{
+									"key": "lng",
+									"value": "invalid"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3000",
+			"type": "string"
+		}
+	]
+} 
