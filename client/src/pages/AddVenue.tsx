@@ -2,16 +2,20 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Building2, Mail, Phone, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { createVenue } from '@/api/venues';
-import { useUsers } from '@/hooks/useUsers';
+import { useAuth } from '@/auth/auth';
 import { generateExampleVenue } from '@/utils';
 import { VenueFormData, venueSchema } from '@/validations/venueValidation';
 
 export default function AddVenue() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  if (!user?.id || !user) {
+    return null;
+  }
   const {
     register,
     handleSubmit,
@@ -25,17 +29,6 @@ export default function AddVenue() {
       images: ['']
     }
   });
-
-  const [firstUserId, setFirstUserId] = useState<string>('1');
-  const { data } = useUsers();
-  const users = data?.data;
-
-  useEffect(() => {
-    if (users) {
-      const fisrtUserId = users[0].id.toString();
-      setFirstUserId(fisrtUserId);
-    }
-  }, [data]);
 
   function handleFillExample() {
     const exampleData = generateExampleVenue();
@@ -55,10 +48,8 @@ export default function AddVenue() {
   });
 
   function onSubmit(data: VenueFormData) {
-    const userId = Number(firstUserId);
+    const userId = Number(user?.id);
     const venueData = { ...data, userId };
-    console.log('Venue data submitted: ', venueData);
-
     mutation.mutate(venueData);
   }
 
@@ -70,52 +61,49 @@ export default function AddVenue() {
         </div>
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Register New Venue</h1>
-          <h2 className="bg-yellow-300 text-red-600 w-fit px-2">
-            Active userId: <span className="font-bold">{firstUserId}</span>
-          </h2>
+          <h2 className="bg-yellow-300 text-red-600 w-fit px-2"></h2>
         </div>
       </div>
 
       <button
         type="button"
         onClick={handleFillExample}
-        className="flex items-center gap-2 mb-5 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+        className="flex items-center absolute right-3 top-36 opacity-5 hover:opacity-60 gap-2 mb-5 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
       >
         <Wand2 size={20} />
-        Fill Example Data
       </button>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Basic Information */}
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Venue Name</label>
+            <label className="block text-sm font-medium  mb-1">Venue Name</label>
             <input
               {...register('name')}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter venue name"
             />
             {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium  mb-1">Description</label>
             <textarea
               {...register('description')}
               rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter venue description"
             />
             {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+            <label className="block text-sm font-medium  mb-1">Address</label>
             <div className="relative">
               <MapPin className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <input
                 {...register('address')}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 text-black pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter venue address"
               />
             </div>
@@ -124,17 +112,17 @@ export default function AddVenue() {
         </div>
 
         {/* Contact Information */}
-        <div className="space-y-4">
+        <div className="space-y-4 ">
           <h2 className="text-lg font-semibold">Contact Information</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium  mb-1">Email</label>
             <div className="relative">
               <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <input
                 {...register('contact.email')}
                 type="email"
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter contact email"
               />
             </div>
@@ -142,12 +130,12 @@ export default function AddVenue() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+            <label className="block text-sm font-medium  mb-1">Phone</label>
             <div className="relative">
               <Phone className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <input
                 {...register('contact.phone')}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter contact phone"
               />
             </div>
@@ -161,24 +149,24 @@ export default function AddVenue() {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Latitude</label>
+              <label className="block text-sm font-medium  mb-1">Latitude</label>
               <input
                 {...register('coordinates.lat', { valueAsNumber: true })}
                 type="number"
                 step="any"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter latitude"
               />
               {errors.coordinates?.lat && <p className="mt-1 text-sm text-red-600">{errors.coordinates.lat.message}</p>}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Longitude</label>
+              <label className="block text-sm font-medium  mb-1">Longitude</label>
               <input
                 {...register('coordinates.lng', { valueAsNumber: true })}
                 type="number"
                 step="any"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full text-black px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter longitude"
               />
               {errors.coordinates?.lng && <p className="mt-1 text-sm text-red-600">{errors.coordinates.lng.message}</p>}
@@ -191,12 +179,12 @@ export default function AddVenue() {
           <h2 className="text-lg font-semibold">Venue Images</h2>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <label className="block text-sm font-medium  mb-1">Image URL</label>
             <div className="relative">
               <ImageIcon className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
               <input
                 {...register('images.0')}
-                className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-10 pr-3 text-black py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="Enter image URL"
               />
             </div>
