@@ -2,6 +2,7 @@ import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
+import authIllustration from '@/assets/Authentication.svg';
 import { useAuth } from '@/auth/auth';
 
 export const Route = createFileRoute('/login')({
@@ -28,19 +29,36 @@ function LoginComponent() {
   }, [isAuthenticated]);
 
   return (
-    <div className="min-h-96 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8 p-8  transition-all duration-300">
-        <div className="text-center">
-          {isAuthenticated && user?.name && (
+    <div className="min-h-96 flex items-center">
+      {/* Left Section - Login Form */}
+      <div className="flex-1 flex flex-col items-center justify-center p-8">
+        <div className="w-full max-w-md  text-white p-6 rounded-lg ">
+          {isAuthenticated && user ? (
             <div className="text-center space-y-4">
-              <p className="text-xl text-gray-300 font-semibold">You are logged in</p>
-              <p className="text-3xl text-green-600 font-semibold">Access Granted</p>
-              <p className="text-gray-600">Welcome, {user.name}</p>
+              <h1 className="text-2xl font-bold text-green-500">Welcome, {user.name}</h1>
+              <p className="text-gray-400">You are ready to manage your events.</p>
+            </div>
+          ) : (
+            <div className="">
+              <h1 className="text-2xl font-bold mb-6">Welcome</h1>
+              <p className="text-gray-400 mb-11">
+                Log in to add live events, manage your venue&apos;s details, and connect with your audience.
+              </p>
+              <div className="w-fit">
+                <GoogleLogin onSuccess={handleSuccess} shape="pill" />
+              </div>
             </div>
           )}
         </div>
+      </div>
 
-        <div className="flex justify-center">{!user && <GoogleLogin onSuccess={handleSuccess} shape="pill" />}</div>
+      {/* Right Section - Illustration */}
+      <div className="hidden md:flex flex-1 items-center justify-center">
+        <img
+          src={authIllustration} // Replace with your actual illustration path
+          alt="Venue Management Illustration"
+          className="max-w-lg"
+        />
       </div>
     </div>
   );
