@@ -1,11 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
 import type { ViewState } from '@vis.gl/react-maplibre';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import Select from 'react-select';
 import { SingleValue } from 'react-select';
-import { z } from 'zod';
 
 import { useZones } from '@/hooks/useZones';
 import { City, SelectCity } from '@/types/city';
@@ -14,62 +13,84 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import { cities, formatCitiesForSelect } from '@/utils';
 
 export const Route = createFileRoute('/map')({
-  validateSearch: z.object({
-    lat: z.coerce.number().min(-90).max(90).optional().default(40.758),
-    lng: z.coerce.number().min(-180).max(180).optional().default(-73.9855),
-    radius: z.coerce.number().positive().max(50).optional().default(20)
-  }),
   component: MapComponent
 });
 
 function MapComponent() {
-  const searchParams = Route.useSearch();
   const mapRef = useRef<MapRef | null>(null);
 
   const [selectedCity, setSelectedCity] = useState<{ lat: number; lng: number }>({
-    lat: searchParams.lat,
-    lng: searchParams.lng
+    lat: 41.390205,
+    lng: 2.154007
   });
 
   const [viewState, setViewState] = useState<ViewState>({
-    longitude: searchParams.lng, //default cetre
-    latitude: searchParams.lat, //default centre
-    zoom: 12, // initial zoom test
-    pitch: 0, //must be included
-    bearing: 0, //must be included
-    padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
+    longitude: 2.154007,
+    latitude: 41.390205,
+    zoom: 1,
+    pitch: 0,
+    bearing: 0,
+    padding: { top: 0, right: 0, bottom: 0, left: 0 }
   });
 
-  const { data, isLoading, error, isError } = useZones(selectedCity.lat, selectedCity.lng, searchParams.radius);
+  const { data, isLoading, error, isError } = useZones(selectedCity.lat, selectedCity.lng, 50);
 
   const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
 
   const bigCities: City[] = cities;
   const formattedCities: SelectCity[] = formatCitiesForSelect(bigCities);
 
-  if (isLoading) return <div>Loading map...</div>;
-  if (isError) return <div>Error loading zones: {error.message}</div>;
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser.');
+      return;
+    }
+  
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+  
+        // Update viewState to reflect user location
+        setViewState({
+          ...viewState,
+          latitude,
+          longitude,
+          zoom: 12, // Adjust zoom for user location
+        });
+  
+        // Fly to user location using Mapbox instance
+        if (mapRef.current) {
+          const mapInstance = mapRef.current.getMap();
+          mapInstance.flyTo({
+            center: [longitude, latitude],
+            zoom: 12,
+            speed: 1.2,
+            curve: 1.5,
+          });
+        }
+      },
+      (err) => {
+        console.error('Error fetching location:', err.message);
+      }
+    );
+  }, []); 
 
   function handleCityChange(newValue: SingleValue<SelectCity>) {
     if (!newValue || !mapRef.current) return;
 
     const { lat, lng } = newValue.value;
 
-    // Fly to the new location
     const mapInstance = mapRef.current.getMap();
     mapInstance.flyTo({
       center: [lng, lat],
-      zoom: 12,
+      zoom: 10,
       speed: 1.2,
       curve: 1.5
     });
 
-    // Wait for the animation to complete using the moveend event
     function handleMoveEnd() {
-      console.log('FlyTo animation completed');
-      // Update selected city immediately for consistency
       setSelectedCity({ lat, lng });
-      mapInstance.off('moveend', handleMoveEnd); // Cleanup the event listener
+      mapInstance.off('moveend', handleMoveEnd);
     }
 
     mapInstance.on('moveend', handleMoveEnd);
@@ -86,6 +107,9 @@ function MapComponent() {
     }
     return acc;
   }, []);
+
+  if (isLoading) return <div>Loading map...</div>;
+  if (isError) return <div>Error loading zones: {error.message}</div>;
 
   return (
     <div className="p-2 min-h-screen">
@@ -110,46 +134,34 @@ function MapComponent() {
       >
         <NavigationControl />
         <GeolocateControl />
-        {venues.map((venue) => {
-          return (
-            <div key={`marker-wrapper-${venue.id}`}>
-              <Marker
+        {venues.map((venue) => (
+          <div key={`marker-wrapper-${venue.id}`}>
+            <Marker
+              longitude={venue.coordinates.lng}
+              latitude={venue.coordinates.lat}
+              onClick={() => setActiveVenue(venue)}
+              style={{ cursor: 'pointer' }}
+            />
+            {activeVenue && activeVenue.id === venue.id && (
+              <Popup
                 longitude={venue.coordinates.lng}
                 latitude={venue.coordinates.lat}
-                onClick={() => {
-                  console.log('Marker clicked:', venue); // Logs the feature data
-                  setActiveVenue(venue);
-                }}
-                style={{ cursor: 'pointer' }}
-              ></Marker>
-              {activeVenue && activeVenue.id === venue.id && (
-                <Popup
-                  longitude={venue.coordinates.lng}
-                  latitude={venue.coordinates.lat}
-                  anchor="bottom"
-                  offset={[0, 1]}
-                  onClose={() => {
-                    console.log('Popup closed for:', activeVenue); // Logs when the popup is closed
-                    setActiveVenue(null);
-                  }}
-                  closeOnClick={false}
-                  closeButton={false}
-                >
-                  <ClickAwayListener
-                    onClickAway={() => {
-                      setActiveVenue(null);
-                    }}
-                  >
-                    <div className="bg-white p-4 max-w-xs">
-                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{venue.name}</h3>
-                      <p className="text-sm text-gray-700 mb-4">{venue.description}</p>
-                    </div>
-                  </ClickAwayListener>
-                </Popup>
-              )}
-            </div>
-          );
-        })}
+                anchor="bottom"
+                offset={[0, 1]}
+                onClose={() => setActiveVenue(null)}
+                closeOnClick={false}
+                closeButton={false}
+              >
+                <ClickAwayListener onClickAway={() => setActiveVenue(null)}>
+                  <div className="bg-white p-4 max-w-xs">
+                    <h3 className="text-lg font-semibold mb-2 text-blue-600">{venue.name}</h3>
+                    <p className="text-sm text-gray-700 mb-4">{venue.description}</p>
+                  </div>
+                </ClickAwayListener>
+              </Popup>
+            )}
+          </div>
+        ))}
       </Map>
     </div>
   );
