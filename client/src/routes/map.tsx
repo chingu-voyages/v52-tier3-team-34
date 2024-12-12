@@ -3,12 +3,15 @@ import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from 
 import type { ViewState } from '@vis.gl/react-maplibre';
 import { useState, useRef } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
+import Select from 'react-select';
+import { SingleValue, ActionMeta } from 'react-select';
 import { z } from 'zod';
 
 import { useZones } from '@/hooks/useZones';
+import { City, SelectCity } from '@/types/city';
 import { ZoneResponse, Venue, ZoneData } from '@/types/zones';
-
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { cities, formatCitiesForSelect } from '@/utils';
 
 export const Route = createFileRoute('/map')({
   validateSearch: z.object({
@@ -23,8 +26,6 @@ function MapComponent() {
   const searchParams = Route.useSearch();
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data, isLoading, error, isError } = useZones(searchParams.lat, searchParams.lng, searchParams.radius);
-
   const [viewState, setViewState] = useState<ViewState>({
     longitude: searchParams.lng, //default cetre
     latitude: searchParams.lat, //default centre
@@ -34,13 +35,33 @@ function MapComponent() {
     padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
   });
 
+  const { data, isLoading, error, isError } = useZones(viewState.latitude, viewState.longitude, searchParams.radius);
+
   const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
+
+  const bigCities: City[] = cities;
+  const formattedCities: SelectCity[] = formatCitiesForSelect(bigCities);
 
   if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
   if (!data) {
     return null;
+  }
+
+  function handleCityChange(newValue: SingleValue<SelectCity>, actionMeta: ActionMeta<SelectCity>) {
+    if (!newValue) return; // Handle null case (e.g., when cleared)
+
+    const { lat, lng } = newValue.value;
+
+    // Update viewState to focus the map on the new city
+    setViewState((prev) => ({
+      ...prev,
+      latitude: lat,
+      longitude: lng
+    }));
+
+    console.log('City selected:', newValue.label, 'Action:', actionMeta.action);
   }
 
   const zoneResponse: ZoneResponse = data;
@@ -59,6 +80,18 @@ function MapComponent() {
 
   return (
     <div className="p-2 min-h-screen">
+      <div>
+        {/* City Selector */}
+        <Select
+          className="text-black mb-6"
+          options={formattedCities}
+          onChange={handleCityChange}
+          getOptionLabel={(e) => e.label}
+          getOptionValue={(e) => `${e.value.lat}-${e.value.lng}`}
+          placeholder="Search and select a city..."
+          isClearable
+        />
+      </div>
       <Map
         {...viewState}
         ref={mapRef}
