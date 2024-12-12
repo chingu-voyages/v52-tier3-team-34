@@ -4,7 +4,7 @@ import type { ViewState } from '@vis.gl/react-maplibre';
 import { useState, useRef } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
 import Select from 'react-select';
-import { SingleValue, ActionMeta } from 'react-select';
+import { SingleValue } from 'react-select';
 import { z } from 'zod';
 
 import { useZones } from '@/hooks/useZones';
@@ -26,6 +26,11 @@ function MapComponent() {
   const searchParams = Route.useSearch();
   const mapRef = useRef<MapRef | null>(null);
 
+  const [selectedCity, setSelectedCity] = useState<{ lat: number; lng: number }>({
+    lat: searchParams.lat,
+    lng: searchParams.lng
+  });
+
   const [viewState, setViewState] = useState<ViewState>({
     longitude: searchParams.lng, //default cetre
     latitude: searchParams.lat, //default centre
@@ -35,7 +40,7 @@ function MapComponent() {
     padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
   });
 
-  const { data, isLoading, error, isError } = useZones(viewState.latitude, viewState.longitude, searchParams.radius);
+  const { data, isLoading, error, isError } = useZones(selectedCity.lat, selectedCity.lng, searchParams.radius);
 
   const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
 
@@ -49,19 +54,23 @@ function MapComponent() {
     return null;
   }
 
-  function handleCityChange(newValue: SingleValue<SelectCity>, actionMeta: ActionMeta<SelectCity>) {
-    if (!newValue) return; // Handle null case (e.g., when cleared)
+  function handleCityChange(newValue: SingleValue<SelectCity>) {
+    if (!newValue || !mapRef.current) return;
 
     const { lat, lng } = newValue.value;
 
-    // Update viewState to focus the map on the new city
-    setViewState((prev) => ({
-      ...prev,
-      latitude: lat,
-      longitude: lng
-    }));
+    // Update selected city first
+    setSelectedCity({ lat, lng });
 
-    console.log('City selected:', newValue.label, 'Action:', actionMeta.action);
+    // Fly to the new location
+    mapRef.current.flyTo({
+      center: [lng, lat],
+      zoom: 12,
+      speed: 1.2,
+      curve: 1.5
+    });
+
+    console.log('City selected:', newValue.label);
   }
 
   const zoneResponse: ZoneResponse = data;
@@ -74,9 +83,6 @@ function MapComponent() {
     }
     return acc;
   }, []);
-
-  console.log('Venues: ', venues);
-  console.log('zone response: ', zoneResponse);
 
   return (
     <div className="p-2 min-h-screen">
