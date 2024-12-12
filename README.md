@@ -8,7 +8,7 @@ Imagine wandering through a vibrant city on a crisp evening, craving the soul-st
 
 ![Live Music Finder Banner](LiveMusicFinderBanner.webp)
 
-*This application was developed as a learning project for Chingu Voyage 51.*
+*This application was developed as a learning project for Chingu Voyage 52.*
 
 ### ✨ Key Features
 
