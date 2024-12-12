@@ -52,6 +52,7 @@
     "react-click-away-listener": "^2.2.3",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.53.2",
+    "react-select": "^5.9.0",
     "zod": "^3.23.8"
   }
 }
