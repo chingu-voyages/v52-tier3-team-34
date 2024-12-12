@@ -45,19 +45,19 @@ function MapComponent() {
       console.error('Geolocation is not supported by this browser.');
       return;
     }
-  
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-  
+
         // Update viewState to reflect user location
         setViewState({
           ...viewState,
           latitude,
           longitude,
-          zoom: 12, // Adjust zoom for user location
+          zoom: 12 // Adjust zoom for user location
         });
-  
+
         // Fly to user location using Mapbox instance
         if (mapRef.current) {
           const mapInstance = mapRef.current.getMap();
@@ -65,7 +65,7 @@ function MapComponent() {
             center: [longitude, latitude],
             zoom: 12,
             speed: 1.2,
-            curve: 1.5,
+            curve: 1.5
           });
         }
       },
@@ -73,7 +73,7 @@ function MapComponent() {
         console.error('Error fetching location:', err.message);
       }
     );
-  }, []); 
+  }, []);
 
   function handleCityChange(newValue: SingleValue<SelectCity>) {
     if (!newValue || !mapRef.current) return;
@@ -96,6 +96,21 @@ function MapComponent() {
     mapInstance.on('moveend', handleMoveEnd);
 
     console.log('City selected:', newValue.label);
+  }
+
+  function handleGeolocate(position: GeolocationPosition) {
+    const { latitude, longitude } = position.coords;
+
+    // Update selected city to trigger data fetching
+    setSelectedCity({ lat: latitude, lng: longitude });
+
+    // Update viewState for consistency
+    setViewState((prev) => ({
+      ...prev,
+      latitude,
+      longitude,
+      zoom: 12
+    }));
   }
 
   const zoneResponse: ZoneResponse | null = data || null;
@@ -133,7 +148,7 @@ function MapComponent() {
         mapStyle="https://tiles.openfreemap.org/styles/liberty"
       >
         <NavigationControl />
-        <GeolocateControl />
+        <GeolocateControl onGeolocate={handleGeolocate} />
         {venues.map((venue) => (
           <div key={`marker-wrapper-${venue.id}`}>
             <Marker
