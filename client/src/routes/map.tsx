@@ -1,110 +1,183 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Link } from '@tanstack/react-router';
 import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
 import type { ViewState } from '@vis.gl/react-maplibre';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import ClickAwayListener from 'react-click-away-listener';
-import { z } from 'zod';
+import Select from 'react-select';
+import { SingleValue } from 'react-select';
 
 import { useZones } from '@/hooks/useZones';
-import { ZoneResponse, ZoneFeature } from '@/types/zones';
-
+import { City, SelectCity } from '@/types/city';
+import { ZoneResponse, Venue, ZoneData } from '@/types/zones';
 import 'maplibre-gl/dist/maplibre-gl.css';
+import { cities, formatCitiesForSelect } from '@/utils';
 
 export const Route = createFileRoute('/map')({
-  validateSearch: z.object({
-    lat: z.coerce.number().min(-90).max(90).optional().default(40.758),
-    lng: z.coerce.number().min(-180).max(180).optional().default(-73.9855),
-    radius: z.coerce.number().positive().max(50).optional().default(20)
-  }),
   component: MapComponent
 });
 
 function MapComponent() {
-  const searchParams = Route.useSearch();
   const mapRef = useRef<MapRef | null>(null);
 
-  const { data, isLoading, error, isError } = useZones(searchParams.lat, searchParams.lng, searchParams.radius);
-
-  const [viewState, setViewState] = useState<ViewState>({
-    longitude: searchParams.lng, //default cetre
-    latitude: searchParams.lat, //default centre
-    zoom: 12, // initial zoom test
-    pitch: 0, //must be included
-    bearing: 0, //must be included
-    padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
+  const [selectedCity, setSelectedCity] = useState<{ lat: number; lng: number }>({
+    lat: 41.390205,
+    lng: 2.154007
   });
 
-  const [activeEvent, setActiveEvent] = useState<ZoneFeature | null>(null);
+  const [viewState, setViewState] = useState<ViewState>({
+    longitude: 2.154007,
+    latitude: 41.390205,
+    zoom: 1,
+    pitch: 0,
+    bearing: 0,
+    padding: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
+
+  const { data, isLoading, error, isError } = useZones(selectedCity.lat, selectedCity.lng, 50);
+
+  const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
+
+  const bigCities: City[] = cities;
+  const formattedCities: SelectCity[] = formatCitiesForSelect(bigCities);
+
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+
+        // Update viewState to reflect user location
+        setViewState({
+          ...viewState,
+          latitude,
+          longitude,
+          zoom: 12 // Adjust zoom for user location
+        });
+
+        // Fly to user location using Mapbox instance
+        if (mapRef.current) {
+          const mapInstance = mapRef.current.getMap();
+          mapInstance.flyTo({
+            center: [longitude, latitude],
+            zoom: 12,
+            speed: 1.2,
+            curve: 1.5
+          });
+        }
+      },
+      (err) => {
+        console.error('Error fetching location:', err.message);
+      }
+    );
+  }, []);
+
+  function handleCityChange(newValue: SingleValue<SelectCity>) {
+    if (!newValue || !mapRef.current) return;
+
+    const { lat, lng } = newValue.value;
+
+    const mapInstance = mapRef.current.getMap();
+    mapInstance.flyTo({
+      center: [lng, lat],
+      zoom: 10,
+      speed: 1.2,
+      curve: 1.5
+    });
+
+    function handleMoveEnd() {
+      setSelectedCity({ lat, lng });
+      mapInstance.off('moveend', handleMoveEnd);
+    }
+
+    mapInstance.on('moveend', handleMoveEnd);
+
+    console.log('City selected:', newValue.label);
+  }
+
+  function handleGeolocate(position: GeolocationPosition) {
+    const { latitude, longitude } = position.coords;
+
+    // Update selected city to trigger data fetching
+    setSelectedCity({ lat: latitude, lng: longitude });
+
+    // Update viewState for consistency
+    setViewState((prev) => ({
+      ...prev,
+      latitude,
+      longitude,
+      zoom: 12
+    }));
+  }
+
+  const zoneResponse: ZoneResponse | null = data || null;
+  const zoneData: ZoneData[] = zoneResponse?.data || [];
+  const venues: Venue[] = zoneData.reduce((acc: Venue[], item) => {
+    const venue = item.event.venue;
+    if (!acc.some((v) => v.id === venue.id)) {
+      acc.push(venue);
+    }
+    return acc;
+  }, []);
 
   if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
-  const zoneResponse = data as ZoneResponse;
-  const features: ZoneFeature[] = zoneResponse.data.features || [];
-
   return (
     <div className="p-2 min-h-screen">
+      <div>
+        {/* City Selector */}
+        <Select
+          className="text-black mb-6"
+          options={formattedCities}
+          onChange={handleCityChange}
+          getOptionLabel={(e) => e.label}
+          getOptionValue={(e) => `${e.value.lat}-${e.value.lng}`}
+          placeholder="Search and select a city..."
+          isClearable
+        />
+      </div>
       <Map
         {...viewState}
         ref={mapRef}
         style={{ width: '100%', height: '80vh' }}
         onMove={(e) => setViewState(e.viewState)}
-        mapStyle="https://tiles.openfreemap.org/styles/positron"
+        mapStyle="https://tiles.openfreemap.org/styles/liberty"
       >
         <NavigationControl />
-        <GeolocateControl />
-        {features.map((feature) => {
-          return (
-            <div key={`marker-wrapper-${feature.properties.id}`}>
-              <Marker
-                key={feature.properties.id}
-                longitude={feature.geometry.coordinates[0]}
-                latitude={feature.geometry.coordinates[1]}
-                onClick={() => {
-                  console.log('Marker clicked:', feature); // Logs the feature data
-                  setActiveEvent(feature);
-                }}
-                // anchor="bottom"
-                style={{ cursor: 'pointer' }}
-              ></Marker>
-              {activeEvent ? (
-                <Popup
-                  key={activeEvent.properties.id}
-                  longitude={activeEvent.geometry.coordinates[0]}
-                  latitude={activeEvent.geometry.coordinates[1]}
-                  anchor="bottom"
-                  offset={[0, 1]}
-                  onClose={() => {
-                    console.log('Popup closed for:', activeEvent); // Logs when the popup is closed
-                    setActiveEvent(null);
-                  }}
-                  closeOnClick={false}
-                  closeButton={false}
-                >
-                  <ClickAwayListener
-                    onClickAway={() => {
-                      setActiveEvent(null);
-                    }}
-                  >
-                    <div className="bg-white p-4 max-w-xs">
-                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{activeEvent.properties.title}</h3>
-                      <p className="text-sm text-gray-700 mb-4">{activeEvent.properties.description}</p>
-                      <div className="text-sm text-gray-500">
-                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
-                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
-                      </div>
-                    </div>
-                  </ClickAwayListener>
-                </Popup>
-              ) : null}
-            </div>
-          );
-        })}
+        <GeolocateControl onGeolocate={handleGeolocate} />
+        {venues.map((venue) => (
+          <div key={`marker-wrapper-${venue.id}`}>
+            <Marker
+              longitude={venue.coordinates.lng}
+              latitude={venue.coordinates.lat}
+              onClick={() => setActiveVenue(venue)}
+              style={{ cursor: 'pointer' }}
+            />
+            {activeVenue && activeVenue.id === venue.id && (
+              <Popup
+                longitude={venue.coordinates.lng}
+                latitude={venue.coordinates.lat}
+                anchor="bottom"
+                offset={[0, 1]}
+                onClose={() => setActiveVenue(null)}
+                closeOnClick={false}
+                closeButton={false}
+              >
+                <ClickAwayListener onClickAway={() => setActiveVenue(null)}>
+                  <div className="bg-white p-4 max-w-xs">
+                    <h3 className="text-lg font-semibold mb-2 text-blue-600">{venue.name}</h3>
+                    <p className="text-sm text-gray-700 mb-4">{venue.description}</p>
+                  </div>
+                </ClickAwayListener>
+              </Popup>
+            )}
+          </div>
+        ))}
       </Map>
-      <Link to="/" className="mt-4 text-blue-500 underline">
-        View List
-      </Link>
     </div>
   );
 }
