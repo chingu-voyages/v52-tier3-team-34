@@ -27,7 +27,6 @@ export default function Home() {
         <div className="space-y-4 w-full min-w-48">
           <Link
             to="/map"
-            search={{ lat: 41.390205, lng: 2.154007, radius: 20 }}
             className="relative w-full block group"
           >
             {/* Background div with blur and color shift effect */}
