@@ -1,90 +1,143 @@
-# Live Music Finder - MVP
-(README is a WIP)
-## Table of Contents
+# 🎵 Live Music Finder 🌃
 
-- [Overview](#overview)
-- [General Instructions](#general-instructions)
-- [Requirements & Specifications](#requirements--specifications)
-- [Acknowledgements](#acknowledgements)
-- [About This Project](#about-this-project)
+## Discover Live Music in Real-Time, Right Now!
 
-## Overview
+### 🎸 What is Live Music Finder?
 
-Imagine it’s evening, and you’re in a bustling city, searching for a cozy bar with live blues, jazz, or flamenco music playing. This application, **Live Music Finder**, is designed for people who want to discover venues with live music happening in real time, without the wait associated with big concert events. This web-based MVP allows users to see which places have live music right now, or in the near future.
+Imagine wandering through a vibrant city on a crisp evening, craving the soul-stirring sounds of live blues, the improvisational magic of jazz, or the passionate rhythms of flamenco. **Live Music Finder** is your ultimate companion to spontaneous musical adventures.
 
-The application supports two main roles:
+![Live Music Finder Banner](LiveMusicFinderBanner.webp)
 
-- **User (Client)**: Can view locations with live music on a map, filter events by start time, and access basic event details.
-- **Venue Owner**: Can register their venue, set map coordinates, upload at least one picture of their bar, and create events for their venue.
+*This application was developed as a learning project for Chingu Voyage 52.*
 
+### ✨ Key Features
 
-## Requirements & Specifications
+- **Real-Time Music Discovery**: Find live music venues happening right now or in the near future
+- **Interactive City Map**: Explore musical hotspots with an intuitive, user-friendly interface
+- **Dual-Purpose Platform**:
+  - **For Music Lovers**: Instantly discover where live music is playing
+  - **For Venue Owners**: Easily showcase your live music events to eager audiences
+ 
+### Deployed App 
+[Live Music Finder](https://v52-tier3-team-34-1.onrender.com/)
 
-### Structure
+### 🚀 Quick Start
 
-- [ ] This is a full-stack application, with both frontend and backend components.
-- [ ] You may use any preferred languages, tools, or libraries for the app’s design and functionality.
+```bash
+# Clone the repository
+git clone https://github.com/your-username/live-music-finder.git
 
-### Functionality
+# Navigate to the project directory
+cd live-music-finder
 
-#### User (Client) Interface
+# Install dependencies on client and server folders
+npm install
 
-- **Map View of Live Music Locations**
-  - [ ] Display a real-time map showing venues with live music.
-  - [ ] Allow users to click a venue to see basic details: event genre, artist name, start time, and entry status (e.g., free or paid).
-- **Event Time Filters**
-  - [ ] Include a slider to filter events by start time (e.g., “Now,” “In 1 Hour,” “In 2 Hours”).
+# Run the development server on client and server folders
+npm run dev
+```
+
+### 🔑 Main Functionalities
+
+#### User (Client) Experience
+- Browse live music venues on an interactive map
+- Filter events by start time
+- View detailed event information
+
+#### Venue Owner Experience
+- Register your venue
+- Set precise map coordinates
+- Upload venue images
+- Create and manage live music events
+
+### 🛠 Tech Stack
+
+- **Frontend**: 
+* React with TypeScript
+
+* ViteJS as Build Tool
+
+* CSS Tailwind
   
-#### Venue (Owner) Interface
+- **Backend**:
+* Node.JS with TypeScript
 
-- **Venue Registration**
-  - [ ] Enable owners to register their bar, set its map coordinates, and add contact information.
-- **Venue Details Management**
-  - [ ] Allow venue owners to upload at least one image of the bar and provide a description.
-- **Event Creation**
-  - [ ] Allow venue owners to create and manage events for their venue, including details such as event genre, start time, and any entry fees.
+* Express as API framework
+
+* Prisma as ORM
+
+* PostgreSQL as database
+
+* Zod for validation
   
-#### Backend Essentials
+* Jest for testing
 
-- **User Authentication**
-  - [ ] Implement basic login for users and venue owners.
-- **Database**
-  - [ ] Set up a database to store venue details, events, and user data.
+**Check [this documentation](server/README.md) to know all about how to get the back-end started on your local machine.**
+  
+- **Authentication**: Google OAuth
 
-### Styling
+### 📡 Live Music Finder API Documentation
 
-- [ ] Use your team’s creativity to make this app distinctive.
-- [ ] Ensure the application has a responsive design, with consistent display across devices (desktop, tablet, mobile).
-- [ ] Add a footer containing a link to your team’s GitHub repository.
+Deployed API url : https://v52-tier3-team-34.onrender.com/api/v1/
 
-### Acceptance Criteria
+#### Postman Collections
+[This directory](postman/README.mdcontains) contains Postman collections for testing the Live Music Finder API, organized into authentication, events, venues, and user management endpoints.
 
-#### User (Client) Interface
+#### 🎵 Venue Endpoints
 
-- [ ] Users can view live music events on a map, filtered by event time.
-- [ ] Users can access basic event details when clicking on a venue.
+* GET /venues 🗺️ List all venues
+* POST /venues 🏠 Create a new venue
+* GET /venues/{venueId} 🔍 Get venue details
+* PUT /venues/{venueId} ✏️ Update venue information
+* DELETE /venues/{venueId} 🗑️ Delete a venue
 
-#### Venue Interface
+#### 🎸 Event Endpoints
 
-- [ ] Venue owners can register their venue and upload at least one image.
-- [ ] Venue owners can create events and manage event details.
+* GET /events 📅 List all events
+* POST /events 🎉 Create a new event
+* GET /events/{eventId} 🔎 Get event details
+* PUT /events/{eventId} 📝 Update event information
+* DELETE /events/{eventId} ❌ Cancel an event
 
-#### Backend Essentials
+#### 🛡️ User Profile Endpoints
 
-- [ ] Database stores venue, event, and user data.
-- [ ] Authentication is implemented for secure access.
+* GET /profile 👤 Get user profile
+* PUT /profile ✨ Update user profile
+
+#### 🛠️ Utility Endpoints
+
+* GET /health ❤️ API health check
+
+### 🤝 Contributing
+
+Passionate about music and code? We'd love your help!
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+### 📋 Upcoming Features
+
+- Enhanced music genre filtering
+- User reviews and ratings
+- Recommendation algorithm
+
+### 🎉 Why Live Music Finder?
+
+In a world of algorithm-driven playlists, we believe in the magic of live, spontaneous music. Whether you're a jazz enthusiast, a blues lover, or a flamenco aficionado, Live Music Finder connects you with the heartbeat of your city's music scene.
+
+**Made with 🎵 by Music Lovers, For Music Lovers**
 
 ## Acknowledgements
 
 Special thanks to the Chingu community for their ongoing support that make this project possible. 
 
-## About This Project
-
-This app is a real-time solution for discovering local, intimate live music performances. It’s perfect for music lovers who want to explore new places and support local artists, all from an easy-to-navigate interface.
+## The team
 
 - Adam Honvedo #1: [GitHub](https://github.com/Homvi) / [LinkedIn](https://www.linkedin.com/in/adamhonvedo/)
-- Damilola Oshinowo #2: [GitHub](https://github.com/dami-boy) / [LinkedIn](https://linkedin.com/in/damilola-oshinowo)
-- Asare Joseph #3: [GitHub](https://github.com/kofi916) / [LinkedIn](https://www.linkedin.com/in/joseph-asare-0b959111a/)
-- Cristiano Valente #4: [GitHub](https://github.com/cris-valente) / [LinkedIn](https://www.linkedin.com/in/cristiano-valente-3943092a1/)
-- Carlos Morais #5: [GitHub](https://github.com/Morais-C) / [LinkedIn](https://www.linkedin.com/in/carlosmoraisprofile/)
-- Kris Oldrini #6: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)
+- Carlos Morais #2: [GitHub](https://github.com/Morais-C) / [LinkedIn](https://www.linkedin.com/in/carlosmoraisprofile/)
+- Cristiano Valente #3: [GitHub](https://github.com/cris-valente) / [LinkedIn](https://www.linkedin.com/in/cristiano-valente-3943092a1/)
+- Damilola Oshinowo #4: [GitHub](https://github.com/dami-boy) / [LinkedIn](https://linkedin.com/in/damilola-oshinowo)
+- Kris Oldrini #5: [GitHub](https://github.com/XiaoQuark) / [LinkedIn](https://www.linkedin.com/in/kris-oldrini/)
