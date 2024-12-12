@@ -50,32 +50,35 @@ function MapComponent() {
   if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
-  if (!data) {
-    return null;
-  }
-
   function handleCityChange(newValue: SingleValue<SelectCity>) {
     if (!newValue || !mapRef.current) return;
 
     const { lat, lng } = newValue.value;
 
-    // Update selected city first
-    setSelectedCity({ lat, lng });
-
     // Fly to the new location
-    mapRef.current.flyTo({
+    const mapInstance = mapRef.current.getMap();
+    mapInstance.flyTo({
       center: [lng, lat],
       zoom: 12,
       speed: 1.2,
       curve: 1.5
     });
 
+    // Wait for the animation to complete using the moveend event
+    function handleMoveEnd() {
+      console.log('FlyTo animation completed');
+      // Update selected city immediately for consistency
+      setSelectedCity({ lat, lng });
+      mapInstance.off('moveend', handleMoveEnd); // Cleanup the event listener
+    }
+
+    mapInstance.on('moveend', handleMoveEnd);
+
     console.log('City selected:', newValue.label);
   }
 
-  const zoneResponse: ZoneResponse = data;
-  const zoneData: ZoneData[] = zoneResponse.data;
-  // Map to extract venues and filter out duplicates based on venue.id
+  const zoneResponse: ZoneResponse | null = data || null;
+  const zoneData: ZoneData[] = zoneResponse?.data || [];
   const venues: Venue[] = zoneData.reduce((acc: Venue[], item) => {
     const venue = item.event.venue;
     if (!acc.some((v) => v.id === venue.id)) {
