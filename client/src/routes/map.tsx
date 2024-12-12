@@ -1,5 +1,4 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { Link } from '@tanstack/react-router';
 import { Map, Marker, GeolocateControl, NavigationControl, MapRef, Popup } from '@vis.gl/react-maplibre';
 import type { ViewState } from '@vis.gl/react-maplibre';
 import { useState, useRef } from 'react';
@@ -7,7 +6,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import { z } from 'zod';
 
 import { useZones } from '@/hooks/useZones';
-import { ZoneResponse, ZoneFeature } from '@/types/zones';
+import { ZoneResponse, Venue, ZoneData } from '@/types/zones';
 
 import 'maplibre-gl/dist/maplibre-gl.css';
 
@@ -35,13 +34,28 @@ function MapComponent() {
     padding: { top: 0, right: 0, bottom: 0, left: 0 } //must be included
   });
 
-  const [activeEvent, setActiveEvent] = useState<ZoneFeature | null>(null);
+  const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
 
   if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
-  const zoneResponse = data as ZoneResponse;
-  const features: ZoneFeature[] = zoneResponse.data.features || [];
+  if (!data) {
+    return null;
+  }
+
+  const zoneResponse: ZoneResponse = data;
+  const zoneData: ZoneData[] = zoneResponse.data;
+  // Map to extract venues and filter out duplicates based on venue.id
+  const venues: Venue[] = zoneData.reduce((acc: Venue[], item) => {
+    const venue = item.event.venue;
+    if (!acc.some((v) => v.id === venue.id)) {
+      acc.push(venue);
+    }
+    return acc;
+  }, []);
+
+  console.log('Venues: ', venues);
+  console.log('zone response: ', zoneResponse);
 
   return (
     <div className="p-2 min-h-screen">
@@ -50,61 +64,51 @@ function MapComponent() {
         ref={mapRef}
         style={{ width: '100%', height: '80vh' }}
         onMove={(e) => setViewState(e.viewState)}
-        mapStyle="https://tiles.openfreemap.org/styles/positron"
+        mapStyle="https://tiles.openfreemap.org/styles/liberty"
       >
         <NavigationControl />
         <GeolocateControl />
-        {features.map((feature) => {
+        {venues.map((venue) => {
           return (
-            <div key={`marker-wrapper-${feature.properties.id}`}>
+            <div key={`marker-wrapper-${venue.id}`}>
               <Marker
-                key={feature.properties.id}
-                longitude={feature.geometry.coordinates[0]}
-                latitude={feature.geometry.coordinates[1]}
+                longitude={venue.coordinates.lng}
+                latitude={venue.coordinates.lat}
                 onClick={() => {
-                  console.log('Marker clicked:', feature); // Logs the feature data
-                  setActiveEvent(feature);
+                  console.log('Marker clicked:', venue); // Logs the feature data
+                  setActiveVenue(venue);
                 }}
-                // anchor="bottom"
                 style={{ cursor: 'pointer' }}
               ></Marker>
-              {activeEvent ? (
+              {activeVenue && activeVenue.id === venue.id && (
                 <Popup
-                  key={activeEvent.properties.id}
-                  longitude={activeEvent.geometry.coordinates[0]}
-                  latitude={activeEvent.geometry.coordinates[1]}
+                  longitude={venue.coordinates.lng}
+                  latitude={venue.coordinates.lat}
                   anchor="bottom"
                   offset={[0, 1]}
                   onClose={() => {
-                    console.log('Popup closed for:', activeEvent); // Logs when the popup is closed
-                    setActiveEvent(null);
+                    console.log('Popup closed for:', activeVenue); // Logs when the popup is closed
+                    setActiveVenue(null);
                   }}
                   closeOnClick={false}
                   closeButton={false}
                 >
                   <ClickAwayListener
                     onClickAway={() => {
-                      setActiveEvent(null);
+                      setActiveVenue(null);
                     }}
                   >
                     <div className="bg-white p-4 max-w-xs">
-                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{activeEvent.properties.title}</h3>
-                      <p className="text-sm text-gray-700 mb-4">{activeEvent.properties.description}</p>
-                      <div className="text-sm text-gray-500">
-                        <p>Starts: {new Date(activeEvent.properties.startDate).toLocaleString()}</p>
-                        <p>Ends: {new Date(activeEvent.properties.endDate).toLocaleString()}</p>
-                      </div>
+                      <h3 className="text-lg font-semibold mb-2 text-blue-600">{venue.name}</h3>
+                      <p className="text-sm text-gray-700 mb-4">{venue.description}</p>
                     </div>
                   </ClickAwayListener>
                 </Popup>
-              ) : null}
+              )}
             </div>
           );
         })}
       </Map>
-      <Link to="/" className="mt-4 text-blue-500 underline">
-        View List
-      </Link>
     </div>
   );
 }
