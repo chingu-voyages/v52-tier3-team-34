@@ -78,8 +78,35 @@ npm run dev
 
 ### 📡 Live Music Finder API Documentation
 
+Deployed API url : https://v52-tier3-team-34.onrender.com/api/v1/
+
 #### Postman Collections
 [This directory](postman/README.mdcontains) contains Postman collections for testing the Live Music Finder API, organized into authentication, events, venues, and user management endpoints.
+
+#### 🎵 Venue Endpoints
+
+* GET /venues 🗺️ List all venues
+* POST /venues 🏠 Create a new venue
+* GET /venues/{venueId} 🔍 Get venue details
+* PUT /venues/{venueId} ✏️ Update venue information
+* DELETE /venues/{venueId} 🗑️ Delete a venue
+
+#### 🎸 Event Endpoints
+
+* GET /events 📅 List all events
+* POST /events 🎉 Create a new event
+* GET /events/{eventId} 🔎 Get event details
+* PUT /events/{eventId} 📝 Update event information
+* DELETE /events/{eventId} ❌ Cancel an event
+
+#### 🛡️ User Profile Endpoints
+
+* GET /profile 👤 Get user profile
+* PUT /profile ✨ Update user profile
+
+#### 🛠️ Utility Endpoints
+
+* GET /health ❤️ API health check
 
 ### 🤝 Contributing
 
