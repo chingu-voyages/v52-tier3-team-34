@@ -39,17 +39,9 @@ function MapComponent() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        const formattedPos: SelectCity = { value: { lat: latitude, lng: longitude }, label: '' };
 
-        // Fly to user location using Mapbox instance
-        if (mapRef.current) {
-          const mapInstance = mapRef.current.getMap();
-          mapInstance.flyTo({
-            center: [longitude, latitude],
-            zoom: 12,
-            speed: 1.2,
-            curve: 1.5
-          });
-        }
+        handleCityChange(formattedPos);
       },
       (err) => {
         console.error('Error fetching location:', err.message);
@@ -70,7 +62,7 @@ function MapComponent() {
       speed: 1.2,
       curve: 1.5
     });
-    
+
     function handleMoveEnd() {
       setSelectedCity({ lat, lng });
       mapInstance.off('moveend', handleMoveEnd);
