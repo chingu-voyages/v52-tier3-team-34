@@ -74,7 +74,6 @@ export default function AddVenue() {
         </div>
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Register New Venue</h1>
-          <h2 className="bg-yellow-300 text-red-600 w-fit px-2"></h2>
         </div>
       </div>
 
