@@ -6,19 +6,25 @@ import { EventSubmissionData } from '@/validations/eventValidation';
 export async function createEvent(data: EventSubmissionData) {
   console.log('Creating event with: ', data);
 
-  const response = await fetch(`${serverBaseUrl}/events`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(data)
-  });
+  try {
+    const response = await fetch(`${serverBaseUrl}/events`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
 
-  if (!response.ok) {
-    throw new Error('Failed to create event');
+    if (!response.ok) {
+      const errorMessage = await response.text(); // Get detailed error message if provided by the server
+      throw new Error(`Failed to create event: ${errorMessage || response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error creating event:', error);
+    throw error; // Re-throw the error so it can be handled upstream
   }
-
-  return response.json();
 }
 
 export async function fetchEvents({
