@@ -51,8 +51,8 @@ function Dashboard() {
       <h1 className="text-2xl font-bold p-3">
         Dashboard |{' '}
         <span className="opacity-50">
-          {user.name} id: {user.id}
-        </span>{' '}
+          {user.name} {/* id: {user.id} */}
+        </span>
       </h1>
       <div className="flex border-t-[1px]">
         <div className="w-1/2 lg:w-1/3 min-h-screen border-r-[1px] p-3">
