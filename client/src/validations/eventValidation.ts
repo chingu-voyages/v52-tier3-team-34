@@ -45,7 +45,11 @@ export const eventSchema = z.object({
   artist: z.string().min(3, 'Artist name must have at least 3 characters'),
   genre: z.array(z.string()).min(1, 'Please select at least one genre'),
   price: z.number().min(0, 'Price must be a positive number'),
-  venueId: z.number({ message: 'Venue ID must be number' }),
+  venueId: z
+    .string()
+    .min(1, { message: 'Please choose a venue' })
+    .transform((value) => parseInt(value, 10)) // Convert venueId from string to number
+    .refine((value) => !isNaN(value), { message: 'Invalid venue ID' }),
   // image: z.string().url('Please enter a valid URL for the image').optional(),
   terms: z.boolean().refine((val) => val === true, {
     message: 'You must accept the terms'

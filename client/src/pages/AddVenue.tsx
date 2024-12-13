@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Building2, Mail, Phone, MapPin, Image as ImageIcon, Loader2, Wand2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { createVenue } from '@/api/venues';
 import { useAuth } from '@/auth/auth';
@@ -47,9 +48,21 @@ export default function AddVenue() {
     }
   });
 
-  function onSubmit(data: VenueFormData) {
-    const userId = Number(user?.id);
-    const venueData = { ...data, userId };
+  function onError(errors: unknown) {
+    const userId = user?.id ? Number(user.id) : null;
+
+    console.log('userId', userId);
+    console.error('Validation Errors:', errors);
+  }
+
+  function onSubmit(data: z.infer<typeof venueSchema>) {
+    const userId = user?.id ? Number(user.id) : null;
+    if (!userId) {
+      console.error('User ID is required before submission.');
+      return;
+    }
+
+    const venueData: VenueFormData = { ...data, userId };
     mutation.mutate(venueData);
   }
 
@@ -61,7 +74,6 @@ export default function AddVenue() {
         </div>
         <div className="flex flex-col">
           <h1 className="text-2xl font-bold">Register New Venue</h1>
-          <h2 className="bg-yellow-300 text-red-600 w-fit px-2"></h2>
         </div>
       </div>
 
@@ -73,7 +85,7 @@ export default function AddVenue() {
         <Wand2 size={20} />
       </button>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit, onError)} className="space-y-6">
         {/* Basic Information */}
         <div className="space-y-4">
           <div>

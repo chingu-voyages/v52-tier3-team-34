@@ -3,15 +3,18 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Wand2 } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { EventFormData, eventSchema, EventSubmissionData } from '../validations/eventValidation';
 
 import { createEvent } from '@/api/events';
+import { useAuth } from '@/auth/auth';
+import { useVenues } from '@/hooks/useVenues';
+import { Venue } from '@/types/venues';
 import { convertToISO8601 } from '@/utils';
 
-function AddEvent() {
+export default function AddEvent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const {
@@ -27,13 +30,29 @@ function AddEvent() {
         days: '0',
         hours: '1',
         minutes: '0'
-      },
+      }
       //image: 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg',
-      venueId: 50
     }
   });
 
+  const { user } = useAuth();
+
+  if (!user?.id || !user) {
+    return null;
+  }
+
+  const userId = user.id.toString();
+
   const [calculatedEndDate, setCalculatedEndDate] = useState<string | null>(null);
+  const venuesData = useVenues({
+    sort: 'createdAt:desc',
+    limit: 100,
+    filter: { userId: userId }
+  });
+
+  const venues: Venue[] = venuesData.data?.data || [];
+
+  console.log(venues);
 
   // Watch the relevant fields
   const startDate = useWatch({
@@ -79,6 +98,7 @@ function AddEvent() {
     onSuccess: () => {
       // Invalidate and refetch the events query
       queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['userEvents'] });
       navigate({ to: '/dashboard' });
     }
   });
@@ -95,7 +115,7 @@ function AddEvent() {
     setValue('artist', faker.person.fullName());
     setValue('genre', faker.helpers.arrayElements(['rock', 'pop', 'jazz', 'classical', 'blues'], 2));
     setValue('price', faker.number.int({ min: 0, max: 50 }));
-    setValue('venueId', 50);
+    // setValue('venueId', 1);
     //setValue('image', 'https://images.pexels.com/photos/9419374/pexels-photo-9419374.jpeg');
     setValue('terms', true);
   }
@@ -126,63 +146,62 @@ function AddEvent() {
 
   return (
     <div className="max-w-lg p-6 mx-auto">
-      <h1 className="my-3 text-xl font-bold">Create event</h1>
+      <h1 className="my-3 text-2xl font-bold">Create event</h1>
       <button
         type="button"
         onClick={autofillExampleData}
-        className="flex items-center gap-2 mb-5 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
+        className="flex items-center absolute right-3 top-36 opacity-5 hover:opacity-60 gap-2 mb-5 px-4 py-2 bg-purple-50 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
       >
         <Wand2 size={20} />
-        Fill Example Data
       </button>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div>
-          <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="title" className="file:block text-sm font-medium ">
             Event Title:
           </label>
           <input
             type="text"
             id="title"
             {...register('title')} // Registering the field
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-black mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
           {errors.title && <p className="text-red-500 text-xs">{errors.title.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="block text-sm font-medium ">
             Event Description:
           </label>
           <textarea
             id="description"
             {...register('description')} // Registering the field
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-black mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
           {errors.description && <p className="text-red-500 text-xs">{errors.description.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="startDate" className="block text-sm font-medium ">
             Start Date and Time:
           </label>
           <input
             type="datetime-local"
             id="startDate"
             {...register('startDate')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="text-black mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
           {errors.startDate && <p className="text-red-500 text-xs">{errors.startDate.message}</p>}
         </div>
 
         <div className="flex space-x-4">
           <div>
-            <label htmlFor="duration" className="block text-sm font-medium text-gray-700">
+            <label htmlFor="duration" className="block text-sm font-medium ">
               Duration:
             </label>
             <div className="flex space-x-2">
               <select
                 {...register('duration.days')}
-                className="block w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block text-black  w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Days</option>
                 <option value="1">1 Day</option>
@@ -192,7 +211,7 @@ function AddEvent() {
               </select>
               <select
                 {...register('duration.hours')}
-                className="block w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block text-black  w-32 px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Hours</option>
                 <option value="1">1 Hour</option>
@@ -202,7 +221,7 @@ function AddEvent() {
               </select>
               <select
                 {...register('duration.minutes')}
-                className="block px-6 w-32 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                className="block text-black  px-6 w-32 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
               >
                 <option value="0">0 Minutes</option>
                 <option value="15">15 Minutes</option>
@@ -214,26 +233,26 @@ function AddEvent() {
         </div>
 
         <div>
-          <label htmlFor="artist" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="artist" className="block text-sm font-medium ">
             Artist:
           </label>
           <input
             type="text"
             id="artist"
             {...register('artist')} // Registering the field
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 text-black  block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
           {errors.artist && <p className="text-red-500 text-xs">{errors.artist.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="genre" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="genre" className="block text-sm font-medium ">
             Genre:
           </label>
           <select
             multiple
             {...register('genre')} // Registering the field
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 text-black  block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="rock">Rock</option>
             <option value="pop">Pop</option>
@@ -245,34 +264,42 @@ function AddEvent() {
         </div>
 
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
-            Price:
+          <label htmlFor="price" className="block text-sm font-medium">
+            Price (Euros)
           </label>
           <input
             type="number"
             id="price"
             {...register('price')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 text-black  block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           />
           {errors.price && <p className="text-red-500 text-xs">{errors.price.message}</p>}
         </div>
 
         <div>
-          <label htmlFor="venueId" className="block text-sm font-medium text-gray-700">
-            Venue ID:
+          <label htmlFor="venueId" className="block text-sm font-medium">
+            Venue:
           </label>
-          <input
-            type="text"
+          <select
             id="venueId"
             {...register('venueId')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-          />
+            className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+          >
+            <option value="" disabled>
+              Select a venue
+            </option>
+            {venues.map((venue) => (
+              <option key={venue.id} value={venue.id}>
+                {venue.name}
+              </option>
+            ))}
+          </select>
           {errors.venueId && <p className="text-red-500 text-xs">{errors.venueId.message}</p>}
         </div>
 
         {/* Image URL Input */}
         {/* <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="image" className="block text-sm font-medium ">
             Event Image URL:
           </label>
           <input
@@ -287,13 +314,13 @@ function AddEvent() {
         {/* status */}
         {/* Status Dropdown */}
         <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="status" className="block text-sm font-medium ">
             Status
           </label>
           <select
             id="status"
             {...register('status')}
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
           >
             <option value="published">Publish</option>
             <option value="draft">Draft</option>
@@ -302,7 +329,7 @@ function AddEvent() {
           {errors.status && <p className="text-red-500 text-xs">{errors.status.message}</p>}
         </div>
 
-        <div className="flex flex-col space-y-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="flex flex-col space-y-4 p-4 bg-gray-50 rounded-lg border text-black border-gray-200">
           <div className="flex items-start space-x-3">
             <div className="flex items-center h-5">
               <input
@@ -313,7 +340,7 @@ function AddEvent() {
               />
             </div>
             <div className="flex flex-col">
-              <label htmlFor="terms" className="text-sm font-medium text-gray-700 cursor-pointer">
+              <label htmlFor="terms" className="text-sm font-medium  cursor-pointer">
                 Terms and Conditions
               </label>
               <p className="text-xs text-gray-500 mt-1">
@@ -357,5 +384,3 @@ function AddEvent() {
     </div>
   );
 }
-
-export default AddEvent;
