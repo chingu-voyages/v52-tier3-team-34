@@ -6,6 +6,7 @@ import ClickAwayListener from 'react-click-away-listener';
 import Select from 'react-select';
 import { SingleValue } from 'react-select';
 
+import { initialCity, initialViewState } from '@/config';
 import { useZones } from '@/hooks/useZones';
 import { City, SelectCity } from '@/types/city';
 import { ZoneResponse, Venue, ZoneData } from '@/types/zones';
@@ -19,27 +20,16 @@ export const Route = createFileRoute('/map')({
 function MapComponent() {
   const mapRef = useRef<MapRef | null>(null);
 
-  const [selectedCity, setSelectedCity] = useState<{ lat: number; lng: number }>({
-    lat: 41.390205,
-    lng: 2.154007
-  });
+  const [selectedCity, setSelectedCity] = useState<{ lat: number; lng: number }>(initialCity);
+  const { data, error, isError } = useZones(selectedCity.lat, selectedCity.lng, 50);
 
-  const [viewState, setViewState] = useState<ViewState>({
-    longitude: 2.154007,
-    latitude: 41.390205,
-    zoom: 1,
-    pitch: 0,
-    bearing: 0,
-    padding: { top: 0, right: 0, bottom: 0, left: 0 }
-  });
-
-  const { data, isLoading, error, isError } = useZones(selectedCity.lat, selectedCity.lng, 50);
-
+  const [viewState, setViewState] = useState<ViewState>(initialViewState);
   const [activeVenue, setActiveVenue] = useState<Venue | null>(null);
 
   const bigCities: City[] = cities;
   const formattedCities: SelectCity[] = formatCitiesForSelect(bigCities);
 
+  // on page load
   useEffect(() => {
     if (!navigator.geolocation) {
       console.error('Geolocation is not supported by this browser.');
@@ -49,14 +39,6 @@ function MapComponent() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-
-        // Update viewState to reflect user location
-        setViewState({
-          ...viewState,
-          latitude,
-          longitude,
-          zoom: 12 // Adjust zoom for user location
-        });
 
         // Fly to user location using Mapbox instance
         if (mapRef.current) {
@@ -75,6 +57,7 @@ function MapComponent() {
     );
   }, []);
 
+  // on select city
   function handleCityChange(newValue: SingleValue<SelectCity>) {
     if (!newValue || !mapRef.current) return;
 
@@ -87,7 +70,7 @@ function MapComponent() {
       speed: 1.2,
       curve: 1.5
     });
-
+    
     function handleMoveEnd() {
       setSelectedCity({ lat, lng });
       mapInstance.off('moveend', handleMoveEnd);
@@ -123,7 +106,6 @@ function MapComponent() {
     return acc;
   }, []);
 
-  if (isLoading) return <div>Loading map...</div>;
   if (isError) return <div>Error loading zones: {error.message}</div>;
 
   return (
